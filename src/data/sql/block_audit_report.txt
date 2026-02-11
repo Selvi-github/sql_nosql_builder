@@ -1,0 +1,30 @@
+=== NoSQL Block Audit Report ===
+
+Generated: 2026-02-06T10:04:28.786Z
+
+Total unique blocks referenced: 16
+Existing blocks implemented: 14
+Missing blocks: 3
+
+⚠️  MISSING BLOCKS:
+  - nosql_skip (used 4 times)
+  - nosql_index (used 5 times)
+  - nosql_admin (used 4 times)
+
+=== Block Usage Statistics ===
+✓ nosql_find: 300 questions
+✓ nosql_comparison: 67 questions
+✓ nosql_logical: 67 questions
+✓ nosql_aggregate: 40 questions
+✓ nosql_update: 13 questions
+✓ nosql_delete: 13 questions
+✓ nosql_insert: 13 questions
+✓ nosql_limit: 11 questions
+✓ nosql_sort: 10 questions
+✓ nosql_count: 6 questions
+✗ nosql_index: 5 questions
+✗ nosql_skip: 4 questions
+✗ nosql_admin: 4 questions
+✓ nosql_distinct: 2 questions
+✓ nosql_find_one: 1 questions
+✓ nosql_project: 1 questions

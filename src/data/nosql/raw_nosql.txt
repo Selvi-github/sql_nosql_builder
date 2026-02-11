@@ -1,0 +1,774 @@
+1. Return all documents from users collection
+db.users.find()
+2. Return only one document from users collection
+db.users.findOne()
+3. Return only firstname of all users
+db.users.find({}, { firstname: 1, _id: 0 })
+4. Return only lastname of all users
+db.users.find({}, { lastname: 1, _id: 0 })
+5. Return firstname and lastname
+db.users.find({}, { firstname: 1, lastname: 1, _id: 0 })
+6. Find users from Chennai
+db.users.find({ city: "Chennai" })
+7. Find users from Madurai
+db.users.find({ city: "Madurai" })
+8. Find users whose age is 25
+db.users.find({ age: 25 })
+9. Find users older than 25
+db.users.find({ age: { $gt: 25 } })
+10. Find users younger than 30
+db.users.find({ age: { $lt: 30 } })
+11. Find users aged 18 or above
+db.users.find({ age: { $gte: 18 } })
+12. Find users aged 60 or below
+db.users.find({ age: { $lte: 60 } })
+13. Find users between age 18 and 30
+db.users.find({ age: { $gte: 18, $lte: 30 } })
+14. Get unique city names
+db.users.distinct("city")
+15. Get unique gender values
+db.users.distinct("gender")
+16. Find users whose firstname is not null
+db.users.find({ firstname: { $ne: null } })
+17. Find users whose email exists
+db.users.find({ email: { $exists: true } })
+18. Find users whose phone does not exist
+db.users.find({ phone: { $exists: false } })
+19. Find active users
+db.users.find({ isActive: true })
+20. Find inactive users
+db.users.find({ isActive: false })
+21. Sort users by age in ascending order
+db.users.find().sort({ age: 1 })
+22. Sort users by age in descending order
+db.users.find().sort({ age: -1 })
+23. Sort users by firstname alphabetically
+db.users.find().sort({ firstname: 1 })
+24. Get first 5 users
+db.users.find().limit(5)
+25. Skip first 5 users
+db.users.find().skip(5)
+26. Skip 5 users and get next 5
+db.users.find().skip(5).limit(5)
+27. Count total number of users
+db.users.countDocuments()
+28. Count users from Chennai
+db.users.countDocuments({ city: "Chennai" })
+29. Count active users
+db.users.countDocuments({ isActive: true })
+30. Count inactive users
+db.users.countDocuments({ isActive: false })
+31. Find users whose salary is 30000
+db.users.find({ salary: 30000 })
+32. Find users with salary greater than 20000
+db.users.find({ salary: { $gt: 20000 } })
+33. Find users with salary less than 50000
+db.users.find({ salary: { $lt: 50000 } })
+34. Find users with salary between 20000 and 50000
+db.users.find({ salary: { $gte: 20000, $lte: 50000 } })
+35. Find users whose role is Admin
+db.users.find({ role: "Admin" })
+36. Find users whose role is User
+db.users.find({ role: "User" })
+37. Find users whose role is not Admin
+db.users.find({ role: { $ne: "Admin" } })
+38. Find users from Chennai or Madurai
+db.users.find({ city: { $in: ["Chennai", "Madurai"] } })
+39. Find users not from Delhi
+db.users.find({ city: { $ne: "Delhi" } })
+40. Find users whose age is not 25
+db.users.find({ age: { $ne: 25 } })
+41. Find male users
+db.users.find({ gender: "Male" })
+42. Find female users
+db.users.find({ gender: "Female" })
+43. Find users whose gender is not Male
+db.users.find({ gender: { $ne: "Male" } })
+44. Find users whose firstname starts with 'A'
+db.users.find({ firstname: { $regex: "^A" } })
+45. Find users whose firstname ends with 'a'
+db.users.find({ firstname: { $regex: "a$" } })
+46. Case-insensitive search for firstname 'priya'
+db.users.find({ firstname: { $regex: "priya", $options: "i" } })
+47. Find users whose email contains 'gmail'
+db.users.find({ email: { $regex: "gmail" } })
+48. Find users having skill Python
+db.users.find({ skills: "Python" })
+49. Find users having skill Java
+db.users.find({ skills: "Java" })
+50. Find users having skill MongoDB
+db.users.find({ skills: "MongoDB" })
+51. Find users having both Python and Java
+db.users.find({ skills: { $all: ["Python", "Java"] } })
+52. Find users with exactly 2 skills
+db.users.find({ skills: { $size: 2 } })
+53. Find users whose age is even
+db.users.find({ age: { $mod: [2, 0] } })
+54. Find users whose age is odd
+db.users.find({ age: { $mod: [2, 1] } })
+55. Find users with salary not equal to 30000
+db.users.find({ salary: { $ne: 30000 } })
+56. Find users whose city is Chennai and active
+db.users.find({ city: "Chennai", isActive: true })
+57. Find users whose city is Chennai and salary > 30000
+db.users.find({ city: "Chennai", salary: { $gt: 30000 } })
+58. Find users whose age > 25 and salary > 40000
+db.users.find({ age: { $gt: 25 }, salary: { $gt: 40000 } })
+59. Find users whose city is Chennai and gender is Female
+db.users.find({ city: "Chennai", gender: "Female" })
+60. Find users whose role is Admin and active
+db.users.find({ role: "Admin", isActive: true })
+61. Find users whose city is Chennai or Bangalore
+db.users.find({ $or: [{ city: "Chennai" }, { city: "Bangalore" }] })
+62. Find users whose age < 20 or > 50
+db.users.find({ $or: [{ age: { $lt: 20 } }, { age: { $gt: 50 } }] })
+63. Find users whose city is not Chennai or Delhi
+db.users.find({ city: { $nin: ["Chennai", "Delhi"] } })
+64. Find users whose age is in 20, 25, 30
+db.users.find({ age: { $in: [20, 25, 30] } })
+65. Find users whose salary is in 20000, 30000
+db.users.find({ salary: { $in: [20000, 30000] } })
+66. Find users whose email ends with .com
+db.users.find({ email: { $regex: ".com$" } })
+67. Find users whose email is Gmail
+db.users.find({ email: { $regex: "@gmail.com$" } })
+68. Find users whose firstname length is not null
+db.users.find({ firstname: { $exists: true } })
+69. Find users whose salary exists
+db.users.find({ salary: { $exists: true } })
+70. Find users whose role exists
+db.users.find({ role: { $exists: true } })
+71. Find users whose city exists
+db.users.find({ city: { $exists: true } })
+72. Find users whose age exists
+db.users.find({ age: { $exists: true } })
+73. Find users whose skills exist
+db.users.find({ skills: { $exists: true } })
+74. Find users whose skills field is empty array
+db.users.find({ skills: { $size: 0 } })
+75. Find users whose age is not between 20 and 30
+db.users.find({ age: { $not: { $gte: 20, $lte: 30 } } })
+76. Find users whose city starts with 'M'
+db.users.find({ city: { $regex: "^M" } })
+77. Find users whose city ends with 'i'
+db.users.find({ city: { $regex: "i$" } })
+78. Find users whose firstname contains 'an'
+db.users.find({ firstname: { $regex: "an" } })
+79. Find users whose lastname contains 'ra'
+db.users.find({ lastname: { $regex: "ra" } })
+80. Find users whose role is not User
+db.users.find({ role: { $ne: "User" } })
+81. Find users whose salary >= 50000
+db.users.find({ salary: { $gte: 50000 } })
+82. Find users whose salary <= 20000
+db.users.find({ salary: { $lte: 20000 } })
+83. Find users whose city is Chennai and age < 30
+db.users.find({ city: "Chennai", age: { $lt: 30 } })
+84. Find users whose city is Chennai and age > 30
+db.users.find({ city: "Chennai", age: { $gt: 30 } })
+85. Find users whose gender is Female and active
+db.users.find({ gender: "Female", isActive: true })
+86. Find users whose gender is Male and inactive
+db.users.find({ gender: "Male", isActive: false })
+87. Find users whose salary is greater than age × 1000
+db.users.find({ $expr: { $gt: ["$salary", { $multiply: ["$age", 1000] }] } })
+88. Find users whose firstname and lastname exist
+db.users.find({ firstname: { $exists: true }, lastname: { $exists: true } })
+89. Find users whose email is null
+db.users.find({ email: null })
+90. Find users whose phone is null
+db.users.find({ phone: null })
+91. Find users whose city is Chennai and skills include Python
+db.users.find({ city: "Chennai", skills: "Python" })
+92. Find users whose age > 25 and skills include Java
+db.users.find({ age: { $gt: 25 }, skills: "Java" })
+93. Find users whose role is Admin and salary > 50000
+db.users.find({ role: "Admin", salary: { $gt: 50000 } })
+94. Find users whose role is User and active
+db.users.find({ role: "User", isActive: true })
+95. Find users whose salary is not null
+db.users.find({ salary: { $ne: null } })
+96. Find users whose age is not null
+db.users.find({ age: { $ne: null } })
+97. Find users whose firstname is Mohana
+db.users.find({ firstname: "Mohana" })
+98. Find users whose lastname is Priya
+db.users.find({ lastname: "Priya" })
+99. Find users whose city is Chennai and role is User
+db.users.find({ city: "Chennai", role: "User" })
+100. Find users whose age is greater than 18 and active
+db.users.find({ age: { $gt: 18 }, isActive: true })
+101. Find users from Chennai AND age greater than 25
+db.users.find({ city: "Chennai", age: { $gt: 25 } })
+102. Find users from Chennai OR Madurai
+db.users.find({ $or: [{ city: "Chennai" }, { city: "Madurai" }] })
+103. Find users whose age is less than 20 OR greater than 50
+db.users.find({ $or: [{ age: { $lt: 20 } }, { age: { $gt: 50 } }] })
+104. Find users whose city is NOT Chennai
+db.users.find({ city: { $ne: "Chennai" } })
+105. Find users whose city is in Chennai, Madurai, Bangalore
+db.users.find({ city: { $in: ["Chennai", "Madurai", "Bangalore"] } })
+106. Find users whose city is NOT in Chennai, Delhi
+db.users.find({ city: { $nin: ["Chennai", "Delhi"] } })
+107. Find users with salary greater than 30000
+db.users.find({ salary: { $gt: 30000 } })
+108. Find users with salary between 25000 and 60000
+db.users.find({ salary: { $gte: 25000, $lte: 60000 } })
+109. Find users whose salary is NOT equal to 40000
+db.users.find({ salary: { $ne: 40000 } })
+110. Find users with salary in 20000, 30000, 40000
+db.users.find({ salary: { $in: [20000, 30000, 40000] } })
+111. Find users whose firstname starts with "A"
+db.users.find({ firstname: { $regex: "^A" } })
+112. Find users whose firstname ends with "a"
+db.users.find({ firstname: { $regex: "a$" } })
+113. Case-insensitive search for firstname "mohana"
+db.users.find({ firstname: { $regex: "mohana", $options: "i" } })
+114. Find users whose email contains "gmail"
+db.users.find({ email: { $regex: "gmail" } })
+115. Find users whose email ends with "@gmail.com"
+db.users.find({ email: { $regex: "@gmail.com$" } })
+116. Find users having skill Python
+db.users.find({ skills: "Python" })
+117. Find users having both Python and Java
+db.users.find({ skills: { $all: ["Python", "Java"] } })
+118. Find users having either Python or Java
+db.users.find({ skills: { $in: ["Python", "Java"] } })
+119. Find users having exactly 2 skills
+db.users.find({ skills: { $size: 2 } })
+120. Find users having more than one skill
+db.users.find({ $expr: { $gt: [{ $size: "$skills" }, 1] } })
+121. Find users whose age is even
+db.users.find({ age: { $mod: [2, 0] } })
+122. Find users whose age is odd
+db.users.find({ age: { $mod: [2, 1] } })
+123. Find users whose phone field exists
+db.users.find({ phone: { $exists: true } })
+124. Find users whose phone field does not exist
+db.users.find({ phone: { $exists: false } })
+125. Find users whose email is null
+db.users.find({ email: null })
+126. Find users whose firstname is not null
+db.users.find({ firstname: { $ne: null } })
+127. Find users whose salary field exists
+db.users.find({ salary: { $exists: true } })
+128. Find users whose salary field does not exist
+db.users.find({ salary: { $exists: false } })
+129. Find users whose age is not between 20 and 30
+db.users.find({ age: { $not: { $gte: 20, $lte: 30 } } })
+130. Find users whose city starts with "M"
+db.users.find({ city: { $regex: "^M" } })
+131. Find users whose city ends with "i"
+db.users.find({ city: { $regex: "i$" } })
+132. Find users whose firstname contains "an"
+db.users.find({ firstname: { $regex: "an" } })
+133. Find users whose lastname contains "ra"
+db.users.find({ lastname: { $regex: "ra" } })
+134. Find users whose role is Admin AND active
+db.users.find({ role: "Admin", isActive: true })
+135. Find users whose role is User AND inactive
+db.users.find({ role: "User", isActive: false })
+136. Find users whose role is not Admin
+db.users.find({ role: { $ne: "Admin" } })
+137. Find users whose gender is Female AND age > 25
+db.users.find({ gender: "Female", age: { $gt: 25 } })
+138. Find users whose gender is Male AND salary > 40000
+db.users.find({ gender: "Male", salary: { $gt: 40000 } })
+139. Find users whose city is Chennai AND skill is Python
+db.users.find({ city: "Chennai", skills: "Python" })
+140. Find users whose age > 25 AND skill is Java
+db.users.find({ age: { $gt: 25 }, skills: "Java" })
+141. Find users whose city is Chennai OR skill is MongoDB
+db.users.find({ $or: [{ city: "Chennai" }, { skills: "MongoDB" }] })
+142. Find users whose salary > 30000 OR role is Admin
+db.users.find({ $or: [{ salary: { $gt: 30000 } }, { role: "Admin" }] })
+143. Find users whose city is Chennai AND age < 30 AND active
+db.users.find({ city: "Chennai", age: { $lt: 30 }, isActive: true })
+144. Find users whose salary > 50000 AND role is Admin
+db.users.find({ salary: { $gt: 50000 }, role: "Admin" })
+145. Find users whose salary > 40000 AND age < 35
+db.users.find({ salary: { $gt: 40000 }, age: { $lt: 35 } })
+146. Find users whose firstname and lastname exist
+db.users.find({ firstname: { $exists: true }, lastname: { $exists: true } })
+147. Find users whose city and salary exist
+db.users.find({ city: { $exists: true }, salary: { $exists: true } })
+148. Find users whose skills array exists
+db.users.find({ skills: { $exists: true } })
+149. Find users whose skills array is empty
+db.users.find({ skills: { $size: 0 } })
+150. Find users whose salary is greater than age × 1000
+db.users.find({
+ $expr: { $gt: ["$salary", { $multiply: ["$age", 1000] }] }
+})
+151. Find users whose age is greater than salary / 1000
+db.users.find({
+ $expr: { $gt: ["$age", { $divide: ["$salary", 1000] }] }
+})
+152. Find users whose age equals salary / 1000
+db.users.find({
+ $expr: { $eq: ["$age", { $divide: ["$salary", 1000] }] }
+})
+153. Find users whose age is not equal to salary / 1000
+db.users.find({
+ $expr: { $ne: ["$age", { $divide: ["$salary", 1000] }] }
+})
+154. Find users whose salary + bonus field exists
+db.users.find({ salary: { $exists: true }, bonus: { $exists: true } })
+155. Find users whose city is Chennai and not active
+db.users.find({ city: "Chennai", isActive: false })
+156. Find users whose city is not Chennai AND salary > 30000
+db.users.find({ city: { $ne: "Chennai" }, salary: { $gt: 30000 } })
+157. Find users whose gender is Female OR role is Admin
+db.users.find({ $or: [{ gender: "Female" }, { role: "Admin" }] })
+158. Find users whose age < 25 AND city is Madurai
+db.users.find({ age: { $lt: 25 }, city: "Madurai" })
+159. Find users whose salary > 60000 OR active
+db.users.find({ $or: [{ salary: { $gt: 60000 } }, { isActive: true }] })
+160. Find users whose skill is not Python
+db.users.find({ skills: { $ne: "Python" } })
+161. Find users whose role is Admin or Manager
+db.users.find({ role: { $in: ["Admin", "Manager"] } })
+162. Find users whose role is neither Admin nor Manager
+db.users.find({ role: { $nin: ["Admin", "Manager"] } })
+163. Find users whose city matches "chen" (case-insensitive)
+db.users.find({ city: { $regex: "chen", $options: "i" } })
+164. Find users whose firstname length is more than 5 characters
+db.users.find({ $expr: { $gt: [{ $strLenCP: "$firstname" }, 5] } })
+165. Find users whose lastname length is less than 6 characters
+db.users.find({ $expr: { $lt: [{ $strLenCP: "$lastname" }, 6] } })
+166. Find users whose salary is divisible by 5000
+db.users.find({ salary: { $mod: [5000, 0] } })
+167. Find users whose age is divisible by 5
+db.users.find({ age: { $mod: [5, 0] } })
+168. Find users whose salary is not divisible by 10000
+db.users.find({ salary: { $mod: [10000, 1] } })
+169. Find users whose email starts with 'a'
+db.users.find({ email: { $regex: "^a" } })
+170. Find users whose email ends with '.org'
+db.users.find({ email: { $regex: ".org$" } })
+171. Find users whose firstname is either Mohana or Priya
+db.users.find({ firstname: { $in: ["Mohana", "Priya"] } })
+172. Find users whose lastname is not Priya
+db.users.find({ lastname: { $ne: "Priya" } })
+173. Find users whose salary is between 30000 and 70000 and active
+db.users.find({ salary: { $gte: 30000, $lte: 70000 }, isActive: true })
+174. Find users whose age is between 25 and 40 and city is Chennai
+db.users.find({ age: { $gte: 25, $lte: 40 }, city: "Chennai" })
+175. Find users whose skills include MongoDB and city is Bangalore
+db.users.find({ skills: "MongoDB", city: "Bangalore" })
+176. Find users whose role is User and skill is Python
+db.users.find({ role: "User", skills: "Python" })
+177. Find users whose role is Admin and skill is MongoDB
+db.users.find({ role: "Admin", skills: "MongoDB" })
+178. Find users whose salary > 50000 and skill is Java
+db.users.find({ salary: { $gt: 50000 }, skills: "Java" })
+179. Find users whose city is Madurai and active
+db.users.find({ city: "Madurai", isActive: true })
+180. Find users whose age < 30 and inactive
+db.users.find({ age: { $lt: 30 }, isActive: false })
+181. Find users whose firstname contains letter 'i'
+db.users.find({ firstname: { $regex: "i" } })
+182. Find users whose lastname starts with 'S'
+db.users.find({ lastname: { $regex: "^S" } })
+183. Find users whose city contains 'ra'
+db.users.find({ city: { $regex: "ra" } })
+184. Find users whose salary > 35000 and age > 28
+db.users.find({ salary: { $gt: 35000 }, age: { $gt: 28 } })
+185. Find users whose city is Chennai and role is Admin or User
+db.users.find({
+ city: "Chennai",
+ role: { $in: ["Admin", "User"] }
+})
+186. Find users whose age is null
+db.users.find({ age: null })
+187. Find users whose salary is null
+db.users.find({ salary: null })
+188. Find users whose role is null
+db.users.find({ role: null })
+189. Find users whose skills field is null
+db.users.find({ skills: null })
+190. Find users whose email is not null
+db.users.find({ email: { $ne: null } })
+191. Find users whose city is Chennai and email exists
+db.users.find({ city: "Chennai", email: { $exists: true } })
+192. Find users whose salary exists and active
+db.users.find({ salary: { $exists: true }, isActive: true })
+193. Find users whose age exists and inactive
+db.users.find({ age: { $exists: true }, isActive: false })
+194. Find users whose skills exist and size > 1
+db.users.find({ $expr: { $gt: [{ $size: "$skills" }, 1] } })
+195. Find users whose city is not Chennai and not active
+db.users.find({ city: { $ne: "Chennai" }, isActive: false })
+196. Find users whose age > 25 and city exists
+db.users.find({ age: { $gt: 25 }, city: { $exists: true } })
+197. Find users whose salary < 30000 and role exists
+db.users.find({ salary: { $lt: 30000 }, role: { $exists: true } })
+198. Find users whose role exists and is not null
+db.users.find({ role: { $exists: true, $ne: null } })
+199. Find users whose firstname exists and length < 5
+db.users.find({
+ $expr: { $lt: [{ $strLenCP: "$firstname" }, 5] }
+})
+200. Find users whose salary exists and > 0
+db.users.find({ salary: { $exists: true, $gt: 0 } })
+201. Find the highest salary
+db.users.find().sort({ salary: -1 }).limit(1)
+202. Find second highest salary
+db.users.find().sort({ salary: -1 }).skip(1).limit(1)
+203. Find top 3 highest salaries
+db.users.find().sort({ salary: -1 }).limit(3)
+204. Find lowest salary
+db.users.find().sort({ salary: 1 }).limit(1)
+205. Count users per city
+db.users.aggregate([
+ { $group: { _id: "$city", count: { $sum: 1 } } }
+])
+206. Count users per gender
+db.users.aggregate([
+ { $group: { _id: "$gender", total: { $sum: 1 } } }
+])
+207. Get average salary
+db.users.aggregate([
+ { $group: { _id: null, avgSalary: { $avg: "$salary" } } }
+])
+208. Get total salary
+db.users.aggregate([
+ { $group: { _id: null, totalSalary: { $sum: "$salary" } } }
+])
+209. Get max salary per city
+db.users.aggregate([
+ { $group: { _id: "$city", maxSalary: { $max: "$salary" } } }
+])
+210. Get min salary per city
+db.users.aggregate([
+ { $group: { _id: "$city", minSalary: { $min: "$salary" } } }
+])
+211. Find users having more than one skill
+db.users.find({ "skills.1": { $exists: true } })
+212. Find users having exactly 3 skills
+db.users.find({ skills: { $size: 3 } })
+213. Find users who know both Java and MongoDB
+db.users.find({ skills: { $all: ["Java", "MongoDB"] } })
+214. Find users who know either Python or Java
+db.users.find({ skills: { $in: ["Python", "Java"] } })
+215. Find users who do NOT know Python
+db.users.find({ skills: { $nin: ["Python"] } })
+216. Find inactive users
+db.users.find({ isActive: false })
+217. Find active Admin users
+db.users.find({ role: "Admin", isActive: true })
+218. Find users older than average age
+db.users.aggregate([
+ { $group: { _id: null, avgAge: { $avg: "$age" } } },
+ { $lookup: {
+ from: "users",
+ pipeline: [{ $match: { $expr: { $gt: ["$age", "$$avgAge"] } } }],
+ as: "result"
+ }}
+])
+219. Find users with salary between 30k and 60k
+db.users.find({ salary: { $gte: 30000, $lte: 60000 } })
+220. Find users whose name starts with "A"
+db.users.find({ firstname: { $regex: "^A" } })
+221. Find users whose email ends with gmail.com
+db.users.find({ email: { $regex: "gmail.com$" } })
+222. Find users created in last 7 days
+db.users.find({
+ createdAt: { $gte: new Date(Date.now() - 7*24*60*60*1000) }
+})
+223. Find users who never logged in
+db.users.find({ lastLogin: null })
+224. Find users grouped by role
+db.users.aggregate([
+ { $group: { _id: "$role", count: { $sum: 1 } } }
+])
+225. Find duplicate emails
+db.users.aggregate([
+ { $group: { _id: "$email", count: { $sum: 1 } } },
+ { $match: { count: { $gt: 1 } } }
+])
+226. Find users without email field
+db.users.find({ email: { $exists: false } })
+227. Find users with null phone number
+db.users.find({ phone: null })
+228. Rename field firstname to first_name
+db.users.updateMany({}, { $rename: { firstname: "first_name" } })
+229. Increase salary by 10%
+db.users.updateMany({}, { $mul: { salary: 1.1 } })
+230. Set default role to "User"
+db.users.updateMany(
+ { role: { $exists: false } },
+ { $set: { role: "User" } }
+)
+231. Delete users older than 60
+db.users.deleteMany({ age: { $gt: 60 } })
+232. Soft delete a user
+db.users.updateOne({ _id: ObjectId("id") }, { $set: { isActive: false } })
+233. Restore soft deleted user
+db.users.updateOne({ _id: ObjectId("id") }, { $set: { isActive: true } })
+234. Remove a skill from all users
+db.users.updateMany({}, { $pull: { skills: "C++" } })
+235. Add new skill to all users
+db.users.updateMany({}, { $addToSet: { skills: "Git" } })
+236. Find users with even age
+db.users.find({ age: { $mod: [2, 0] } })
+237. Find users with odd age
+db.users.find({ age: { $mod: [2, 1] } })
+238. Get random user
+db.users.aggregate([{ $sample: { size: 1 } }])
+239. Get random 5 users
+db.users.aggregate([{ $sample: { size: 5 } }])
+240. Limit results with pagination
+db.users.find().skip(10).limit(5)
+241. Convert city name to uppercase
+db.users.aggregate([
+ { $project: { cityUpper: { $toUpper: "$city" } } }
+])
+242. Calculate age category
+db.users.aggregate([
+ {
+ $project: {
+ category: {
+ $cond: [{ $gte: ["$age", 18] }, "Adult", "Minor"]
+ }
+ }
+ }
+])
+243. Find users with maximum age
+db.users.find().sort({ age: -1 }).limit(1)
+244. Find users with minimum age
+db.users.find().sort({ age: 1 }).limit(1)
+245. Group users by age
+db.users.aggregate([
+ { $group: { _id: "$age", count: { $sum: 1 } } }
+])
+246. Create index on email
+db.users.createIndex({ email: 1 })
+247. Create compound index
+db.users.createIndex({ city: 1, age: -1 })
+248. Drop index
+db.users.dropIndex("email_1")
+249. Check indexes
+db.users.getIndexes()
+250. Explain query performance
+db.users.find({ city: "Chennai" }).explain("executionStats")
+251. Count total documents
+db.users.countDocuments()
+252. Count active users
+db.users.countDocuments({ isActive: true })
+253. Find users without skills
+db.users.find({ skills: { $size: 0 } })
+254. Find users with salary greater than city average
+db.users.aggregate([
+ { $group: { _id: "$city", avgSal: { $avg: "$salary" } } }
+])
+255. Find users created today
+db.users.find({
+ createdAt: {
+ $gte: new Date(new Date().setHours(0,0,0,0))
+ }
+})
+256. Merge users into backup collection
+db.users.aggregate([{ $out: "users_backup" }])
+257. Lookup example (join-like)
+db.users.aggregate([
+ {
+ $lookup: {
+ from: "orders",
+ localField: "_id",
+ foreignField: "userId",
+ as: "orders"
+ }
+ }
+])
+258. Unwind skills array
+db.users.aggregate([{ $unwind: "$skills" }])
+259. Count skill frequency
+db.users.aggregate([
+ { $unwind: "$skills" },
+ { $group: { _id: "$skills", count: { $sum: 1 } } }
+])
+260. Sort users by number of skills
+db.users.aggregate([
+ { $project: { skillCount: { $size: "$skills" } } },
+ { $sort: { skillCount: -1 } }
+])
+261. Mask email output
+db.users.aggregate([
+ {
+ $project: {
+ maskedEmail: { $concat: ["****@", { $arrayElemAt: [{ $split: ["$email", "@"] }, 1] }] }
+ }
+ }
+])
+262. Find users without city
+db.users.find({ city: { $in: [null, ""] } })
+263. Update multiple fields
+db.users.updateMany({}, { $set: { updatedAt: new Date() } })
+264. Remove field from documents
+db.users.updateMany({}, { $unset: { tempField: "" } })
+265. Replace entire document
+db.users.replaceOne({ _id: ObjectId("id") }, newDocument)
+266. Find users added this month
+db.users.find({
+ createdAt: {
+ $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+ }
+})
+267. Validate schema using JSON schema
+db.createCollection("users", {
+ validator: {
+ $jsonSchema: {
+ bsonType: "object",
+ required: ["firstname", "email"]
+ }
+ }
+})
+268. Check collection stats
+db.users.stats()
+269. Rename collection
+db.users.renameCollection("app_users")
+270. Drop collection
+db.users.drop()
+271. Find users with same salary
+db.users.aggregate([
+ { $group: { _id: "$salary", count: { $sum: 1 } } },
+ { $match: { count: { $gt: 1 } } }
+])
+272. Calculate experience (years)
+db.users.aggregate([
+ { $project: { experience: { $divide: [{ $subtract: [new Date(), "$createdAt"] },
+1000*60*60*24*365] } } }
+])
+273. Use facet for multiple outputs
+db.users.aggregate([
+ {
+ $facet: {
+ active: [{ $match: { isActive: true } }],
+ inactive: [{ $match: { isActive: false } }]
+ }
+ }
+])
+274. Merge aggregation result
+db.users.aggregate([{ $merge: "users_summary" }])
+275. Detect missing ages
+db.users.find({ age: { $exists: false } })
+276. Bucket ages
+db.users.aggregate([
+ {
+ $bucket: {
+ groupBy: "$age",
+ boundaries: [0,18,30,50,100],
+ default: "Other"
+ }
+ }
+])
+277. Auto bucket ages
+db.users.aggregate([
+ { $bucketAuto: { groupBy: "$age", buckets: 4 } }
+])
+278. Find documents size
+db.users.aggregate([{ $project: { size: { $bsonSize: "$$ROOT" } } }])
+279. Use text search
+db.users.createIndex({ firstname: "text" })
+280. Search text
+db.users.find({ $text: { $search: "Mohana" } })
+281. Find users with max skills
+db.users.aggregate([
+ { $project: { skillCount: { $size: "$skills" } } },
+ { $sort: { skillCount: -1 } },
+ { $limit: 1 }
+])
+282. Conditional salary grade
+db.users.aggregate([
+ {
+ $project: {
+ grade: {
+ $switch: {
+ branches: [
+ { case: { $gte: ["$salary", 70000] }, then: "A" },
+ { case: { $gte: ["$salary", 40000] }, then: "B" }
+ ],
+ default: "C"
+ }
+ }
+ }
+ }
+])
+283. Count total skills
+db.users.aggregate([
+ { $unwind: "$skills" },
+ { $count: "totalSkills" }
+])
+284. Find city with highest users
+db.users.aggregate([
+ { $group: { _id: "$city", count: { $sum: 1 } } },
+ { $sort: { count: -1 } },
+ { $limit: 1 }
+])
+285. Backup users collection
+db.users.aggregate([{ $out: "users_backup" }])
+286. Find users missing required fields
+db.users.find({
+ $or: [
+ { firstname: { $exists: false } },
+ { email: { $exists: false } }
+ ]
+})
+287. Normalize city names
+db.users.updateMany({}, [{ $set: { city: { $toLower: "$city" } } }])
+288. Count documents by year
+db.users.aggregate([
+ { $group: { _id: { $year: "$createdAt" }, count: { $sum: 1 } } }
+])
+289. Find most recent user
+db.users.find().sort({ createdAt: -1 }).limit(1)
+290. Find oldest user record
+db.users.find({ createdAt: 1 }).limit(1)
+291. Calculate days since last login
+db.users.aggregate([
+ { $project: { days: { $divide: [{ $subtract: [new Date(), "$lastLogin"] }, 1000*60*60*24] } }
+}
+])
+292. Find users inactive for 30 days
+db.users.find({
+ lastLogin: { $lt: new Date(Date.now() - 30*24*60*60*1000) }
+})
+293. Validate email format
+db.users.find({ email: { $regex: "^[^@]+@[^@]+\\.[^@]+$" } })
+294. Find users with same firstname
+db.users.aggregate([
+ { $group: { _id: "$firstname", count: { $sum: 1 } } },
+ { $match: { count: { $gt: 1 } } }
+])
+295. Calculate percentage of active users
+db.users.aggregate([
+ {
+ $group: {
+ _id: null,
+ total: { $sum: 1 },
+ active: { $sum: { $cond: ["$isActive", 1, 0] } }
+ }
+ }
+])
+296. Delete inactive users older than 1 year
+db.users.deleteMany({
+ isActive: false,
+ createdAt: { $lt: new Date(Date.now() - 365*24*60*60*1000) }
+})
+297. Archive old users
+db.users.aggregate([
+ { $match: { createdAt: { $lt: new Date("2023-01-01") } } },
+ { $out: "users_archive" }
+])
+298. Restore archived users
+db.users_archive.aggregate([{ $merge: "users" }])
+299. Drop archived collection
+db.users_archive.drop()
+300. Full advanced analytics pipeline
+db.users.aggregate([
+ { $match: { isActive: true } },
+ { $unwind: "$skills" },
+ { $group: { _id: "$skills", count: { $sum: 1 } } },
+ { $sort: { count: -1 } }
+])

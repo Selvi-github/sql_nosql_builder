@@ -1,0 +1,77 @@
+:root {
+  --bg-primary: #0b1120;
+  --bg-secondary: #0f172a;
+  --card-bg: #161e31;
+  --border-subtle: #1f2937;
+  --text-primary: #f1f5f9;
+  --text-secondary: #64748b;
+  --accent-indigo: #4f46e5;
+  --accent-indigo-hover: #4338ca;
+  --accent-sql: #0ea5e9;
+  --accent-nosql: #10b981;
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar styling for a cleaner look */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 5px;
+  border: 2px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+.blocklyMainBackground {
+  stroke: none;
+}
+
+.blocklyToolboxDiv {
+  background: var(--card-bg) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  color: var(--text-primary);
+}
+
+.blocklyTreeLabel {
+  color: var(--text-primary) !important;
+  font-family: var(--font-inter) !important;
+}
+
+.blocklyScrollbarHandle {
+  fill: var(--accent-indigo) !important;
+  opacity: 0.6;
+}
+
+.blocklyFlyoutBackground {
+  fill: var(--bg-secondary) !important;
+}

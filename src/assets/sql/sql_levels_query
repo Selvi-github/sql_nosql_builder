@@ -1,0 +1,1928 @@
+-- 🧩 FILTERING & CONDITIONS (21–40)
+
+-- 23. Find users NOT from Chennai or Delhi
+SELECT * FROM users WHERE city NOT IN ('Chennai', 'Delhi');
+
+-- 24. Find users with age NOT between 20 and 30
+SELECT * FROM users WHERE age NOT BETWEEN 20 AND 30;
+
+-- 25. Find users where email is NULL
+SELECT * FROM users WHERE email IS NULL;
+
+-- 26. Find users where phone is NOT NULL
+SELECT * FROM users WHERE phone IS NOT NULL;
+
+-- 27. Find users with age >= 18 AND age <= 60
+SELECT * FROM users WHERE age >= 18 AND age <= 60;
+
+-- 28. Find users from Mumbai with age > 30
+SELECT * FROM users WHERE city = 'Mumbai' AND age > 30;
+
+-- 29. Find users whose lastname is NULL OR city is Delhi
+SELECT * FROM users WHERE lastname IS NULL OR city = 'Delhi';
+
+-- 30. Find users with age = 25 OR age = 30 OR age = 35
+SELECT * FROM users WHERE age IN (25, 30, 35);
+
+-- 31. Find users whose firstname is exactly 5 characters long
+SELECT * FROM users WHERE LENGTH(firstname) = 5;
+
+-- 32. Find users whose city starts with 'B'
+SELECT * FROM users WHERE city LIKE 'B%';
+
+-- 33. Find users whose lastname ends with 'sharma'
+SELECT * FROM users WHERE lastname LIKE '%sharma';
+
+-- 34. Find users with age < 20 OR age > 50
+SELECT * FROM users WHERE age < 20 OR age > 50;
+
+-- 35. Find users from Chennai with firstname starting with 'R'
+SELECT * FROM users WHERE city = 'Chennai' AND firstname LIKE 'R%';
+
+-- 36. Find users whose email contains '@gmail'
+SELECT * FROM users WHERE email LIKE '%@gmail%';
+
+-- 37. Find users where age is divisible by 5
+SELECT * FROM users WHERE age % 5 = 0;
+
+-- 38. Find users whose firstname has exactly 4 letters
+SELECT * FROM users WHERE firstname LIKE '____';
+
+-- 39. Find users NOT from top 3 cities
+SELECT * FROM users WHERE city NOT IN ('Chennai', 'Mumbai', 'Delhi');
+
+-- 40. Find users with age between 25 and 35 from Bangalore
+SELECT * FROM users WHERE age BETWEEN 25 AND 35 AND city = 'Bangalore';
+
+-- 🧩 GROUP BY & AGGREGATIONS (41–60)
+
+-- 41. Count users per city
+SELECT city, COUNT(*) FROM users GROUP BY city;
+
+-- 42. Find average age per city
+SELECT city, AVG(age) FROM users GROUP BY city;
+
+-- 43. Find minimum age per city
+SELECT city, MIN(age) FROM users GROUP BY city;
+
+-- 44. Find maximum age per city
+SELECT city, MAX(age) FROM users GROUP BY city;
+
+-- 45. Count users grouped by age
+SELECT age, COUNT(*) FROM users GROUP BY age;
+
+-- 46. Sum of ages grouped by city
+SELECT city, SUM(age) FROM users GROUP BY city;
+
+-- 47. Cities with more than 5 users
+SELECT city, COUNT(*) FROM users GROUP BY city HAVING COUNT(*) > 5;
+
+-- 48. Cities where average age > 30
+SELECT city, AVG(age) FROM users GROUP BY city HAVING AVG(age) > 30;
+
+-- 49. Count male and female users
+SELECT gender, COUNT(*) FROM users GROUP BY gender;
+
+-- 50. Average age by gender
+SELECT gender, AVG(age) FROM users GROUP BY gender;
+
+-- 51. Cities with minimum age less than 20
+SELECT city, MIN(age) FROM users GROUP BY city HAVING MIN(age) < 20;
+
+-- 52. Count users per city, ordered by count descending
+SELECT city, COUNT(*) as user_count FROM users GROUP BY city ORDER BY user_count DESC;
+
+-- 53. Find cities with exactly 3 users
+SELECT city, COUNT(*) FROM users GROUP BY city HAVING COUNT(*) = 3;
+
+-- 54. Group by city and gender, count users
+SELECT city, gender, COUNT(*) FROM users GROUP BY city, gender;
+
+-- 55. Average age by city and gender
+SELECT city, gender, AVG(age) FROM users GROUP BY city, gender;
+
+-- 56. Cities with total age sum > 200
+SELECT city, SUM(age) FROM users GROUP BY city HAVING SUM(age) > 200;
+
+-- 57. Count users by age range (grouped manually)
+SELECT 
+  CASE 
+    WHEN age < 20 THEN 'Under 20'
+    WHEN age BETWEEN 20 AND 30 THEN '20-30'
+    ELSE 'Above 30'
+  END as age_range,
+  COUNT(*)
+FROM users GROUP BY age_range;
+
+-- 58. Find most common age
+SELECT age, COUNT(*) as frequency FROM users GROUP BY age ORDER BY frequency DESC LIMIT 1;
+
+-- 59. Count users per city with age > 25
+SELECT city, COUNT(*) FROM users WHERE age > 25 GROUP BY city;
+
+-- 60. Find cities where max age is less than 40
+SELECT city, MAX(age) FROM users GROUP BY city HAVING MAX(age) < 40;
+
+-- 🧩 JOINS (61–90)
+
+-- 61. Inner join users and orders on user_id
+SELECT * FROM users u INNER JOIN orders o ON u.user_id = o.user_id;
+
+-- 62. Get username and order amount
+SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id;
+
+-- 63. Left join users and orders
+SELECT * FROM users u LEFT JOIN orders o ON u.user_id = o.user_id;
+
+-- 64. Right join users and orders
+SELECT * FROM users u RIGHT JOIN orders o ON u.user_id = o.user_id;
+
+-- 65. Find users who have placed orders
+SELECT DISTINCT u.* FROM users u INNER JOIN orders o ON u.user_id = o.user_id;
+
+-- 66. Find users who haven't placed any orders
+SELECT u.* FROM users u LEFT JOIN orders o ON u.user_id = o.user_id WHERE o.order_id IS NULL;
+
+-- 67. Count orders per user
+SELECT u.firstname, COUNT(o.order_id) FROM users u LEFT JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 68. Total amount spent per user
+SELECT u.firstname, SUM(o.amount) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 69. Join users, orders, and products
+SELECT u.firstname, o.order_id, p.product_name FROM users u 
+INNER JOIN orders o ON u.user_id = o.user_id 
+INNER JOIN products p ON o.product_id = p.product_id;
+
+-- 70. Find users with orders > 1000
+SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE o.amount > 1000;
+
+-- 71. Self join to find users from same city
+SELECT u1.firstname, u2.firstname, u1.city FROM users u1 INNER JOIN users u2 ON u1.city = u2.city WHERE u1.user_id < u2.user_id;
+
+-- 72. Join users and orders, filter by date
+SELECT u.firstname, o.order_date FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE o.order_date > '2024-01-01';
+
+-- 73. Average order amount per city
+SELECT u.city, AVG(o.amount) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.city;
+
+-- 74. Users with more than 3 orders
+SELECT u.firstname, COUNT(o.order_id) as order_count FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname HAVING order_count > 3;
+
+-- 75. Find product names ordered by each user
+SELECT u.firstname, p.product_name FROM users u 
+INNER JOIN orders o ON u.user_id = o.user_id 
+INNER JOIN products p ON o.product_id = p.product_id;
+
+-- 76. Cross join users and products
+SELECT u.firstname, p.product_name FROM users u CROSS JOIN products p;
+
+-- 77. Full outer join users and orders
+SELECT * FROM users u FULL OUTER JOIN orders o ON u.user_id = o.user_id;
+
+-- 78. Find users who ordered specific product
+SELECT DISTINCT u.firstname FROM users u 
+INNER JOIN orders o ON u.user_id = o.user_id 
+INNER JOIN products p ON o.product_id = p.product_id 
+WHERE p.product_name = 'Laptop';
+
+-- 79. Join with multiple conditions
+SELECT * FROM users u INNER JOIN orders o ON u.user_id = o.user_id AND u.city = 'Chennai';
+
+-- 80. Count distinct products ordered per user
+SELECT u.firstname, COUNT(DISTINCT o.product_id) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 81. Maximum order amount per user
+SELECT u.firstname, MAX(o.amount) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 82. Find users with orders in 2024
+SELECT DISTINCT u.* FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE YEAR(o.order_date) = 2024;
+
+-- 83. Join and filter users from Chennai with orders
+SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE u.city = 'Chennai';
+
+-- 84. Users and their first order date
+SELECT u.firstname, MIN(o.order_date) as first_order FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 85. Users and their last order date
+SELECT u.firstname, MAX(o.order_date) as last_order FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;
+
+-- 86. Join users, orders where amount between 500 and 2000
+SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE o.amount BETWEEN 500 AND 2000;
+
+-- 87. Find cities with highest total order value
+SELECT u.city, SUM(o.amount) as total FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.city ORDER BY total DESC LIMIT 1;
+
+-- 88. Users who ordered more than one product type
+SELECT u.firstname, COUNT(DISTINCT o.product_id) as product_count FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname HAVING product_count > 1;
+
+-- 89. Join with alias and complex conditions
+SELECT u.firstname as customer, p.product_name as item FROM users u 
+INNER JOIN orders o ON u.user_id = o.user_id 
+INNER JOIN products p ON o.product_id = p.product_id 
+WHERE u.age > 25 AND o.amount > 500;
+
+-- 90. Find average age of users per product
+SELECT p.product_name, AVG(u.age) FROM users u 
+INNER JOIN orders o ON u.user_id = o.user_id 
+INNER JOIN products p ON o.product_id = p.product_id 
+GROUP BY p.product_id, p.product_name;
+
+-- 🧩 SUBQUERIES (91–120)
+
+-- 91. Find users with age greater than average
+SELECT * FROM users WHERE age > (SELECT AVG(age) FROM users);
+
+-- 92. Find users from city with most users
+SELECT * FROM users WHERE city = (SELECT city FROM users GROUP BY city ORDER BY COUNT(*) DESC LIMIT 1);
+
+-- 93. Users with above average order amount
+SELECT * FROM users WHERE user_id IN (SELECT user_id FROM orders WHERE amount > (SELECT AVG(amount) FROM orders));
+
+-- 94. Find maximum age user details
+SELECT * FROM users WHERE age = (SELECT MAX(age) FROM users);
+
+-- 95. Users who placed orders above average amount
+SELECT * FROM users WHERE user_id IN (SELECT user_id FROM orders GROUP BY user_id HAVING AVG(amount) > (SELECT AVG(amount) FROM orders));
+
+-- 96. Find cities with more users than average
+SELECT city, COUNT(*) as cnt FROM users GROUP BY city HAVING cnt > (SELECT AVG(city_count) FROM (SELECT COUNT(*) as city_count FROM users GROUP BY city) as subq);
+
+-- 97. Users from cities with total age > 200
+SELECT * FROM users WHERE city IN (SELECT city FROM users GROUP BY city HAVING SUM(age) > 200);
+
+-- 98. Find youngest user per city using subquery
+SELECT * FROM users u1 WHERE age = (SELECT MIN(age) FROM users u2 WHERE u1.city = u2.city);
+
+-- 99. Users who never placed an order
+SELECT * FROM users WHERE user_id NOT IN (SELECT DISTINCT user_id FROM orders);
+
+-- 100. Products never ordered
+SELECT * FROM products WHERE product_id NOT IN (SELECT DISTINCT product_id FROM orders);
+
+-- 101. Users with more orders than average
+SELECT user_id FROM orders GROUP BY user_id HAVING COUNT(*) > (SELECT AVG(order_count) FROM (SELECT COUNT(*) as order_count FROM orders GROUP BY user_id) as subq);
+
+-- 102. Find second highest age
+SELECT MAX(age) FROM users WHERE age < (SELECT MAX(age) FROM users);
+
+-- 103. Users with total spending above 5000
+SELECT * FROM users WHERE user_id IN (SELECT user_id FROM orders GROUP BY user_id HAVING SUM(amount) > 5000);
+
+-- 104. Cities where minimum age is less than overall average
+SELECT city FROM users GROUP BY city HAVING MIN(age) < (SELECT AVG(age) FROM users);
+
+-- 105. Find orders with amount greater than user's city average
+SELECT * FROM orders o WHERE amount > (SELECT AVG(o2.amount) FROM orders o2 INNER JOIN users u ON o2.user_id = u.user_id WHERE u.user_id = o.user_id);
+
+-- 106. Users older than youngest user from Chennai
+SELECT * FROM users WHERE age > (SELECT MIN(age) FROM users WHERE city = 'Chennai');
+
+-- 107. Products with price above average
+SELECT * FROM products WHERE price > (SELECT AVG(price) FROM products);
+
+-- 108. Users from city with highest average age
+SELECT * FROM users WHERE city = (SELECT city FROM users GROUP BY city ORDER BY AVG(age) DESC LIMIT 1);
+
+-- 109. Orders placed by users from Chennai
+SELECT * FROM orders WHERE user_id IN (SELECT user_id FROM users WHERE city = 'Chennai');
+
+-- 110. Find third highest salary
+SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 2;
+
+-- 111. Users with age equal to any user from Mumbai
+SELECT * FROM users WHERE age IN (SELECT age FROM users WHERE city = 'Mumbai');
+
+-- 112. Departments with employees earning above company average
+SELECT dept_id FROM employees GROUP BY dept_id HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
+
+-- 113. Products ordered by users from specific city
+SELECT DISTINCT product_id FROM orders WHERE user_id IN (SELECT user_id FROM users WHERE city = 'Delhi');
+
+-- 114. Users who spent more than highest spender from Chennai
+SELECT user_id FROM orders GROUP BY user_id HAVING SUM(amount) > (SELECT MAX(total) FROM (SELECT SUM(amount) as total FROM orders o INNER JOIN users u ON o.user_id = u.user_id WHERE u.city = 'Chennai' GROUP BY o.user_id) as subq);
+
+-- 115. Find orders on same date as maximum order amount
+SELECT * FROM orders WHERE order_date = (SELECT order_date FROM orders WHERE amount = (SELECT MAX(amount) FROM orders));
+
+-- 116. Employees earning more than their department average
+SELECT * FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e1.dept_id = e2.dept_id);
+
+-- 117. Users from cities with more than 2 orders total
+SELECT * FROM users WHERE city IN (SELECT u.city FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.city HAVING COUNT(*) > 2);
+
+-- 118. Products with no orders in last 30 days
+SELECT * FROM products WHERE product_id NOT IN (SELECT product_id FROM orders WHERE order_date > DATE_SUB(NOW(), INTERVAL 30 DAY));
+
+-- 119. Find users with exact average age
+SELECT * FROM users WHERE age = (SELECT ROUND(AVG(age)) FROM users);
+
+-- 120. Orders from users older than 30
+SELECT * FROM orders WHERE user_id IN (SELECT user_id FROM users WHERE age > 30);
+
+-- 🧩 STRING FUNCTIONS (121–145)
+
+-- 121. Convert firstname to uppercase
+SELECT UPPER(firstname) FROM users;
+
+-- 122. Convert city to lowercase
+SELECT LOWER(city) FROM users;
+
+-- 123. Get first 3 characters of firstname
+SELECT LEFT(firstname, 3) FROM users;
+
+-- 124. Get last 3 characters of lastname
+SELECT RIGHT(lastname, 3) FROM users;
+
+-- 125. Concatenate firstname and lastname
+SELECT CONCAT(firstname, ' ', lastname) as fullname FROM users;
+
+-- 126. Get length of firstname
+SELECT firstname, LENGTH(firstname) FROM users;
+
+-- 127. Trim spaces from email
+SELECT TRIM(email) FROM users;
+
+-- 128. Replace 'a' with 'X' in firstname
+SELECT REPLACE(firstname, 'a', 'X') FROM users;
+
+-- 129. Get substring from position 2, length 4
+SELECT SUBSTRING(firstname, 2, 4) FROM users;
+
+-- 130. Reverse the firstname
+SELECT REVERSE(firstname) FROM users;
+
+-- 131. Find position of 'a' in firstname
+SELECT firstname, POSITION('a' IN firstname) FROM users;
+
+-- 132. Capitalize first letter
+SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) FROM users;
+
+-- 133. Concatenate with separator
+SELECT CONCAT_WS('-', firstname, lastname, city) FROM users;
+
+-- 134. Pad firstname to 10 characters with '*'
+SELECT LPAD(firstname, 10, '*') FROM users;
+
+-- 135. Right pad city to 15 characters
+SELECT RPAD(city, 15, '-') FROM users;
+
+-- 136. Repeat firstname 3 times
+SELECT REPEAT(firstname, 3) FROM users;
+
+-- 137. Get ASCII value of first character
+SELECT ASCII(firstname) FROM users;
+
+-- 138. Remove leading spaces
+SELECT LTRIM(email) FROM users;
+
+-- 139. Remove trailing spaces
+SELECT RTRIM(email) FROM users;
+
+-- 140. Extract domain from email
+SELECT SUBSTRING_INDEX(email, '@', -1) as domain FROM users;
+
+-- 141. Check if firstname contains 'ar'
+SELECT firstname, LOCATE('ar', firstname) FROM users;
+
+-- 142. Format phone number
+SELECT CONCAT('(', LEFT(phone, 3), ') ', MID(phone, 4, 3), '-', RIGHT(phone, 4)) FROM users;
+
+-- 143. Count vowels in firstname
+SELECT firstname, LENGTH(firstname) - LENGTH(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(firstname), 'a', ''), 'e', ''), 'i', ''), 'o', ''), 'u', '')) as vowel_count FROM users;
+
+-- 144. Get initials from name
+SELECT CONCAT(LEFT(firstname, 1), LEFT(lastname, 1)) as initials FROM users;
+
+-- 145. Convert firstname to title case
+SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) as title_case FROM users;
+
+-- 🧩 DATE FUNCTIONS (146–175)
+
+-- 146. Get current date
+SELECT CURDATE();
+
+-- 147. Get current time
+SELECT CURTIME();
+
+-- 148. Get current datetime
+SELECT NOW();
+
+-- 149. Extract year from date
+SELECT YEAR(created_date) FROM users;
+
+-- 150. Extract month from date
+SELECT MONTH(created_date) FROM users;
+
+-- 151. Extract day from date
+SELECT DAY(created_date) FROM users;
+
+-- 152. Get day name
+SELECT DAYNAME(created_date) FROM users;
+
+-- 153. Get month name
+SELECT MONTHNAME(created_date) FROM users;
+
+-- 154. Add 7 days to date
+SELECT DATE_ADD(created_date, INTERVAL 7 DAY) FROM users;
+
+-- 155. Subtract 1 month from date
+SELECT DATE_SUB(created_date, INTERVAL 1 MONTH) FROM users;
+
+-- 156. Calculate age from birthdate
+SELECT TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) as age FROM users;
+
+-- 157. Difference in days between two dates
+SELECT DATEDIFF(NOW(), created_date) as days_since_creation FROM users;
+
+-- 158. Format date as DD-MM-YYYY
+SELECT DATE_FORMAT(created_date, '%d-%m-%Y') FROM users;
+
+-- 159. Get last day of month
+SELECT LAST_DAY(created_date) FROM users;
+
+-- 160. Get first day of current month
+SELECT DATE_FORMAT(NOW(), '%Y-%m-01');
+
+-- 161. Extract hour from datetime
+SELECT HOUR(created_at) FROM orders;
+
+-- 162. Extract minute from datetime
+SELECT MINUTE(created_at) FROM orders;
+
+-- 163. Extract second from datetime
+SELECT SECOND(created_at) FROM orders;
+
+-- 164. Get week number
+SELECT WEEK(created_date) FROM users;
+
+-- 165. Get quarter
+SELECT QUARTER(created_date) FROM users;
+
+-- 166. Users created in last 30 days
+SELECT * FROM users WHERE created_date > DATE_SUB(NOW(), INTERVAL 30 DAY);
+
+-- 167. Orders placed today
+SELECT * FROM orders WHERE DATE(order_date) = CURDATE();
+
+-- 168. Orders placed this month
+SELECT * FROM orders WHERE MONTH(order_date) = MONTH(NOW()) AND YEAR(order_date) = YEAR(NOW());
+
+-- 169. Users born in specific year
+SELECT * FROM users WHERE YEAR(birthdate) = 1995;
+
+-- 170. Get day of week number
+SELECT DAYOFWEEK(created_date) FROM users;
+
+-- 171. Get day of year
+SELECT DAYOFYEAR(created_date) FROM users;
+
+-- 172. Add 2 hours to timestamp
+SELECT DATE_ADD(created_at, INTERVAL 2 HOUR) FROM orders;
+
+-- 173. Convert string to date
+SELECT STR_TO_DATE('01-01-2024', '%d-%m-%Y');
+
+-- 174. Get Unix timestamp
+SELECT UNIX_TIMESTAMP(created_date) FROM users;
+
+-- 175. Convert Unix timestamp to date
+SELECT FROM_UNIXTIME(1234567890);
+
+-- 🧩 MATHEMATICAL FUNCTIONS (176–200)
+
+-- 176. Round age to nearest integer
+SELECT ROUND(age) FROM users;
+
+-- 177. Round amount to 2 decimal places
+SELECT ROUND(amount, 2) FROM orders;
+
+-- 178. Ceiling of average age
+SELECT CEIL(AVG(age)) FROM users;
+
+-- 179. Floor of average amount
+SELECT FLOOR(AVG(amount)) FROM orders;
+
+-- 180. Absolute value of difference
+SELECT ABS(age - 30) FROM users;
+
+-- 181. Square root of age
+SELECT SQRT(age) FROM users;
+
+-- 182. Power of 2
+SELECT POW(age, 2) FROM users;
+
+-- 183. Modulus operation
+SELECT age % 10 FROM users;
+
+-- 184. Random number
+SELECT RAND();
+
+-- 185. Random number between 1 and 100
+SELECT FLOOR(RAND() * 100) + 1;
+
+-- 186. Sign of number
+SELECT SIGN(amount - 1000) FROM orders;
+
+-- 187. Truncate to 1 decimal
+SELECT TRUNCATE(amount, 1) FROM orders;
+
+-- 188. Greatest of three values
+SELECT GREATEST(age, 18, 65) FROM users;
+
+-- 189. Least of three values
+SELECT LEAST(age, 18, 65) FROM users;
+
+-- 190. Natural logarithm
+SELECT LN(age) FROM users WHERE age > 0;
+
+-- 191. Logarithm base 10
+SELECT LOG10(amount) FROM orders WHERE amount > 0;
+
+-- 192. Exponential function
+SELECT EXP(1);
+
+-- 193. Pi value
+SELECT PI();
+
+-- 194. Sine of angle
+SELECT SIN(RADIANS(90));
+
+-- 195. Cosine of angle
+SELECT COS(RADIANS(0));
+
+-- 196. Tangent of angle
+SELECT TAN(RADIANS(45));
+
+-- 197. Convert degrees to radians
+SELECT RADIANS(180);
+
+-- 198. Convert radians to degrees
+SELECT DEGREES(PI());
+
+-- 199. Calculate percentage
+SELECT age, (age * 100.0 / (SELECT SUM(age) FROM users)) as percentage FROM users;
+
+-- 200. Compound interest calculation
+SELECT amount, amount * POW(1.05, 3) as future_value FROM orders;
+
+-- 🧩 CASE STATEMENTS (201–225)
+
+-- 201. Categorize age groups
+SELECT firstname, CASE WHEN age < 20 THEN 'Teen' WHEN age < 40 THEN 'Adult' ELSE 'Senior' END as category FROM users;
+
+-- 202. Classify order amounts
+SELECT order_id, CASE WHEN amount < 500 THEN 'Small' WHEN amount < 2000 THEN 'Medium' ELSE 'Large' END as order_size FROM orders;
+
+-- 203. Gender abbreviation
+SELECT firstname, CASE gender WHEN 'Male' THEN 'M' WHEN 'Female' THEN 'F' ELSE 'O' END FROM users;
+
+-- 204. City region classification
+SELECT city, CASE WHEN city IN ('Chennai', 'Bangalore') THEN 'South' WHEN city IN ('Delhi', 'Mumbai') THEN 'North' ELSE 'Other' END as region FROM users;
+
+-- 205. Discount based on amount
+SELECT amount, CASE WHEN amount > 5000 THEN amount * 0.9 WHEN amount > 2000 THEN amount * 0.95 ELSE amount END as final_amount FROM orders;
+
+-- 206. Priority based on age
+SELECT firstname, CASE WHEN age > 60 THEN 'High' WHEN age > 30 THEN 'Medium' ELSE 'Low' END as priority FROM users;
+
+-- 207. Season from month
+SELECT CASE WHEN MONTH(order_date) IN (3,4,5) THEN 'Spring' WHEN MONTH(order_date) IN (6,7,8) THEN 'Summer' WHEN MONTH(order_date) IN (9,10,11) THEN 'Fall' ELSE 'Winter' END as season FROM orders;
+
+-- 208. Grade based on marks
+SELECT student_name, CASE WHEN marks >= 90 THEN 'A' WHEN marks >= 75 THEN 'B' WHEN marks >= 60 THEN 'C' ELSE 'F' END as grade FROM students;
+
+-- 209. Status based on NULL check
+SELECT firstname, CASE WHEN email IS NULL THEN 'No Email' ELSE 'Has Email' END as email_status FROM users;
+
+-- 210. Weekend or weekday
+SELECT order_date, CASE WHEN DAYOFWEEK(order_date) IN (1,7) THEN 'Weekend' ELSE 'Weekday' END FROM orders;
+
+-- 211. Price range categorization
+SELECT product_name, CASE WHEN price < 100 THEN 'Budget' WHEN price < 500 THEN 'Mid-Range' ELSE 'Premium' END FROM products;
+
+-- 212. Multiple condition CASE
+SELECT firstname, CASE WHEN age > 50 AND city = 'Chennai' THEN 'Senior Chennai' WHEN age < 25 AND city = 'Mumbai' THEN 'Young Mumbai' ELSE 'Other' END FROM users;
+
+-- 213. Tax calculation
+SELECT amount, CASE WHEN amount < 1000 THEN amount * 1.05 WHEN amount < 5000 THEN amount * 1.12 ELSE amount * 1.18 END as with_tax FROM orders;
+
+-- 214. Member tier
+SELECT user_id, CASE WHEN total_orders > 50 THEN 'Gold' WHEN total_orders > 20 THEN 'Silver' ELSE 'Bronze' END FROM (SELECT user_id, COUNT(*) as total_orders FROM orders GROUP BY user_id) as subq;
+
+-- 215. Risk assessment
+SELECT firstname, CASE WHEN age < 18 THEN 'Minor Risk' WHEN age > 65 THEN 'Senior Risk' ELSE 'Normal' END FROM users;
+
+-- 216. Shipping cost
+SELECT amount, CASE WHEN amount > 2000 THEN 0 WHEN amount > 1000 THEN 50 ELSE 100 END as shipping FROM orders;
+
+-- 217. Performance rating
+SELECT employee_name, CASE WHEN rating >= 4.5 THEN 'Excellent' WHEN rating >= 3.5 THEN 'Good' WHEN rating >= 2.5 THEN 'Average' ELSE 'Poor' END FROM employees;
+
+-- 218. Day type classification
+SELECT CASE DAYOFWEEK(NOW()) WHEN 2 THEN 'Monday Blues' WHEN 6 THEN 'Friday Feeling' ELSE 'Regular Day' END;
+
+-- 219. Temperature category
+SELECT city, temp, CASE WHEN temp > 35 THEN 'Hot' WHEN temp > 25 THEN 'Warm' WHEN temp > 15 THEN 'Cool' ELSE 'Cold' END FROM weather;
+
+-- 220. Experience level
+SELECT emp_name, CASE WHEN years_exp > 10 THEN 'Expert' WHEN years_exp > 5 THEN 'Experienced' WHEN years_exp > 2 THEN 'Intermediate' ELSE 'Beginner' END FROM employees;
+
+-- 221. Boolean to text
+SELECT firstname, CASE WHEN is_active = 1 THEN 'Active' ELSE 'Inactive' END FROM users;
+
+-- 222. Urgency level
+SELECT task, CASE WHEN deadline < DATE_ADD(NOW(), INTERVAL 1 DAY) THEN 'Urgent' WHEN deadline < DATE_ADD(NOW(), INTERVAL 7 DAY) THEN 'Soon' ELSE 'Later' END FROM tasks;
+
+-- 223. Commission calculation
+SELECT sales_amount, CASE WHEN sales_amount > 100000 THEN sales_amount * 0.1 WHEN sales_amount > 50000 THEN sales_amount * 0.07 ELSE sales_amount * 0.05 END as commission FROM sales;
+
+-- 224. Time of day
+SELECT CASE WHEN HOUR(NOW()) < 12 THEN 'Morning' WHEN HOUR(NOW()) < 18 THEN 'Afternoon' ELSE 'Evening' END;
+
+-- 225. Stock status
+SELECT product_name, CASE WHEN quantity = 0 THEN 'Out of Stock' WHEN quantity < 10 THEN 'Low Stock' ELSE 'In Stock' END FROM inventory;
+
+-- 🧩 WINDOW FUNCTIONS (226–260)
+
+-- 226. Row number for all users
+SELECT firstname, ROW_NUMBER() OVER (ORDER BY age) as row_num FROM users;
+
+-- 227. Rank users by age
+SELECT firstname, age, RANK() OVER (ORDER BY age DESC) as age_rank FROM users;
+
+-- 228. Dense rank by salary
+SELECT emp_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) FROM employees;
+
+-- 229. Partition by city and rank
+SELECT firstname, city, age, RANK() OVER (PARTITION BY city ORDER BY age DESC) FROM users;
+
+-- 230. Running total of amount
+SELECT order_id, amount, SUM(amount) OVER (ORDER BY order_date) as running_total FROM orders;
+
+-- 231. Average age by city with window
+SELECT firstname, city, age, AVG(age) OVER (PARTITION BY city) as city_avg_age FROM users;
+
+-- 232. Lag to get previous order amount
+SELECT order_id, amount, LAG(amount) OVER (ORDER BY order_date) as prev_amount FROM orders;
+
+-- 233. Lead to get next user age
+SELECT firstname, age, LEAD(age) OVER (ORDER BY age) as next_age FROM users;
+
+-- 234. First value in partition
+SELECT city, age, FIRST_VALUE(age) OVER (PARTITION BY city ORDER BY age) as youngest FROM users;
+
+-- 235. Last value in partition
+SELECT city, age, LAST_VALUE(age) OVER (PARTITION BY city ORDER BY age ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as oldest FROM users;
+
+-- 236. Percentile rank
+SELECT firstname, age, PERCENT_RANK() OVER (ORDER BY age) FROM users;
+
+-- 237. Cumulative distribution
+SELECT firstname, age, CUME_DIST() OVER (ORDER BY age) FROM users;
+
+-- 238. NTile to create quartiles
+SELECT firstname, age, NTILE(4) OVER (ORDER BY age) as quartile FROM users;
+
+-- 239. Moving average of last 3 orders
+SELECT order_id, amount, AVG(amount) OVER (ORDER BY order_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) as moving_avg FROM orders;
+
+-- 240. Count over partition
+SELECT firstname, city, COUNT(*) OVER (PARTITION BY city) as city_user_count FROM users;
+
+-- 241. Max amount per user window
+SELECT user_id, order_id, amount, MAX(amount) OVER (PARTITION BY user_id) as max_user_order FROM orders;
+
+-- 242. Min amount per user window
+SELECT user_id, order_id, amount, MIN(amount) OVER (PARTITION BY user_id) as min_user_order FROM orders;
+
+-- 243. Difference from average
+SELECT firstname, age, age - AVG(age) OVER () as diff_from_avg FROM users;
+
+-- 244. Row number with partition
+SELECT firstname, city, ROW_NUMBER() OVER (PARTITION BY city ORDER BY age) as city_rank FROM users;
+
+-- 245. Running count
+SELECT order_id, order_date, COUNT(*) OVER (ORDER BY order_date) as cumulative_orders FROM orders;
+
+-- 246. Standard deviation over window
+SELECT city, age, STDDEV(age) OVER (PARTITION BY city) FROM users;
+
+-- 247. Variance over window
+SELECT city, age, VARIANCE(age) OVER (PARTITION BY city) FROM users;
+
+-- 248. Nth value function
+SELECT city, age, NTH_VALUE(age, 2) OVER (PARTITION BY city ORDER BY age) as second_youngest FROM users;
+
+-- 249. Range between clause
+SELECT order_id, amount, SUM(amount) OVER (ORDER BY order_date RANGE BETWEEN INTERVAL 7 DAY PRECEDING AND CURRENT ROW) FROM orders;
+
+-- 250. Multiple window functions
+SELECT firstname, age, 
+  RANK() OVER (ORDER BY age) as age_rank,
+  ROW_NUMBER() OVER (ORDER BY age) as row_num,
+  NTILE(3) OVER (ORDER BY age) as tercile 
+FROM users;
+
+-- 251. Lag with default value
+SELECT order_id, amount, LAG(amount, 1, 0) OVER (ORDER BY order_date) FROM orders;
+
+-- 252. Lead with offset 2
+SELECT order_id, amount, LEAD(amount, 2) OVER (ORDER BY order_date) FROM orders;
+
+-- 253. Ratio to report
+SELECT product_id, sales, sales / SUM(sales) OVER () as sales_ratio FROM product_sales;
+
+-- 254. Rank with ties
+SELECT emp_name, salary, RANK() OVER (ORDER BY salary DESC) as salary_rank FROM employees;
+
+-- 255. Partition by multiple columns
+SELECT firstname, city, gender, RANK() OVER (PARTITION BY city, gender ORDER BY age) FROM users;
+
+-- 256. Frame specification
+SELECT order_id, amount, AVG(amount) OVER (ORDER BY order_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) FROM orders;
+
+-- 257. Named window
+SELECT firstname, age, RANK() OVER w as age_rank FROM users WINDOW w AS (ORDER BY age DESC);
+
+-- 258. Top N per group
+SELECT * FROM (SELECT firstname, city, age, RANK() OVER (PARTITION BY city ORDER BY age DESC) as rnk FROM users) sub WHERE rnk <= 3;
+
+-- 259. Percentage of total
+SELECT city, COUNT(*) as cnt, COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () as percentage FROM users GROUP BY city;
+
+-- 260. Gap analysis with lag
+SELECT order_date, amount, amount - LAG(amount) OVER (ORDER BY order_date) as amount_change FROM orders;
+
+-- 🧩 COMMON TABLE EXPRESSIONS (261–285)
+
+-- 261. Basic CTE
+WITH user_ages AS (SELECT firstname, age FROM users WHERE age > 25)
+SELECT * FROM user_ages;
+
+-- 262. CTE with join
+WITH chennai_users AS (SELECT user_id, firstname FROM users WHERE city = 'Chennai')
+SELECT cu.firstname, o.amount FROM chennai_users cu INNER JOIN orders o ON cu.user_id = o.user_id;
+
+-- 263. Multiple CTEs
+WITH male_users AS (SELECT * FROM users WHERE gender = 'Male'),
+     female_users AS (SELECT * FROM users WHERE gender = 'Female')
+SELECT 'Male' as gender, COUNT(*) FROM male_users
+UNION ALL
+SELECT 'Female', COUNT(*) FROM female_users;
+
+-- 264. Recursive CTE for numbers
+WITH RECURSIVE numbers AS (
+  SELECT 1 as n
+  UNION ALL
+  SELECT n + 1 FROM numbers WHERE n < 10
+)
+SELECT * FROM numbers;
+
+-- 265. CTE with aggregation
+WITH city_stats AS (SELECT city, AVG(age) as avg_age, COUNT(*) as user_count FROM users GROUP BY city)
+SELECT * FROM city_stats WHERE avg_age > 30;
+
+-- 266. Nested CTE reference
+WITH base AS (SELECT * FROM users WHERE age > 20),
+     filtered AS (SELECT * FROM base WHERE city = 'Mumbai')
+SELECT * FROM filtered;
+
+-- 267. CTE for top spenders
+WITH user_spending AS (SELECT user_id, SUM(amount) as total FROM orders GROUP BY user_id)
+SELECT u.firstname, us.total FROM users u INNER JOIN user_spending us ON u.user_id = us.user_id WHERE us.total > 5000;
+
+-- 268. Recursive org chart
+WITH RECURSIVE emp_hierarchy AS (
+  SELECT emp_id, emp_name, manager_id, 1 as level FROM employees WHERE manager_id IS NULL
+  UNION ALL
+  SELECT e.emp_id, e.emp_name, e.manager_id, eh.level + 1 FROM employees e INNER JOIN emp_hierarchy eh ON e.manager_id = eh.emp_id
+)
+SELECT * FROM emp_hierarchy;
+
+-- 269. CTE for data transformation
+WITH transformed AS (SELECT user_id, UPPER(firstname) as fname, LOWER(city) as city_lower FROM users)
+SELECT * FROM transformed WHERE city_lower = 'chennai';
+
+-- 270. CTE with window function
+WITH ranked_users AS (SELECT firstname, age, RANK() OVER (ORDER BY age DESC) as age_rank FROM users)
+SELECT * FROM ranked_users WHERE age_rank <= 5;
+
+-- 271. CTE for date calculations
+WITH recent_orders AS (SELECT * FROM orders WHERE order_date > DATE_SUB(NOW(), INTERVAL 30 DAY))
+SELECT user_id, COUNT(*) FROM recent_orders GROUP BY user_id;
+
+-- 272. CTE with CASE
+WITH categorized AS (SELECT firstname, age, CASE WHEN age < 30 THEN 'Young' ELSE 'Old' END as category FROM users)
+SELECT category, COUNT(*) FROM categorized GROUP BY category;
+
+-- 273. Factorial using recursive CTE
+WITH RECURSIVE factorial AS (
+  SELECT 1 as n, 1 as fact
+  UNION ALL
+  SELECT n + 1, fact * (n + 1) FROM factorial WHERE n < 5
+)
+SELECT * FROM factorial;
+
+-- 274. CTE for moving average
+WITH daily_sales AS (SELECT DATE(order_date) as day, SUM(amount) as total FROM orders GROUP BY day)
+SELECT day, total, AVG(total) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as moving_avg_7day FROM daily_sales;
+
+-- 275. CTE to find duplicates
+WITH duplicates AS (SELECT email, COUNT(*) as cnt FROM users GROUP BY email HAVING cnt > 1)
+SELECT u.* FROM users u INNER JOIN duplicates d ON u.email = d.email;
+
+-- 276. CTE for year over year comparison
+WITH yearly_sales AS (SELECT YEAR(order_date) as year, SUM(amount) as total FROM orders GROUP BY year)
+SELECT y1.year, y1.total, y2.total as prev_year_total FROM yearly_sales y1 LEFT JOIN yearly_sales y2 ON y1.year = y2.year + 1;
+
+-- 277. CTE with UNION
+WITH active_users AS (SELECT user_id, firstname FROM users WHERE is_active = 1),
+     inactive_users AS (SELECT user_id, firstname FROM users WHERE is_active = 0)
+SELECT 'Active' as status, COUNT(*) FROM active_users
+UNION
+SELECT 'Inactive', COUNT(*) FROM inactive_users;
+
+-- 278. CTE for running calculations
+WITH ordered_data AS (SELECT order_id, amount, ROW_NUMBER() OVER (ORDER BY order_date) as rn FROM orders)
+SELECT *, SUM(amount) OVER (ORDER BY rn) as running_total FROM ordered_data;
+
+-- 279. CTE to generate date series
+WITH RECURSIVE date_series AS (
+  SELECT CURDATE() as dt
+  UNION ALL
+  SELECT DATE_ADD(dt, INTERVAL 1 DAY) FROM date_series WHERE dt < DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+)
+SELECT * FROM date_series;
+
+-- 280. CTE for pivot-like operation
+WITH category_counts AS (SELECT city, gender, COUNT(*) as cnt FROM users GROUP BY city, gender)
+SELECT city, 
+  SUM(CASE WHEN gender = 'Male' THEN cnt ELSE 0 END) as male_count,
+  SUM(CASE WHEN gender = 'Female' THEN cnt ELSE 0 END) as female_count
+FROM category_counts GROUP BY city;
+
+-- 281. CTE with subquery
+WITH high_spenders AS (SELECT user_id FROM orders GROUP BY user_id HAVING SUM(amount) > (SELECT AVG(total) FROM (SELECT SUM(amount) as total FROM orders GROUP BY user_id) t))
+SELECT * FROM users WHERE user_id IN (SELECT user_id FROM high_spenders);
+
+-- 282. Recursive path finding
+WITH RECURSIVE paths AS (
+  SELECT node_id, parent_id, CAST(node_id AS CHAR(200)) as path FROM tree WHERE parent_id IS NULL
+  UNION ALL
+  SELECT t.node_id, t.parent_id, CONCAT(p.path, '->', t.node_id) FROM tree t INNER JOIN paths p ON t.parent_id = p.node_id
+)
+SELECT * FROM paths;
+
+-- 283. CTE for percentile calculation
+WITH ordered_ages AS (SELECT age, ROW_NUMBER() OVER (ORDER BY age) as rn, COUNT(*) OVER () as total FROM users)
+SELECT age FROM ordered_ages WHERE rn = CEIL(total * 0.95);
+
+-- 284. CTE for gap detection
+WITH ordered_ids AS (SELECT user_id, ROW_NUMBER() OVER (ORDER BY user_id) as rn FROM users)
+SELECT user_id + 1 as missing_id FROM ordered_ids WHERE user_id + 1 NOT IN (SELECT user_id FROM users);
+
+-- 285. CTE with multiple aggregations
+WITH user_metrics AS (
+  SELECT u.user_id, u.firstname, COUNT(o.order_id) as order_count, COALESCE(SUM(o.amount), 0) as total_spent, COALESCE(AVG(o.amount), 0) as avg_order
+  FROM users u LEFT JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname
+)
+SELECT * FROM user_metrics WHERE order_count > 0;
+
+-- 🧩 ADVANCED QUERIES (286–320)
+
+-- 286. Find Nth highest salary without using LIMIT
+SELECT DISTINCT salary FROM employees e1 WHERE 3 = (SELECT COUNT(DISTINCT salary) FROM employees e2 WHERE e2.salary >= e1.salary);
+
+-- 287. Find employees with salary above their department average
+SELECT e.* FROM employees e WHERE salary > (SELECT AVG(salary) FROM employees WHERE dept_id = e.dept_id);
+
+-- 288. Delete duplicate rows keeping one
+DELETE u1 FROM users u1 INNER JOIN users u2 WHERE u1.user_id > u2.user_id AND u1.email = u2.email;
+
+-- 289. Swap values in two columns
+UPDATE users SET firstname = lastname, lastname = firstname WHERE user_id = 1;
+
+-- 290. Pivot table simulation
+SELECT city,
+  SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male_count,
+  SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female_count
+FROM users GROUP BY city;
+
+-- 291. Unpivot simulation
+SELECT user_id, 'firstname' as attribute, firstname as value FROM users
+UNION ALL
+SELECT user_id, 'lastname', lastname FROM users;
+
+-- 292. Find consecutive dates
+SELECT t1.order_date FROM orders t1 INNER JOIN orders t2 ON t1.order_date = DATE_ADD(t2.order_date, INTERVAL 1 DAY);
+
+-- 293. Running difference
+SELECT order_id, amount, amount - LAG(amount, 1, 0) OVER (ORDER BY order_date) as diff FROM orders;
+
+-- 294. Median calculation
+WITH ordered_data AS (SELECT age, ROW_NUMBER() OVER (ORDER BY age) as rn, COUNT(*) OVER () as cnt FROM users)
+SELECT AVG(age) as median FROM ordered_data WHERE rn IN (FLOOR((cnt + 1) / 2), CEIL((cnt + 1) / 2));
+
+-- 295. Mode calculation
+SELECT age FROM users GROUP BY age ORDER BY COUNT(*) DESC LIMIT 1;
+
+-- 296. Find islands of consecutive numbers
+WITH numbered AS (SELECT user_id, user_id - ROW_NUMBER() OVER (ORDER BY user_id) as grp FROM users)
+SELECT MIN(user_id) as start_id, MAX(user_id) as end_id, COUNT(*) as cnt FROM numbered GROUP BY grp;
+
+-- 297. Cumulative percentage
+SELECT city, COUNT(*) as cnt, SUM(COUNT(*)) OVER (ORDER BY COUNT(*) DESC) * 100.0 / (SELECT COUNT(*) FROM users) as cumulative_pct FROM users GROUP BY city;
+
+-- 298. Cross tab query
+SELECT u.city, p.product_name, COUNT(o.order_id) FROM users u CROSS JOIN products p LEFT JOIN orders o ON u.user_id = o.user_id AND p.product_id = o.product_id GROUP BY u.city, p.product_name;
+
+-- 299. Find patterns in strings
+SELECT firstname FROM users WHERE firstname REGEXP '^[A-M]';
+
+-- 300. Dynamic date ranges
+SELECT * FROM orders WHERE order_date BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND LAST_DAY(NOW());
+
+-- 301. Hierarchical data flattening
+WITH RECURSIVE hierarchy AS (
+  SELECT category_id, category_name, parent_id, 1 as level, CAST(category_name AS CHAR(200)) as path FROM categories WHERE parent_id IS NULL
+  UNION ALL
+  SELECT c.category_id, c.category_name, c.parent_id, h.level + 1, CONCAT(h.path, ' > ', c.category_name) FROM categories c INNER JOIN hierarchy h ON c.parent_id = h.category_id
+)
+SELECT * FROM hierarchy;
+
+-- 302. Time-based bucketing
+SELECT DATE_FORMAT(order_date, '%Y-%m-%d %H:00:00') as hour_bucket, COUNT(*) FROM orders GROUP BY hour_bucket;
+
+-- 303. Conditional aggregation
+SELECT city, SUM(CASE WHEN age < 30 THEN 1 ELSE 0 END) as under_30, SUM(CASE WHEN age >= 30 THEN 1 ELSE 0 END) as over_30 FROM users GROUP BY city;
+
+-- 304. Rolling window calculation
+SELECT order_date, amount, SUM(amount) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7day FROM orders;
+
+-- 305. Self-referencing update
+UPDATE employees e1 SET salary = salary * 1.1 WHERE salary < (SELECT AVG(salary) FROM employees e2 WHERE e1.dept_id = e2.dept_id);
+
+-- 306. Complex JSON extraction
+SELECT user_id, JSON_EXTRACT(metadata, '$.city') as city FROM users;
+
+-- 307. Generate random sample
+SELECT * FROM users ORDER BY RAND() LIMIT 10;
+
+-- 308. Find overlapping date ranges
+SELECT a.booking_id, b.booking_id FROM bookings a INNER JOIN bookings b ON a.booking_id < b.booking_id AND a.room_id = b.room_id AND a.start_date <= b.end_date AND a.end_date >= b.start_date;
+
+-- 309. Calculate retention rate
+WITH first_purchase AS (SELECT user_id, MIN(order_date) as first_date FROM orders GROUP BY user_id),
+     repeat_purchase AS (SELECT DISTINCT o.user_id FROM orders o INNER JOIN first_purchase fp ON o.user_id = fp.user_id WHERE o.order_date > DATE_ADD(fp.first_date, INTERVAL 30 DAY))
+SELECT COUNT(DISTINCT rp.user_id) * 100.0 / COUNT(DISTINCT fp.user_id) as retention_rate FROM first_purchase fp LEFT JOIN repeat_purchase rp ON fp.user_id = rp.user_id;
+
+-- 310. Find missing sequence numbers
+SELECT t1.seq + 1 as missing FROM sequences t1 WHERE NOT EXISTS (SELECT 1 FROM sequences t2 WHERE t2.seq = t1.seq + 1);
+
+-- 311. Transpose rows to columns
+SELECT MAX(CASE WHEN rn = 1 THEN value END) as col1, MAX(CASE WHEN rn = 2 THEN value END) as col2 FROM (SELECT value, ROW_NUMBER() OVER (ORDER BY id) as rn FROM data) t;
+
+-- 312. Complex ranking with ties
+SELECT firstname, age, RANK() OVER (ORDER BY age DESC) as rnk, DENSE_RANK() OVER (ORDER BY age DESC) as dense_rnk, ROW_NUMBER() OVER (ORDER BY age DESC) as row_num FROM users;
+
+-- 313. Multi-level grouping sets
+SELECT city, gender, COUNT(*) FROM users GROUP BY city, gender WITH ROLLUP;
+
+-- 314. Window frame with exclusion
+SELECT order_id, amount, AVG(amount) OVER (ORDER BY order_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE CURRENT ROW) FROM orders;
+
+-- 315. Advanced text search
+SELECT * FROM products WHERE MATCH(product_name, description) AGAINST('laptop computer' IN NATURAL LANGUAGE MODE);
+
+-- 316. Conditional joins
+SELECT u.*, o.* FROM users u LEFT JOIN orders o ON u.user_id = o.user_id AND o.order_date > '2024-01-01';
+
+-- 317. Chained CTEs for complex logic
+WITH base AS (SELECT * FROM orders WHERE amount > 100),
+     aggregated AS (SELECT user_id, COUNT(*) as cnt FROM base GROUP BY user_id),
+     filtered AS (SELECT * FROM aggregated WHERE cnt > 5)
+SELECT u.firstname, f.cnt FROM users u INNER JOIN filtered f ON u.user_id = f.user_id;
+
+-- 318. Dynamic pivot using GROUP_CONCAT
+SELECT city, GROUP_CONCAT(DISTINCT gender ORDER BY gender) as genders FROM users GROUP BY city;
+
+-- 319. Correlation calculation
+SELECT (COUNT(*) * SUM(age * salary) - SUM(age) * SUM(salary)) / (SQRT(COUNT(*) * SUM(age * age) - SUM(age) * SUM(age)) * SQRT(COUNT(*) * SUM(salary * salary) - SUM(salary) * SUM(salary))) as correlation FROM employees;
+
+-- 320. Time series gap filling
+WITH RECURSIVE all_dates AS (
+  SELECT MIN(order_date) as dt FROM orders
+  UNION ALL
+  SELECT DATE_ADD(dt, INTERVAL 1 DAY) FROM all_dates WHERE dt < (SELECT MAX(order_date) FROM orders)
+)
+SELECT ad.dt, COALESCE(SUM(o.amount), 0) FROM all_dates ad LEFT JOIN orders o ON DATE(o.order_date) = ad.dt GROUP BY ad.dt;
+
+-- 🧩 INDEXES & PERFORMANCE (321–340)
+
+-- 321. Create index on single column
+CREATE INDEX idx_city ON users(city);
+
+-- 322. Create composite index
+CREATE INDEX idx_city_age ON users(city, age);
+
+-- 323. Create unique index
+CREATE UNIQUE INDEX idx_email ON users(email);
+
+-- 324. Drop index
+DROP INDEX idx_city ON users;
+
+-- 325. Show indexes on table
+SHOW INDEX FROM users;
+
+-- 326. Create full-text index
+CREATE FULLTEXT INDEX idx_fulltext ON articles(title, content);
+
+-- 327. Analyze table
+ANALYZE TABLE users;
+
+-- 328. Optimize table
+OPTIMIZE TABLE users;
+
+-- 329. Check table
+CHECK TABLE users;
+
+-- 330. Repair table
+REPAIR TABLE users;
+
+-- 331. Explain query plan
+EXPLAIN SELECT * FROM users WHERE city = 'Chennai';
+
+-- 332. Explain with format
+EXPLAIN FORMAT=JSON SELECT * FROM users u INNER JOIN orders o ON u.user_id = o.user_id;
+
+-- 333. Show table status
+SHOW TABLE STATUS LIKE 'users';
+
+-- 334. Force index usage
+SELECT * FROM users FORCE INDEX (idx_city) WHERE city = 'Mumbai';
+
+-- 335. Ignore index
+SELECT * FROM users IGNORE INDEX (idx_city) WHERE city = 'Delhi';
+
+-- 336. Create index with specific length
+CREATE INDEX idx_firstname ON users(firstname(10));
+
+-- 337. Descending index
+CREATE INDEX idx_age_desc ON users(age DESC);
+
+-- 338. Spatial index
+CREATE SPATIAL INDEX idx_location ON locations(coordinates);
+
+-- 339. Show query profile
+SET profiling = 1; SELECT * FROM users; SHOW PROFILES;
+
+-- 340. Create covering index
+CREATE INDEX idx_covering ON orders(user_id, order_date, amount);
+
+-- 🧩 TRANSACTIONS & LOCKS (341–355)
+
+-- 341. Start transaction
+START TRANSACTION;
+
+-- 342. Commit transaction
+COMMIT;
+
+-- 343. Rollback transaction
+ROLLBACK;
+
+-- 344. Savepoint
+SAVEPOINT sp1;
+
+-- 345. Rollback to savepoint
+ROLLBACK TO SAVEPOINT sp1;
+
+-- 346. Set transaction isolation level
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+-- 347. Lock tables for read
+LOCK TABLES users READ;
+
+-- 348. Lock tables for write
+LOCK TABLES users WRITE;
+
+-- 349. Unlock tables
+UNLOCK TABLES;
+
+-- 350. Select with lock in share mode
+SELECT * FROM users WHERE user_id = 1 LOCK IN SHARE MODE;
+
+-- 351. Select for update
+SELECT * FROM users WHERE user_id = 1 FOR UPDATE;
+
+-- 352. Set autocommit off
+SET autocommit = 0;
+
+-- 353. Show open tables
+SHOW OPEN TABLES;
+
+-- 354. Show process list
+SHOW PROCESSLIST;
+
+-- 355. Kill process
+KILL 123;
+
+-- 🧩 VIEWS & STORED PROCEDURES (356–375)
+
+-- 356. Create view
+CREATE VIEW active_users AS SELECT * FROM users WHERE is_active = 1;
+
+-- 357. Select from view
+SELECT * FROM active_users;
+
+-- 358. Update view
+CREATE OR REPLACE VIEW active_users AS SELECT * FROM users WHERE is_active = 1 AND age > 18;
+
+-- 359. Drop view
+DROP VIEW active_users;
+
+-- 360. Create materialized view (using table)
+CREATE TABLE mv_user_stats AS SELECT city, COUNT(*) as cnt FROM users GROUP BY city;
+
+-- 361. Create simple stored procedure
+DELIMITER //
+CREATE PROCEDURE GetUsers()
+BEGIN
+  SELECT * FROM users;
+END //
+DELIMITER ;
+
+-- 362. Call stored procedure
+CALL GetUsers();
+
+-- 363. Procedure with parameters
+DELIMITER //
+CREATE PROCEDURE GetUsersByCity(IN city_name VARCHAR(100))
+BEGIN
+  SELECT * FROM users WHERE city = city_name;
+END //
+DELIMITER ;
+
+-- 364. Procedure with OUT parameter
+DELIMITER //
+CREATE PROCEDURE GetUserCount(OUT user_count INT)
+BEGIN
+  SELECT COUNT(*) INTO user_count FROM users;
+END //
+DELIMITER ;
+
+-- 365. Drop procedure
+DROP PROCEDURE GetUsers;
+
+-- 366. Show procedures
+SHOW PROCEDURE STATUS WHERE Db = 'your_database';
+
+-- 367. Create function
+DELIMITER //
+CREATE FUNCTION GetAgeCategory(age INT) RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+  IF age < 18 THEN RETURN 'Minor';
+  ELSEIF age < 60 THEN RETURN 'Adult';
+  ELSE RETURN 'Senior';
+  END IF;
+END //
+DELIMITER ;
+
+-- 368. Use function
+SELECT firstname, GetAgeCategory(age) FROM users;
+
+-- 369. Drop function
+DROP FUNCTION GetAgeCategory;
+
+-- 370. Create trigger before insert
+DELIMITER //
+CREATE TRIGGER before_user_insert BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+  SET NEW.created_date = NOW();
+END //
+DELIMITER ;
+
+-- 371. Create trigger after update
+DELIMITER //
+CREATE TRIGGER after_user_update AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+  INSERT INTO user_audit (user_id, action, action_date) VALUES (NEW.user_id, 'UPDATE', NOW());
+END //
+DELIMITER ;
+
+-- 372. Drop trigger
+DROP TRIGGER before_user_insert;
+
+-- 373. Show triggers
+SHOW TRIGGERS;
+
+-- 374. Create event
+CREATE EVENT daily_cleanup ON SCHEDULE EVERY 1 DAY DO DELETE FROM logs WHERE log_date < DATE_SUB(NOW(), INTERVAL 30 DAY);
+
+-- 375. Drop event
+DROP EVENT daily_cleanup;
+
+-- 🧩 DATA MANIPULATION (376–400)
+
+-- 376. Insert single row
+INSERT INTO users (firstname, lastname, age, city) VALUES ('John', 'Doe', 30, 'Chennai');
+
+-- 377. Insert multiple rows
+INSERT INTO users (firstname, lastname, age) VALUES ('Alice', 'Smith', 25), ('Bob', 'Jones', 35);
+
+-- 378. Insert from select
+INSERT INTO users_backup SELECT * FROM users;
+
+-- 379. Insert or update (upsert)
+INSERT INTO users (user_id, firstname, age) VALUES (1, 'John', 30) ON DUPLICATE KEY UPDATE age = 30;
+
+-- 380. Update single column
+UPDATE users SET age = 31 WHERE user_id = 1;
+
+-- 381. Update multiple columns
+UPDATE users SET firstname = 'Jane', city = 'Mumbai' WHERE user_id = 2;
+
+-- 382. Update with calculation
+UPDATE users SET age = age + 1;
+
+-- 383. Update with join
+UPDATE users u INNER JOIN orders o ON u.user_id = o.user_id SET u.last_order_date = o.order_date WHERE o.order_id = (SELECT MAX(order_id) FROM orders WHERE user_id = u.user_id);
+
+-- 384. Update with subquery
+UPDATE users SET city = (SELECT city FROM addresses WHERE addresses.user_id = users.user_id LIMIT 1);
+
+-- 385. Delete single row
+DELETE FROM users WHERE user_id = 1;
+
+-- 386. Delete with condition
+DELETE FROM users WHERE age < 18;
+
+-- 387. Delete with join
+DELETE u FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE o.amount < 100;
+
+-- 388. Delete all rows
+DELETE FROM users;
+
+-- 389. Truncate table
+TRUNCATE TABLE users;
+
+-- 390. Replace into
+REPLACE INTO users (user_id, firstname, age) VALUES (1, 'John', 30);
+
+-- 391. Insert ignore
+INSERT IGNORE INTO users (email) VALUES ('duplicate@email.com');
+
+-- 392. Update with CASE
+UPDATE users SET age = CASE WHEN city = 'Chennai' THEN age + 1 WHEN city = 'Mumbai' THEN age + 2 ELSE age END;
+
+-- 393. Update with limit
+UPDATE users SET is_active = 0 ORDER BY last_login LIMIT 100;
+
+-- 394. Delete with limit
+DELETE FROM logs ORDER BY log_date LIMIT 1000;
+
+-- 395. Multi-table delete
+DELETE u, o FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE u.is_active = 0;
+
+-- 396. Insert with default values
+INSERT INTO users (firstname) VALUES ('John');
+
+-- 397. Update with ORDER BY
+UPDATE users SET priority = priority + 1 ORDER BY age DESC LIMIT 10;
+
+-- 398. Conditional insert
+INSERT INTO users (firstname, age) SELECT 'Test', 25 WHERE NOT EXISTS (SELECT 1 FROM users WHERE firstname = 'Test');
+
+-- 399. Bulk insert from CSV concept
+LOAD DATA INFILE '/path/to/file.csv' INTO TABLE users FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+
+-- 400. Export to CSV concept
+SELECT * INTO OUTFILE '/path/to/output.csv' FIELDS TERMINATED BY ',' FROM users;
+
+-- 🧩 TABLE OPERATIONS (401–425)
+
+-- 401. Create table
+CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR(100), price DECIMAL(10,2));
+
+-- 402. Create table with constraints
+CREATE TABLE orders (order_id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, amount DECIMAL(10,2) DEFAULT 0, order_date DATE, FOREIGN KEY (user_id) REFERENCES users(user_id));
+
+-- 403. Create temporary table
+CREATE TEMPORARY TABLE temp_users AS SELECT * FROM users WHERE city = 'Chennai';
+
+-- 404. Drop table
+DROP TABLE products;
+
+-- 405. Drop table if exists
+DROP TABLE IF EXISTS temp_table;
+
+-- 406. Alter table add column
+ALTER TABLE users ADD COLUMN phone VARCHAR(15);
+
+-- 407. Alter table drop column
+ALTER TABLE users DROP COLUMN phone;
+
+-- 408. Alter table modify column
+ALTER TABLE users MODIFY COLUMN age INT NOT NULL;
+
+-- 409. Alter table change column name
+ALTER TABLE users CHANGE COLUMN firstname first_name VARCHAR(50);
+
+-- 410. Alter table add primary key
+ALTER TABLE users ADD PRIMARY KEY (user_id);
+
+-- 411. Alter table drop primary key
+ALTER TABLE users DROP PRIMARY KEY;
+
+-- 412. Alter table add foreign key
+ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users(user_id);
+
+-- 413. Alter table drop foreign key
+ALTER TABLE orders DROP FOREIGN KEY orders_ibfk_1;
+
+-- 414. Alter table add unique constraint
+ALTER TABLE users ADD UNIQUE (email);
+
+-- 415. Alter table add check constraint
+ALTER TABLE users ADD CONSTRAINT chk_age CHECK (age >= 18);
+
+-- 416. Rename table
+RENAME TABLE users TO customers;
+
+-- 417. Alter table add index
+ALTER TABLE users ADD INDEX idx_city (city);
+
+-- 418. Describe table
+DESCRIBE users;
+
+-- 419. Show create table
+SHOW CREATE TABLE users;
+
+-- 420. Show columns
+SHOW COLUMNS FROM users;
+
+-- 421. Alter table auto_increment
+ALTER TABLE users AUTO_INCREMENT = 1000;
+
+-- 422. Alter table engine
+ALTER TABLE users ENGINE = InnoDB;
+
+-- 423. Alter table charset
+ALTER TABLE users CONVERT TO CHARACTER SET utf8mb4;
+
+-- 424. Create table like
+CREATE TABLE users_copy LIKE users;
+
+-- 425. Copy table with data
+CREATE TABLE users_backup AS SELECT * FROM users;
+
+-- 🧩 DATABASE OPERATIONS (426–440)
+
+-- 426. Create database
+CREATE DATABASE mydb;
+
+-- 427. Create database if not exists
+CREATE DATABASE IF NOT EXISTS mydb;
+
+-- 428. Drop database
+DROP DATABASE mydb;
+
+-- 429. Show databases
+SHOW DATABASES;
+
+-- 430. Use database
+USE mydb;
+
+-- 431. Show current database
+SELECT DATABASE();
+
+-- 432. Show tables
+SHOW TABLES;
+
+-- 433. Show table status
+SHOW TABLE STATUS;
+
+-- 434. Alter database charset
+ALTER DATABASE mydb CHARACTER SET utf8mb4;
+
+-- 435. Show create database
+SHOW CREATE DATABASE mydb;
+
+-- 436. Get database size
+SELECT table_schema, SUM(data_length + index_length) / 1024 / 1024 as size_mb FROM information_schema.tables GROUP BY table_schema;
+
+-- 437. Show variables
+SHOW VARIABLES LIKE '%version%';
+
+-- 438. Set variable
+SET GLOBAL max_connections = 200;
+
+-- 439. Show status
+SHOW STATUS LIKE '%thread%';
+
+-- 440. Show grants
+SHOW GRANTS FOR CURRENT_USER;
+
+-- 🧩 USER MANAGEMENT (441–455)
+
+-- 441. Create user
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+
+-- 442. Grant privileges
+GRANT SELECT, INSERT ON mydb.* TO 'newuser'@'localhost';
+
+-- 443. Grant all privileges
+GRANT ALL PRIVILEGES ON mydb.* TO 'newuser'@'localhost';
+
+-- 444. Revoke privileges
+REVOKE INSERT ON mydb.* FROM 'newuser'@'localhost';
+
+-- 445. Drop user
+DROP USER 'newuser'@'localhost';
+
+-- 446. Rename user
+RENAME USER 'olduser'@'localhost' TO 'newuser'@'localhost';
+
+-- 447. Change password
+ALTER USER 'newuser'@'localhost' IDENTIFIED BY 'newpassword';
+
+-- 448. Show users
+SELECT user, host FROM mysql.user;
+
+-- 449. Flush privileges
+FLUSH PRIVILEGES;
+
+-- 450. Show current user
+SELECT CURRENT_USER();
+
+-- 451. Grant with grant option
+GRANT SELECT ON mydb.* TO 'newuser'@'localhost' WITH GRANT OPTION;
+
+-- 452. Show privileges for user
+SHOW GRANTS FOR 'newuser'@'localhost';
+
+-- 453. Create role
+CREATE ROLE 'app_developer';
+
+-- 454. Grant role to user
+GRANT 'app_developer' TO 'newuser'@'localhost';
+
+-- 455. Set default role
+SET DEFAULT ROLE 'app_developer' TO 'newuser'@'localhost';
+
+-- 🧩 INFORMATION SCHEMA (456–475)
+
+-- 456. List all tables in database
+SELECT table_name FROM information_schema.tables WHERE table_schema = 'mydb';
+
+-- 457. Get table row count
+SELECT table_name, table_rows FROM information_schema.tables WHERE table_schema = 'mydb';
+
+-- 458. Get column information
+SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users';
+
+-- 459. Find tables with specific column
+SELECT table_name FROM information_schema.columns WHERE column_name = 'email' AND table_schema = 'mydb';
+
+-- 460. Get primary keys
+SELECT column_name FROM information_schema.key_column_usage WHERE table_name = 'users' AND constraint_name = 'PRIMARY';
+
+-- 461. Get foreign keys
+SELECT constraint_name, column_name, referenced_table_name FROM information_schema.key_column_usage WHERE table_name = 'orders' AND referenced_table_name IS NOT NULL;
+
+-- 462. Get table constraints
+SELECT constraint_name, constraint_type FROM information_schema.table_constraints WHERE table_name = 'users';
+
+-- 463. Find tables without primary key
+SELECT table_name FROM information_schema.tables t WHERE table_schema = 'mydb' AND NOT EXISTS (SELECT 1 FROM information_schema.key_column_usage k WHERE k.table_name = t.table_name AND k.constraint_name = 'PRIMARY');
+
+-- 464. Get index information
+SELECT index_name, column_name FROM information_schema.statistics WHERE table_name = 'users';
+
+-- 465. Table size information
+SELECT table_name, ROUND((data_length + index_length) / 1024 / 1024, 2) as size_mb FROM information_schema.tables WHERE table_schema = 'mydb';
+
+-- 466. Get view definition
+SELECT view_definition FROM information_schema.views WHERE table_name = 'active_users';
+
+-- 467. Find unused indexes
+SELECT * FROM information_schema.statistics WHERE table_schema = 'mydb' AND index_name NOT IN (SELECT DISTINCT index_name FROM information_schema.statistics WHERE table_schema = 'mydb');
+
+-- 468. Get trigger information
+SELECT trigger_name, event_manipulation, event_object_table FROM information_schema.triggers WHERE trigger_schema = 'mydb';
+
+-- 469. Get stored procedure info
+SELECT routine_name, routine_type FROM information_schema.routines WHERE routine_schema = 'mydb';
+
+-- 470. Check auto_increment values
+SELECT table_name, auto_increment FROM information_schema.tables WHERE table_schema = 'mydb' AND auto_increment IS NOT NULL;
+
+-- 471. Find duplicate column names
+SELECT column_name, COUNT(*) FROM information_schema.columns WHERE table_schema = 'mydb' GROUP BY column_name HAVING COUNT(*) > 1;
+
+-- 472. Get collation information
+SELECT table_name, table_collation FROM information_schema.tables WHERE table_schema = 'mydb';
+
+-- 473. Find nullable columns
+SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'mydb' AND is_nullable = 'YES';
+
+-- 474. Get column defaults
+SELECT column_name, column_default FROM information_schema.columns WHERE table_name = 'users';
+
+-- 475. Find tables modified recently
+SELECT table_name, update_time FROM information_schema.tables WHERE table_schema = 'mydb' ORDER BY update_time DESC;
+
+-- 🧩 SET OPERATIONS (476–490)
+
+-- 476. Union of two queries
+SELECT firstname FROM users WHERE city = 'Chennai' UNION SELECT firstname FROM users WHERE city = 'Mumbai';
+
+-- 477. Union all (with duplicates)
+SELECT city FROM users UNION ALL SELECT city FROM addresses;
+
+-- 478. Intersect simulation
+SELECT DISTINCT city FROM users WHERE city IN (SELECT city FROM addresses);
+
+-- 479. Except simulation (MINUS)
+SELECT city FROM users WHERE city NOT IN (SELECT city FROM addresses);
+
+-- 480. Union with order by
+SELECT firstname, age FROM users WHERE city = 'Chennai' UNION SELECT firstname, age FROM users WHERE city = 'Delhi' ORDER BY age;
+
+-- 481. Union different column counts (matched)
+SELECT firstname, lastname FROM users UNION SELECT product_name, NULL FROM products;
+
+-- 482. Complex union with joins
+SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id UNION SELECT c.name, c.credit_amount FROM customers c;
+
+-- 483. Union with aggregation
+SELECT city, COUNT(*) as cnt FROM users GROUP BY city UNION SELECT 'Total', COUNT(*) FROM users;
+
+-- 484. Multiple unions
+SELECT 'Users' as type, COUNT(*) FROM users UNION SELECT 'Orders', COUNT(*) FROM orders UNION SELECT 'Products', COUNT(*) FROM products;
+
+-- 485. Union with calculated columns
+SELECT firstname, age, age * 2 as double_age FROM users WHERE city = 'Chennai' UNION SELECT firstname, age, age * 3 FROM users WHERE city = 'Mumbai';
+
+-- 486. Union with CASE
+SELECT firstname, CASE WHEN age > 30 THEN 'Senior' ELSE 'Junior' END as category FROM users WHERE city = 'Chennai' UNION SELECT firstname, 'All' FROM users WHERE city = 'Delhi';
+
+-- 487. Intersect with aggregation
+SELECT city FROM users GROUP BY city HAVING COUNT(*) > 5 INTERSECT SELECT city FROM orders o INNER JOIN users u ON o.user_id = u.user_id GROUP BY u.city HAVING SUM(amount) > 10000;
+
+-- 488. Nested union
+SELECT * FROM (SELECT firstname FROM users WHERE age > 30 UNION SELECT firstname FROM users WHERE city = 'Chennai') AS combined;
+
+-- 489. Union with limit
+(SELECT * FROM users ORDER BY age LIMIT 5) UNION (SELECT * FROM users ORDER BY age DESC LIMIT 5);
+
+-- 490. Symmetric difference
+SELECT city FROM users WHERE city NOT IN (SELECT city FROM addresses) UNION SELECT city FROM addresses WHERE city NOT IN (SELECT city FROM users);
+
+-- 🧩 CONDITIONAL EXPRESSIONS (491–510)
+
+-- 491. IFNULL function
+SELECT firstname, IFNULL(email, 'No Email') FROM users;
+
+-- 492. COALESCE function
+SELECT firstname, COALESCE(email, phone, 'No Contact') FROM users;
+
+-- 493. NULLIF function
+SELECT firstname, NULLIF(city, 'Unknown') FROM users;
+
+-- 494. IF function
+SELECT firstname, IF(age >= 18, 'Adult', 'Minor') FROM users;
+
+-- 495. Simple CASE expression
+SELECT firstname, CASE city WHEN 'Chennai' THEN 'TN' WHEN 'Mumbai' THEN 'MH' ELSE 'Other' END FROM users;
+
+-- 496. Searched CASE expression
+SELECT firstname, CASE WHEN age < 20 THEN 'Teen' WHEN age < 40 THEN 'Adult' ELSE 'Senior' END FROM users;
+
+-- 497. Nested CASE
+SELECT firstname, CASE WHEN age >= 18 THEN CASE WHEN city = 'Chennai' THEN 'Adult Chennai' ELSE 'Adult Other' END ELSE 'Minor' END FROM users;
+
+-- 498. CASE in WHERE clause
+SELECT * FROM users WHERE CASE WHEN city = 'Chennai' THEN age > 25 ELSE age > 30 END;
+
+-- 499. CASE in ORDER BY
+SELECT firstname FROM users ORDER BY CASE WHEN city = 'Chennai' THEN 1 WHEN city = 'Mumbai' THEN 2 ELSE 3 END;
+
+-- 500. CASE with aggregation
+SELECT SUM(CASE WHEN age > 30 THEN 1 ELSE 0 END) as over_30, SUM(CASE WHEN age <= 30 THEN 1 ELSE 0 END) as under_30 FROM users;
+
+-- 501. GREATEST function
+SELECT firstname, GREATEST(age, 18) FROM users;
+
+-- 502. LEAST function
+SELECT firstname, LEAST(age, 65) FROM users;
+
+-- 503. ELT function
+SELECT ELT(2, 'First', 'Second', 'Third');
+
+-- 504. FIELD function
+SELECT firstname, FIELD(city, 'Chennai', 'Mumbai', 'Delhi') as city_rank FROM users;
+
+-- 505. Multiple conditions with COALESCE
+SELECT COALESCE(NULL, NULL, 'Default', NULL);
+
+-- 506. CASE with NULL handling
+SELECT firstname, CASE WHEN email IS NULL THEN 'No Email' WHEN email = '' THEN 'Empty' ELSE email END FROM users;
+
+-- 507. Conditional counting
+SELECT COUNT(CASE WHEN age > 30 THEN 1 END) as over_30_count FROM users;
+
+-- 508. CASE in JOIN condition
+SELECT * FROM users u LEFT JOIN orders o ON u.user_id = o.user_id AND CASE WHEN u.city = 'Chennai' THEN o.amount > 1000 ELSE o.amount > 500 END;
+
+-- 509. Dynamic sorting with CASE
+SELECT * FROM users ORDER BY CASE WHEN @sort_column = 'age' THEN age END, CASE WHEN @sort_column = 'city' THEN city END;
+
+-- 510. Conditional SUM
+SELECT SUM(CASE WHEN city = 'Chennai' THEN amount ELSE 0 END) as chennai_total FROM orders o INNER JOIN users u ON o.user_id = u.user_id;
+
+-- 🧩 ADVANCED AGGREGATIONS (511–535)
+
+-- 511. COUNT with DISTINCT
+SELECT COUNT(DISTINCT city) FROM users;
+
+-- 512. GROUP_CONCAT function
+SELECT city, GROUP_CONCAT(firstname) FROM users GROUP BY city;
+
+-- 513. GROUP_CONCAT with separator
+SELECT city, GROUP_CONCAT(firstname SEPARATOR ' | ') FROM users GROUP BY city;
+
+-- 514. GROUP_CONCAT with ORDER BY
+SELECT city, GROUP_CONCAT(firstname ORDER BY age DESC) FROM users GROUP BY city;
+
+-- 515. Standard deviation
+SELECT STDDEV(age) FROM users;
+
+-- 516. Variance
+SELECT VARIANCE(age) FROM users;
+
+-- 517. Coefficient of variation
+SELECT (STDDEV(age) / AVG(age)) * 100 as cv FROM users;
+
+-- 518. Percentile with window function
+SELECT PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY age) FROM users;
+
+-- 519. Median using percentile
+SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY age) FROM users;
+
+-- 520. Count with multiple conditions
+SELECT COUNT(*) FILTER (WHERE age > 30) as over_30, COUNT(*) FILTER (WHERE age <= 30) as under_30 FROM users;
+
+-- 521. Conditional average
+SELECT AVG(CASE WHEN city = 'Chennai' THEN age END) as chennai_avg_age FROM users;
+
+-- 522. Weighted average
+SELECT SUM(age * weight) / SUM(weight) FROM users;
+
+-- 523. Geometric mean
+SELECT EXP(AVG(LN(age))) FROM users WHERE age > 0;
+
+-- 524. Harmonic mean
+SELECT COUNT(*) / SUM(1.0 / age) FROM users WHERE age > 0;
+
+-- 525. Running product
+SELECT order_id, amount, EXP(SUM(LN(amount)) OVER (ORDER BY order_id)) as running_product FROM orders WHERE amount > 0;
+
+-- 526. Cumulative count distinct
+SELECT city, COUNT(DISTINCT user_id) OVER (ORDER BY city) FROM users;
+
+-- 527. String aggregation with filtering
+SELECT city, GROUP_CONCAT(DISTINCT firstname) FROM users WHERE age > 25 GROUP BY city;
+
+-- 528. Nested aggregation
+SELECT AVG(city_avg) FROM (SELECT city, AVG(age) as city_avg FROM users GROUP BY city) sub;
+
+-- 529. Conditional MAX
+SELECT MAX(CASE WHEN city = 'Chennai' THEN age END) as chennai_max_age FROM users;
+
+-- 530. Multiple aggregations
+SELECT city, COUNT(*) as cnt, AVG(age) as avg_age, MIN(age) as min_age, MAX(age) as max_age, SUM(age) as total_age FROM users GROUP BY city;
+
+-- 531. Aggregation with HAVING and multiple conditions
+SELECT city FROM users GROUP BY city HAVING COUNT(*) > 5 AND AVG(age) > 30;
+
+-- 532. Percent of total
+SELECT city, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM users) as percentage FROM users GROUP BY city;
+
+-- 533. BIT_AND, BIT_OR aggregation
+SELECT BIT_AND(age), BIT_OR(age) FROM users;
+
+-- 534. JSON aggregation
+SELECT JSON_ARRAYAGG(firstname) FROM users;
+
+-- 535. JSON object aggregation
+SELECT JSON_OBJECTAGG(user_id, firstname) FROM users;
+
+-- 🧩 PATTERN MATCHING (536–555)
+
+-- 536. Basic LIKE with wildcard
+SELECT * FROM users WHERE firstname LIKE '%oh%';
+
+-- 537. LIKE with single character wildcard
+SELECT * FROM users WHERE firstname LIKE 'J_hn';
+
+-- 538. NOT LIKE
+SELECT * FROM users WHERE city NOT LIKE 'C%';
+
+-- 539. Case insensitive LIKE
+SELECT * FROM users WHERE LOWER(firstname) LIKE '%john%';
+
+-- 540. REGEXP for pattern matching
+SELECT * FROM users WHERE firstname REGEXP '^[A-M]';
+
+-- 541. REGEXP case insensitive
+SELECT * FROM users WHERE firstname REGEXP BINARY '^[a-m]';
+
+-- 542. Match phone pattern
+SELECT * FROM users WHERE phone REGEXP '^[0-9]{10}$';
+
+-- 543. Email validation
+SELECT * FROM users WHERE email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$';
+
+-- 544. Match multiple patterns
+SELECT * FROM users WHERE firstname REGEXP 'John|Jane|Bob';
+
+-- 545. REGEXP with character class
+SELECT * FROM users WHERE firstname REGEXP '[aeiou]{3}';
+
+-- 546. NOT REGEXP
+SELECT * FROM users WHERE firstname NOT REGEXP '^A';
+
+-- 547. SOUNDS LIKE (soundex)
+SELECT * FROM users WHERE firstname SOUNDS LIKE 'Jon';
+
+-- 548. LIKE with ESCAPE
+SELECT * FROM products WHERE description LIKE '%50\%%' ESCAPE '\';
+
+-- 549. Multiple LIKE conditions
+SELECT * FROM users WHERE firstname LIKE 'A%' OR firstname LIKE 'B%';
+
+-- 550. REGEXP_LIKE function
+SELECT * FROM users WHERE REGEXP_LIKE(email, '@gmail.com$');
+
+-- 551. REGEXP_REPLACE
+SELECT REGEXP_REPLACE(phone, '[^0-9]', '') FROM users;
+
+-- 552. REGEXP_SUBSTR
+SELECT REGEXP_SUBSTR(email, '@[^.]+') as domain_part FROM users;
+
+-- 553. REGEXP_INSTR
+SELECT firstname, REGEXP_INSTR(firstname, '[aeiou]') as first_vowel_pos FROM users;
+
+-- 554. Match date format
+SELECT * FROM orders WHERE order_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$';
+
+-- 555. Extract numbers from string
+SELECT REGEXP_SUBSTR(address, '[0-9]+') FROM users;
+
+-- 🧩 NULL HANDLING (556–570)
+
+-- 556. IS NULL check
+SELECT * FROM users WHERE email IS NULL;
+
+-- 557. IS NOT NULL check
+SELECT * FROM users WHERE phone IS NOT NULL;
+
+-- 558. Count NULL values
+SELECT COUNT(*) - COUNT(email) as null_emails FROM users;
+
+-- 559. Replace NULL with value
+SELECT firstname, IFNULL(email, 'no-email@example.com') FROM users;
+
+-- 560. COALESCE multiple columns
+SELECT COALESCE(email, phone, address, 'No contact') FROM users;
+
+-- 561. NULL-safe equal
+SELECT * FROM users WHERE email <=> NULL;
+
+-- 562. Find rows with any NULL
+SELECT * FROM users WHERE email IS NULL OR phone IS NULL OR city IS NULL;
+
+-- 563. Find rows with all columns filled
+SELECT * FROM users WHERE email IS NOT NULL AND phone IS NOT NULL AND city IS NOT NULL;
+
+-- 564. NULLIF to create NULL
+SELECT NULLIF(city, '') FROM users;
+
+-- 565. Count non-NULL values
+SELECT COUNT(email) FROM users;
+
+-- 566. Percentage NULL
+SELECT (COUNT(*) - COUNT(email)) * 100.0 / COUNT(*) as null_percentage FROM users;
+
+-- 567. Group by NULL handling
+SELECT COALESCE(city, 'Unknown'), COUNT(*) FROM users GROUP BY COALESCE(city, 'Unknown');
+
+-- 568. ORDER BY NULL handling
+SELECT * FROM users ORDER BY ISNULL(email), email;
+
+-- 569. Update NULL to value
+UPDATE users SET email = 'unknown@example.com' WHERE email IS NULL;
+
+-- 570. Case when NULL
+SELECT firstname, CASE WHEN email IS NULL THEN 'Missing' ELSE 'Present' END FROM users;
+
+-- 🧩 ARRAY & JSON OPERATIONS (571–590)
+
+-- 571. Create JSON object
+SELECT JSON_OBJECT('name', firstname, 'age', age) FROM users;
+
+-- 572. Create JSON array
+SELECT JSON_ARRAY(firstname, lastname, age) FROM users;
+
+-- 573. Extract JSON value
+SELECT JSON_EXTRACT('{"name":"John"}', '$.name');
+
+-- 574. Extract with arrow operator
+SELECT data->>'$.city' FROM user_data;
+
+-- 575. JSON_CONTAINS check
+SELECT * FROM products WHERE JSON_CONTAINS(tags, '"electronics"');
+
+-- 576. JSON_LENGTH
+SELECT JSON_LENGTH('["a","b","c"]');
+
+-- 577. JSON_KEYS
+SELECT JSON_KEYS('{"a":1,"b":2}');
+
+-- 578. JSON_MERGE
+SELECT JSON_MERGE('{"a":1}', '{"b":2}');
+
+-- 579. JSON_ARRAY_APPEND
+SELECT JSON_ARRAY_APPEND('[1,2]', '$', 3);
+
+-- 580. JSON_ARRAY_INSERT
+SELECT JSON_ARRAY_INSERT('[1,3]', '$[1]', 2);
+
+-- 581. JSON_INSERT
+SELECT JSON_INSERT('{"a":1}', '$.b', 2);
+
+-- 582. JSON_REPLACE
+SELECT JSON_REPLACE('{"a":1}', '$.a', 2);
+
+-- 583. JSON_REMOVE
+SELECT JSON_REMOVE('{"a":1,"b":2}', '$.b');
+
+-- 584. JSON_SET
+SELECT JSON_SET('{"a":1}', '$.a', 2, '$.b', 3);
+
+-- 585. JSON_SEARCH
+SELECT JSON_SEARCH('{"a":"text"}', 'one', 'text');
+
+-- 586. JSON_TYPE
+SELECT JSON_TYPE('{"a":1}');
+
+-- 587. JSON_VALID check
+SELECT JSON_VALID('{"a":1}');
+
+-- 588. JSON table function
+SELECT jt.* FROM JSON_TABLE('[{"name":"John","age":30}]', '$[*]' COLUMNS (name VARCHAR(50) PATH '$.name', age INT PATH '$.age')) AS jt;
+
+-- 589. JSON aggregation
+SELECT JSON_ARRAYAGG(JSON_OBJECT('name', firstname, 'age', age)) FROM users;
+
+-- 590. JSON pretty print
+SELECT JSON_PRETTY('{"a":1,"b":2}');
+
+-- 🧩 MISCELLANEOUS (591–600)
+
+-- 591. Generate UUID
+SELECT UUID();
+
+-- 592. Get row count after query
+SELECT FOUND_ROWS();
+
+-- 593. Sleep function
+SELECT SLEEP(5);
+
+-- 594. Benchmark function
+SELECT BENCHMARK(1000000, MD5('test'));
+
+-- 595. Connection ID
+SELECT CONNECTION_ID();
+
+-- 596. Database version
+SELECT VERSION();
+
+-- 597. Last insert ID
+SELECT LAST_INSERT_ID();
+
+-- 598. Row number without window function
+SELECT @rownum := @rownum + 1 as row_num, firstname FROM users, (SELECT @rownum := 0) r;
+
+-- 599. Dynamic SQL with PREPARE
+PREPARE stmt FROM 'SELECT * FROM users WHERE city = ?';
+SET @city = 'Chennai';
+EXECUTE stmt USING @city;
+DEALLOCATE PREPARE stmt;
+
+-- 600. Meta query information
+SELECT @@max_allowed_packet, @@version, @@datadir;

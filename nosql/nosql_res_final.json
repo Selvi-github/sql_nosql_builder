@@ -1,0 +1,4 @@
+{
+    "success": false,
+    "error": "querySrv ETIMEOUT _mongodb._tcp.querybuildercluster.pqevs9l.mongodb.net"
+}

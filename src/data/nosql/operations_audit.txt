@@ -1,0 +1,24 @@
+=== MongoDB Operations Audit ===
+
+Total unique operations: 15
+
+Operations found:
+✓ aggregate: 39 times → nosql_aggregate
+✓ countDocuments: 6 times → nosql_count
+✗ createIndex: 3 times → nosql_index
+✓ deleteMany: 2 times → nosql_delete
+✓ distinct: 2 times → nosql_distinct
+✗ drop: 1 times → nosql_admin
+✗ dropIndex: 1 times → nosql_index
+✓ find: 228 times → nosql_find
+✓ findOne: 1 times → nosql_find_one
+✗ getIndexes: 1 times → nosql_index
+✗ renameCollection: 1 times → nosql_admin
+✓ replaceOne: 1 times → nosql_update
+✗ stats: 1 times → nosql_admin
+✓ updateMany: 8 times → nosql_update
+✓ updateOne: 2 times → nosql_update
+
+⚠️  MISSING BLOCKS:
+  - nosql_index (for: createIndex, dropIndex, getIndexes)
+  - nosql_admin (for: drop, renameCollection, stats)

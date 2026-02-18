@@ -810,6 +810,14 @@ app.post('/api/certificate/generate', requireAuth, requireStudent, async (req, r
     }
 });
 
+// Basic status page for quick checks in the browser
+app.get('/', async (req, res) => {
+    const sqlStatus = await db.initSql().then(r => r.success).catch(() => false);
+    const mongoStatus = await db.initMongo().then(r => r.success).catch(() => false);
+    const status = sqlStatus && mongoStatus ? 'Connected' : 'Degraded';
+    res.status(200).send(`Backend running. Database status: ${status}.`);
+});
+
 // 5. Health Check (for Cloud Monitoring)
 app.get('/api/health', async (req, res) => {
     const sqlStatus = await db.initSql().then(r => r.success).catch(() => false);

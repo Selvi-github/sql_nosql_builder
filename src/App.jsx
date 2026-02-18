@@ -4,10 +4,11 @@ import GameLayout from './components/layout/GameLayout';
 import LandingPage from './components/layout/LandingPage';
 import Login from './components/auth/Login';
 import Profile from './components/profile/Profile';
+import HodDashboard from './components/hod/HodDashboard';
 import './App.css';
 
 function App() {
-  // Views: 'LOGIN' | 'LANDING' | 'SQL' | 'NoSQL' | 'PROFILE'
+  // Views: 'LOGIN' | 'LANDING' | 'SQL' | 'NoSQL' | 'PROFILE' | 'HOD'
   const [view, setView] = useState('LOGIN');
   const [user, setUser] = useState(null);
 
@@ -25,7 +26,7 @@ function App() {
         .then((data) => {
           if (data && data.success && data.user) {
             setUser({ ...data.user, token: parsed.token });
-            setView('LANDING');
+            setView(data.user.role === 'HOD' ? 'HOD' : 'LANDING');
           } else {
             localStorage.removeItem('qa_auth');
           }
@@ -40,7 +41,7 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
-    setView('LANDING');
+    setView(userData.role === 'HOD' ? 'HOD' : 'LANDING');
     localStorage.setItem('qa_auth', JSON.stringify({ token: userData.token }));
   };
 
@@ -54,11 +55,18 @@ function App() {
     <div className="app-root">
       {view === 'LOGIN' && <Login onLogin={handleLogin} />}
 
-      {user && view === 'LANDING' && (
+      {user && view === 'LANDING' && user.role !== 'HOD' && (
         <LandingPage
           user={user}
           onStart={(type) => setView(type)}
           onProfile={() => setView('PROFILE')}
+          onLogout={handleLogout}
+        />
+      )}
+
+      {user && view === 'HOD' && (
+        <HodDashboard
+          user={user}
           onLogout={handleLogout}
         />
       )}

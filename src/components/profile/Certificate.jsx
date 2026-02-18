@@ -43,7 +43,9 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
             const link = document.createElement('a');
             link.download = `Certificate_${type}_${name.replace(/\s+/g, '_')}.png`;
             link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
             link.click();
+            link.remove();
         } catch (error) {
             console.error("Image Download Error:", error);
             alert("Image Download Failed: " + error.message);
@@ -72,6 +74,7 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
                                 src="/assets/kamaraj_logo.png?v=2"
                                 alt="Kamaraj College Logo"
                                 style={styles.logo}
+                                crossOrigin="anonymous"
                                 onError={(e) => {
                                     console.error("Logo Error:", e);
                                     e.target.style.display = 'none';
@@ -142,13 +145,16 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
+        justifyContent: 'flex-start',
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'auto',
         backgroundColor: '#0f172a',
         padding: '20px'
     },
     paper: {
         width: '1000px', // Landscape A4 approx ratio
+        maxWidth: '100%',
         height: '700px',
         backgroundColor: 'white',
         padding: '40px',

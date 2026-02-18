@@ -4,7 +4,7 @@ import fs from 'fs';
 const filePath = 'c:/Users/lenovo/OneDrive/Desktop/sql-nosql-dashboard/my-dashboard/src/data/levels.js';
 const content = fs.readFileSync(filePath, 'utf8');
 
-const startMarker = 'export const sqlLevels = [';
+const startMarker = 'const sqlLevelsRaw = [';
 const startIdx = content.indexOf(startMarker);
 if (startIdx === -1) { console.error('Could not find sqlLevels start.'); process.exit(1); }
 

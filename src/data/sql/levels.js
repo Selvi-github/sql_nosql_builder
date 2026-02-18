@@ -374,7 +374,7 @@ export const sqlLevels = [
             },
             {
                 "id": 117,
-                "text": "Find users NOT from top 3 cities",
+                "text": "Find users NOT from top 3 cities (Chennai, Mumbai, Delhi)",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",

@@ -12,11 +12,17 @@ export const validateQuery = (generatedCode, expectedPattern) => {
         return { isValid: true, message: "Structure looks okay." };
     }
 
-    // NoSQL Validation: Exact script matching (with normalization)
+    // NoSQL Validation: Script matching with normalization and minor tolerance
     if (expectedPattern.script) {
         const normalizeScript = (str) => str
             .replace(/\s+/g, ' ')           // Collapse whitespace
             .replace(/['"]/g, '"')          // Normalize quotes
+            .replace(/\/\"([^\"]*)\"\/([gimsuy]*)/g, '"$1"') // Normalize regex literals with quoted pattern
+            .replace(/\/([^/]+)\/([gimsuy]*)/g, '"$1"') // Normalize regex literals
+            .replace(/\s*,\s*/g, ',')       // Normalize comma spacing
+            .replace(/\s*:\s*/g, ':')       // Normalize colon spacing
+            .replace(/\s*([.(){}\[\]])\s*/g, '$1') // Normalize spacing around punctuation
+            .replace(/;+\s*$/g, '')          // Drop trailing semicolons
             .trim()
             .toUpperCase();
 
@@ -25,12 +31,42 @@ export const validateQuery = (generatedCode, expectedPattern) => {
 
         if (normGenerated === normExpected) {
             return { isValid: true, message: "Perfect! Query matches expected pattern." };
-        } else {
-            return {
-                isValid: false,
-                message: "Query doesn't match the expected pattern. Check your syntax and try again!"
-            };
         }
+
+        // Allow $and array form when expected uses inline field conditions
+        const andToInline = (norm) => {
+            const match = norm.match(/^DB\.USERS\.FIND\(\{\$AND:\[(.*)\]\}\)$/);
+            if (!match) return norm;
+            const inner = match[1]
+                .split(/\},\{/)
+                .map(part => part.replace(/^\{?/, '{').replace(/\}?$/, '}'))
+                .join(',');
+            return `DB.USERS.FIND({${inner}})`;
+        };
+        const normalizedGenerated = andToInline(normGenerated);
+        if (normalizedGenerated === normExpected) {
+            return { isValid: true, message: "Perfect! Query matches expected pattern." };
+        }
+
+        // Allow countDocuments() vs find().count() for beginner levels
+        const expectedCountDocs = normExpected.replace(/\.COUNTDOCUMENTS\(\)/g, '.COUNTDOCUMENTS()');
+        const generatedCount = normGenerated.replace(/\.FIND\(\)\.COUNT\(\)/g, '.COUNTDOCUMENTS()');
+        if (expectedCountDocs === generatedCount) {
+            return { isValid: true, message: "Perfect! Query matches expected pattern." };
+        }
+
+        // Allow id/_id projection tolerance for beginner levels
+        if (normExpected.includes('_ID') && !normGenerated.includes('_ID')) {
+            const relaxed = normGenerated.replace(/\bID\b/g, '_ID');
+            if (relaxed === normExpected) {
+                return { isValid: true, message: "Perfect! Query matches expected pattern." };
+            }
+        }
+
+        return {
+            isValid: false,
+            message: "Query doesn't match the expected pattern. Check your syntax and try again!"
+        };
     }
 
     // SQL Validation: Structure-based (token presence check)

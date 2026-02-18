@@ -12,6 +12,171 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const SQL_FREE_DB_PREFIX = process.env.SQL_FREE_DB_PREFIX || 'qa_free_';
+const MONGO_FREE_DB_PREFIX = process.env.MONGO_FREE_DB_PREFIX || 'qa_free_';
+
+const NO_SQL_SAMPLE_USERS = [
+    {
+        firstname: "Alice",
+        lastname: "Johnson",
+        name: "Alice",
+        age: 25,
+        skills: ["JS", "Python"],
+        role: "Admin",
+        city: "Mumbai",
+        gender: "Female",
+        email: "alice@example.com",
+        phone: "9876543210",
+        isActive: true,
+        salary: 50000
+    },
+    {
+        firstname: "Bob",
+        lastname: "Smith",
+        name: "Bob",
+        age: 30,
+        skills: ["Java"],
+        role: "User",
+        city: "Delhi",
+        gender: "Male",
+        email: "bob@example.com",
+        phone: "9876543211",
+        isActive: true,
+        salary: 45000
+    },
+    {
+        firstname: "Charlie",
+        lastname: "Brown",
+        name: "Charlie",
+        age: 22,
+        skills: ["Go", "Rust"],
+        role: "User",
+        city: "Bangalore",
+        gender: "Male",
+        email: "charlie@example.com",
+        isActive: false,
+        salary: 35000
+    },
+    {
+        firstname: "Diana",
+        lastname: "Prince",
+        name: "Diana",
+        age: 28,
+        skills: ["Python", "R"],
+        role: "Admin",
+        city: "Chennai",
+        gender: "Female",
+        email: "diana@example.com",
+        phone: "9876543213",
+        isActive: true,
+        salary: 60000
+    },
+    {
+        firstname: "Eve",
+        lastname: "Davis",
+        name: "Eve",
+        age: 35,
+        skills: ["C++", "Rust"],
+        role: "User",
+        city: "Hyderabad",
+        gender: "Female",
+        isActive: true,
+        salary: 55000
+    },
+    {
+        firstname: "Frank",
+        lastname: "Miller",
+        name: "Frank",
+        age: 19,
+        skills: ["HTML", "CSS"],
+        role: "User",
+        city: "Pune",
+        gender: "Male",
+        email: "frank@example.com",
+        phone: "9876543215",
+        isActive: false,
+        salary: 25000
+    },
+    {
+        firstname: "Grace",
+        lastname: "Lee",
+        name: "Grace",
+        age: 27,
+        skills: ["Ruby", "Rails"],
+        role: "Admin",
+        city: "Mumbai",
+        gender: "Female",
+        email: "grace@example.com",
+        isActive: true,
+        salary: 48000
+    },
+    {
+        firstname: "Henry",
+        lastname: "Wilson",
+        name: "Henry",
+        age: 32,
+        skills: ["PHP", "Laravel"],
+        role: "User",
+        city: "Delhi",
+        gender: "Male",
+        phone: "9876543217",
+        isActive: true,
+        salary: 42000
+    },
+    {
+        firstname: "Ivy",
+        lastname: "Taylor",
+        name: "Ivy",
+        age: 24,
+        skills: ["Swift", "iOS"],
+        role: "User",
+        city: "Bangalore",
+        gender: "Female",
+        email: "ivy@example.com",
+        isActive: false,
+        salary: 38000
+    },
+    {
+        firstname: "Jack",
+        lastname: "Anderson",
+        name: "Jack",
+        age: 29,
+        skills: ["Kotlin", "Android"],
+        role: "Admin",
+        city: "Chennai",
+        gender: "Male",
+        email: "jack@example.com",
+        phone: "9876543219",
+        isActive: true,
+        salary: 52000
+    }
+];
+
+export function getNoSqlSampleData() {
+    return NO_SQL_SAMPLE_USERS.map(doc => ({ ...doc }));
+}
+
+function toSafeIdentifier(value) {
+    const safe = String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    return safe || 'user';
+}
+
+function getFreeSqlDbName(userId) {
+    return `${SQL_FREE_DB_PREFIX}${toSafeIdentifier(userId)}`;
+}
+
+function getFreeMongoDbName(userId) {
+    return `${MONGO_FREE_DB_PREFIX}${toSafeIdentifier(userId)}`;
+}
+
+async function ensureDatabase(connection, dbName) {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+    await connection.query(`USE \`${dbName}\``);
+}
+
 // --- CONFIGURATION ---
 const CLOUD_CONFIG = {
     host: process.env.MYSQL_HOST,
@@ -133,6 +298,22 @@ async function tableExists(connection, dbName, tableName) {
         [dbName, tableName]
     );
     return rows.length > 0;
+}
+
+async function indexExists(connection, dbName, tableName, indexName) {
+    const [rows] = await connection.query(
+        `SELECT 1 as ok FROM information_schema.statistics WHERE table_schema = ? AND table_name = ? AND index_name = ? LIMIT 1`,
+        [dbName, tableName, indexName]
+    );
+    return rows.length > 0;
+}
+
+async function createIndexIfMissing(connection, dbName, tableName, indexName, columnName) {
+    if (!(await tableExists(connection, dbName, tableName))) return false;
+    if (!(await columnExists(connection, dbName, tableName, columnName))) return false;
+    if (await indexExists(connection, dbName, tableName, indexName)) return false;
+    await connection.query(`CREATE INDEX \`${indexName}\` ON \`${tableName}\` (\`${columnName}\`)`);
+    return true;
 }
 
 async function columnExists(connection, dbName, tableName, columnName) {
@@ -337,6 +518,21 @@ async function ensureCloudSchema(connection) {
     }
 }
 
+async function ensureSqlIndexes(connection) {
+    if (ensureSqlIndexes._done) return;
+    const dbName = await getActiveDbName(connection);
+    if (!dbName) return;
+
+    await createIndexIfMissing(connection, dbName, 'users', 'idx_users_department_section', 'department_section');
+    await createIndexIfMissing(connection, dbName, 'users', 'idx_users_student_id', 'student_id');
+    await createIndexIfMissing(connection, dbName, 'users', 'idx_users_marks', 'marks');
+    await createIndexIfMissing(connection, dbName, 'students', 'idx_students_department_section', 'department_section');
+    await createIndexIfMissing(connection, dbName, 'students', 'idx_students_student_id', 'student_id');
+    await createIndexIfMissing(connection, dbName, 'students', 'idx_students_marks', 'marks');
+
+    ensureSqlIndexes._done = true;
+}
+
 // --- SQL INITIALIZATION ---
 export async function initSql() {
     console.log('🔄 [DB] Initializing SQL (Cloud Only)...');
@@ -371,6 +567,7 @@ export async function initSql() {
                     await ensureCloudSchema(conn);
                     console.log('✅ [DB] Cloud SQL schema OK');
                 }
+                await ensureSqlIndexes(conn);
             } finally {
                 conn.release();
             }
@@ -396,15 +593,40 @@ export async function initSql() {
 }
 
 // --- SQL EXECUTION ---
-export async function executeSql(query) {
+export async function executeSql(query, options = {}) {
     if (!activeSqlMode || activeSqlMode === 'NONE') {
         await initSql();
     }
+
+    const mode = String(options.mode || '').toUpperCase();
+    const userId = options.userId ? String(options.userId) : '';
+    const isFreeMode = mode === 'FREE' && userId;
 
     if (activeSqlMode === 'CLOUD') {
         let connection;
         try {
             connection = await sqlPool.getConnection();
+            let targetDb = CLOUD_CONFIG.database;
+            if (!targetDb) {
+                targetDb = await getActiveDbName(connection);
+            }
+
+            if (isFreeMode) {
+                const freeDb = getFreeSqlDbName(userId);
+                try {
+                    await ensureDatabase(connection, freeDb);
+                    targetDb = freeDb;
+                } catch (err) {
+                    // Fall back to shared DB if CREATE DATABASE is not permitted.
+                    const msg = err && err.message ? String(err.message) : 'unknown error';
+                    console.warn(`⚠️ [DB] Free-mode DB creation failed (${freeDb}): ${msg}`);
+                }
+            }
+
+            if (targetDb) {
+                await connection.query(`USE \`${targetDb}\``);
+            }
+
             const [results] = await connection.query(query);
             return transformSqlResults(results);
         } catch (e) {
@@ -480,6 +702,14 @@ export async function findOrCreateUser(username, email) {
         user = {
             username,
             email,
+            role: 'STUDENT',
+            department_section: 'CSE-A',
+            roll_number: null,
+            student_id: null,
+            metrics: {
+                marks: 0,
+                attendance: 0
+            },
             sqlProgress: {
                 completedLevels: [],
                 completedQuestions: []
@@ -494,22 +724,64 @@ export async function findOrCreateUser(username, email) {
         user._id = res.insertedId;
     }
 
+    return ensureUserDefaults(user);
+}
+
+async function ensureUserIndexes() {
+    if (!mongoDb) await initMongo();
+
+    const users = mongoDb.collection('users');
+    await users.createIndex({ department_section: 1 });
+    await users.createIndex({ roll_number: 1 }, { sparse: true });
+    await users.createIndex({ student_id: 1 }, { sparse: true });
+    await users.createIndex({ 'metrics.marks': -1 });
+    await users.createIndex({ role: 1 });
+}
+
+async function ensureUserDefaults(user) {
+    if (!user || !user._id) return user;
+    const updates = {};
+    const metrics = { ...(user.metrics || {}) };
+
+    if (!user.role) updates.role = 'STUDENT';
+    if (!user.department_section) {
+        updates.department_section = 'CSE-A';
+    } else {
+        const normalizedSection = String(user.department_section).toUpperCase();
+        if (normalizedSection !== user.department_section) updates.department_section = normalizedSection;
+    }
+    if (user.roll_number === undefined) updates.roll_number = null;
+    if (user.student_id === undefined) updates.student_id = String(user._id);
+
+    if (typeof metrics.marks !== 'number') metrics.marks = 0;
+    if (typeof metrics.attendance !== 'number') metrics.attendance = 0;
+    if (!user.metrics || metrics.marks !== user.metrics.marks || metrics.attendance !== user.metrics.attendance) {
+        updates.metrics = metrics;
+    }
+
+    if (Object.keys(updates).length > 0) {
+        const users = mongoDb.collection('users');
+        await users.updateOne({ _id: user._id }, { $set: updates });
+        return { ...user, ...updates, metrics: { ...metrics } };
+    }
     return user;
 }
 
 export async function findUserByEmail(email) {
     if (!mongoDb) await initMongo();
     const users = mongoDb.collection('users');
-    return users.findOne({ email });
+    const user = await users.findOne({ email });
+    return ensureUserDefaults(user);
 }
 
 export async function getUserById(id) {
     if (!mongoDb) await initMongo();
     const users = mongoDb.collection('users');
-    return users.findOne({ _id: id });
+    const user = await users.findOne({ _id: id });
+    return ensureUserDefaults(user);
 }
 
-export async function createUser({ username, email, passwordHash }) {
+export async function createUser({ username, email, passwordHash, role, department_section, roll_number, student_id, metrics }) {
     if (!mongoDb) await initMongo();
 
     const users = mongoDb.collection('users');
@@ -520,6 +792,14 @@ export async function createUser({ username, email, passwordHash }) {
         username,
         email,
         passwordHash,
+        role: role || 'STUDENT',
+        department_section: department_section || 'CSE-A',
+        roll_number: roll_number || null,
+        student_id: student_id || null,
+        metrics: {
+            marks: metrics && typeof metrics.marks === 'number' ? metrics.marks : 0,
+            attendance: metrics && typeof metrics.attendance === 'number' ? metrics.attendance : 0
+        },
         sqlProgress: {
             completedLevels: [],
             completedQuestions: [],
@@ -535,6 +815,10 @@ export async function createUser({ username, email, passwordHash }) {
 
     const res = await users.insertOne(user);
     user._id = res.insertedId;
+    if (!user.student_id) {
+        user.student_id = String(user._id);
+        await users.updateOne({ _id: user._id }, { $set: { student_id: user.student_id } });
+    }
     return user;
 }
 
@@ -566,6 +850,113 @@ export async function updateUserProgressById(userId, dbType, progress) {
         { _id: userId },
         { $set: { [updateKey]: progress } }
     );
+}
+
+export async function getHodDashboard(section) {
+    if (!mongoDb) await initMongo();
+
+    const users = mongoDb.collection('users');
+    const roleMatch = { $or: [{ role: 'STUDENT' }, { role: { $exists: false } }] };
+    const normalizedSection = section ? String(section).toUpperCase() : null;
+    const sectionMatch = normalizedSection
+        ? { normalizedSection }
+        : null;
+
+    const pipeline = [
+        { $match: roleMatch },
+        {
+            $addFields: {
+                normalizedSection: {
+                    $toUpper: {
+                        $ifNull: ['$department_section', 'CSE-A']
+                    }
+                }
+            }
+        },
+        ...(sectionMatch ? [{ $match: sectionMatch }] : []),
+        {
+            $addFields: {
+                effectiveMarks: {
+                    $ifNull: [
+                        '$metrics.marks',
+                        {
+                            $add: [
+                                { $ifNull: ['$sqlProgress.score', 0] },
+                                { $ifNull: ['$nosqlProgress.score', 0] }
+                            ]
+                        }
+                    ]
+                },
+                effectiveAttendance: { $ifNull: ['$metrics.attendance', 0] }
+            }
+        },
+        {
+            $facet: {
+                averages: [
+                    {
+                        $group: {
+                            _id: '$normalizedSection',
+                            avgMarks: { $avg: '$effectiveMarks' },
+                            avgAttendance: { $avg: '$effectiveAttendance' },
+                            count: { $sum: 1 }
+                        }
+                    }
+                ],
+                topStudents: [
+                    { $sort: { effectiveMarks: -1 } },
+                    {
+                        $group: {
+                            _id: '$normalizedSection',
+                            student: {
+                                $first: {
+                                    _id: '$_id',
+                                    username: '$username',
+                                    email: '$email',
+                                    student_id: '$student_id',
+                                    marks: '$effectiveMarks',
+                                    attendance: '$effectiveAttendance'
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ];
+
+    const [result] = await users.aggregate(pipeline).toArray();
+    const averages = result && result.averages ? result.averages : [];
+    const topStudents = result && result.topStudents ? result.topStudents : [];
+
+    const studentPipeline = [
+        { $match: roleMatch },
+        {
+            $addFields: {
+                normalizedSection: {
+                    $toUpper: {
+                        $ifNull: ['$department_section', 'CSE-A']
+                    }
+                }
+            }
+        },
+        ...(sectionMatch ? [{ $match: sectionMatch }] : []),
+        {
+            $project: {
+                username: 1,
+                email: 1,
+                roll_number: 1,
+                student_id: 1,
+                department_section: '$normalizedSection',
+                metrics: 1,
+                sqlProgress: 1,
+                nosqlProgress: 1
+            }
+        },
+        { $limit: 500 }
+    ];
+    const students = await users.aggregate(studentPipeline).toArray();
+
+    return { averages, topStudents, students };
 }
 
 export async function recordCertificate(userId, payload) {
@@ -652,6 +1043,7 @@ export async function initMongo() {
         await mongoClient.connect();
         mongoDb = mongoClient.db();
         await mongoDb.command({ ping: 1 });
+        await ensureUserIndexes();
         console.log('✅ [DB] Connected to MongoDB');
         return { success: true };
     } catch (e) {
@@ -670,6 +1062,15 @@ export async function executeMongo(wrapperFunction) {
     return wrapperFunction(mongoDb);
 }
 
+export async function executeMongoForUser(userId, wrapperFunction) {
+    if (!mongoClient) {
+        await initMongo();
+    }
+    const dbName = getFreeMongoDbName(userId);
+    const userDb = mongoClient.db(dbName);
+    return wrapperFunction(userDb);
+}
+
 // --- NOSQL SAMPLE DATA INITIALIZATION ---
 export async function initNoSQLSampleData() {
     if (!mongoDb) await initMongo();
@@ -683,145 +1084,6 @@ export async function initNoSQLSampleData() {
         return;
     }
 
-    // Create comprehensive sample data for NoSQL learning
-    // Matches all fields used in NoSQL levels 1-20
-    const sampleData = [
-        {
-            firstname: "Alice",
-            lastname: "Johnson",
-            name: "Alice",
-            age: 25,
-            skills: ["JS", "Python"],
-            role: "Admin",
-            city: "Mumbai",
-            gender: "Female",
-            email: "alice@example.com",
-            phone: "9876543210",
-            isActive: true,
-            salary: 50000
-        },
-        {
-            firstname: "Bob",
-            lastname: "Smith",
-            name: "Bob",
-            age: 30,
-            skills: ["Java"],
-            role: "User",
-            city: "Delhi",
-            gender: "Male",
-            email: "bob@example.com",
-            phone: "9876543211",
-            isActive: true,
-            salary: 45000
-        },
-        {
-            firstname: "Charlie",
-            lastname: "Brown",
-            name: "Charlie",
-            age: 22,
-            skills: ["Go", "Rust"],
-            role: "User",
-            city: "Bangalore",
-            gender: "Male",
-            email: "charlie@example.com",
-            isActive: false,
-            salary: 35000
-        },
-        {
-            firstname: "Diana",
-            lastname: "Prince",
-            name: "Diana",
-            age: 28,
-            skills: ["Python", "R"],
-            role: "Admin",
-            city: "Chennai",
-            gender: "Female",
-            email: "diana@example.com",
-            phone: "9876543213",
-            isActive: true,
-            salary: 60000
-        },
-        {
-            firstname: "Eve",
-            lastname: "Davis",
-            name: "Eve",
-            age: 35,
-            skills: ["C++", "Rust"],
-            role: "User",
-            city: "Hyderabad",
-            gender: "Female",
-            isActive: true,
-            salary: 55000
-        },
-        {
-            firstname: "Frank",
-            lastname: "Miller",
-            name: "Frank",
-            age: 19,
-            skills: ["HTML", "CSS"],
-            role: "User",
-            city: "Pune",
-            gender: "Male",
-            email: "frank@example.com",
-            phone: "9876543215",
-            isActive: false,
-            salary: 25000
-        },
-        {
-            firstname: "Grace",
-            lastname: "Lee",
-            name: "Grace",
-            age: 27,
-            skills: ["Ruby", "Rails"],
-            role: "Admin",
-            city: "Mumbai",
-            gender: "Female",
-            email: "grace@example.com",
-            isActive: true,
-            salary: 48000
-        },
-        {
-            firstname: "Henry",
-            lastname: "Wilson",
-            name: "Henry",
-            age: 32,
-            skills: ["PHP", "Laravel"],
-            role: "User",
-            city: "Delhi",
-            gender: "Male",
-            phone: "9876543217",
-            isActive: true,
-            salary: 42000
-        },
-        {
-            firstname: "Ivy",
-            lastname: "Taylor",
-            name: "Ivy",
-            age: 24,
-            skills: ["Swift", "iOS"],
-            role: "User",
-            city: "Bangalore",
-            gender: "Female",
-            email: "ivy@example.com",
-            isActive: false,
-            salary: 38000
-        },
-        {
-            firstname: "Jack",
-            lastname: "Anderson",
-            name: "Jack",
-            age: 29,
-            skills: ["Kotlin", "Android"],
-            role: "Admin",
-            city: "Chennai",
-            gender: "Male",
-            email: "jack@example.com",
-            phone: "9876543219",
-            isActive: true,
-            salary: 52000
-        }
-    ];
-
-    await sampleUsers.insertMany(sampleData);
+    await sampleUsers.insertMany(getNoSqlSampleData());
     console.log('✅ [DB] NoSQL sample data initialized with 10 comprehensive documents');
 }

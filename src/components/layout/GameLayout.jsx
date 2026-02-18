@@ -56,25 +56,35 @@ const GameLayout = ({ dbType }) => {
         // Execute (Both modes)
         try {
             const endpoint = dbType === 'NoSQL' ? '/api/nosql/execute' : '/api/sql/execute';
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getToken()}`
-                },
-                body: JSON.stringify({ query: generatedCode })
-            });
-            const result = await response.json();
+            const executeOnce = async () => {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ query: generatedCode, mode })
+                });
+                return response.json();
+            };
+
+            let result = await executeOnce();
+            if (!result.success && result.errorType !== 'SYNTAX') {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                result = await executeOnce();
+            }
 
             if (result.success) {
                 if (mode === 'LEARN') handleCorrectAnswer();
                 setExecutionResult(result);
             } else {
-                if (mode === 'LEARN') handleWrongAnswer(result.error);
-                setExecutionResult({ success: false, error: result.error });
+                const isSyntax = result.errorType === 'SYNTAX';
+                const message = isSyntax ? result.error : 'Temporary service issue. Please try again.';
+                if (mode === 'LEARN') handleWrongAnswer(message);
+                setExecutionResult({ success: false, error: message });
             }
         } catch (e) {
-            setExecutionResult({ success: false, error: "Network Error" });
+            setExecutionResult({ success: false, error: 'Temporary service issue. Please try again.' });
         } finally {
             setIsExecuting(false);
         }
@@ -142,9 +152,9 @@ const GameLayout = ({ dbType }) => {
                         <div style={styles.resultBox}>
                             {executionResult.success ? (
                                 <>
-                                    <div style={{ color: '#4ade80', marginBottom: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        <div style={{ width: '8px', height: '8px', backgroundColor: '#4ade80', borderRadius: '50%' }}></div>
-                                        CONNECTED TO CLOUD DB
+                                    <div style={{ color: executionResult.mode === 'OFFLINE' ? '#fbbf24' : '#4ade80', marginBottom: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <div style={{ width: '8px', height: '8px', backgroundColor: executionResult.mode === 'OFFLINE' ? '#fbbf24' : '#4ade80', borderRadius: '50%' }}></div>
+                                        {executionResult.mode === 'OFFLINE' ? 'OFFLINE MODE' : 'CONNECTED TO CLOUD DB'}
                                     </div>
                                     <div style={styles.tableScroll}>
                                         {/* SQL Multi-Statement Results */}

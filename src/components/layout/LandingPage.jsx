@@ -69,7 +69,7 @@ const LandingPage = ({ user, onStart, onProfile, onLogout }) => {
             )}
 
             <div style={styles.contentWrapper}>
-                <h1 style={styles.title}>Visual Query Architect</h1>
+                <h1 style={styles.title}>DualDB Query Architect</h1>
                 <p style={styles.subtitle}>Select your academic environment to begin</p>
 
                 <div style={styles.cardContainer}>

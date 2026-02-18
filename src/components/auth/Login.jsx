@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 
 const Login = ({ onLogin }) => {
     const [mode, setMode] = useState('LOGIN'); // LOGIN | REGISTER
+    const [role, setRole] = useState('STUDENT'); // STUDENT | HOD
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [departmentSection, setDepartmentSection] = useState('CSE-A');
+    const [rollNumber, setRollNumber] = useState('');
+    const [hodAccessCode, setHodAccessCode] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -12,6 +16,18 @@ const Login = ({ onLogin }) => {
         e.preventDefault();
         if (mode === 'REGISTER' && !username) {
             setError('Please enter a username.');
+            return;
+        }
+        if (mode === 'REGISTER' && role === 'STUDENT' && !departmentSection) {
+            setError('Please select your department section.');
+            return;
+        }
+        if (mode === 'REGISTER' && role === 'STUDENT' && !rollNumber) {
+            setError('Please enter your roll number.');
+            return;
+        }
+        if (mode === 'REGISTER' && role === 'HOD' && !hodAccessCode) {
+            setError('Please enter the HOD access code.');
             return;
         }
         if (!email || !password) {
@@ -23,9 +39,15 @@ const Login = ({ onLogin }) => {
         setError('');
 
         try {
-            const endpoint = mode === 'REGISTER' ? '/api/auth/register' : '/api/auth/login';
+            const isHod = role === 'HOD';
+            const endpoint = mode === 'REGISTER'
+                ? (isHod ? '/api/auth/hod/register' : '/api/auth/register')
+                : (isHod ? '/api/auth/hod/login' : '/api/auth/login');
+
             const body = mode === 'REGISTER'
-                ? { username, email, password }
+                ? (isHod
+                    ? { username, email, password, accessCode: hodAccessCode }
+                    : { username, email, password, department_section: departmentSection, roll_number: rollNumber })
                 : { email, password };
 
             const res = await fetch(endpoint, {
@@ -52,8 +74,25 @@ const Login = ({ onLogin }) => {
         <div style={styles.container}>
             <div style={styles.card}>
                 <div style={styles.header}>
-                    <h1 style={styles.title}>Query Architect</h1>
+                    <h1 style={styles.title}>DualDB Query Architect</h1>
                     <p style={styles.subtitle}>Academic Learning Platform</p>
+                </div>
+
+                <div style={styles.roleToggle}>
+                    <button
+                        type="button"
+                        onClick={() => setRole('STUDENT')}
+                        style={{ ...styles.roleBtn, ...(role === 'STUDENT' ? styles.roleActive : {}) }}
+                    >
+                        Student
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setRole('HOD')}
+                        style={{ ...styles.roleBtn, ...(role === 'HOD' ? styles.roleActive : {}) }}
+                    >
+                        Staff
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
@@ -65,6 +104,50 @@ const Login = ({ onLogin }) => {
                                 placeholder="Enter your student name"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
+                                style={styles.input}
+                                required
+                            />
+                        </div>
+                    )}
+
+                    {mode === 'REGISTER' && role === 'STUDENT' && (
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>Department Section</label>
+                            <select
+                                value={departmentSection}
+                                onChange={(e) => setDepartmentSection(e.target.value)}
+                                style={styles.select}
+                                required
+                            >
+                                <option value="CSE-A">CSE-A</option>
+                                <option value="CSE-B">CSE-B</option>
+                                <option value="CSE-C">CSE-C</option>
+                            </select>
+                        </div>
+                    )}
+
+                    {mode === 'REGISTER' && role === 'STUDENT' && (
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>Roll Number</label>
+                            <input
+                                type="text"
+                                placeholder="Enter your roll number"
+                                value={rollNumber}
+                                onChange={(e) => setRollNumber(e.target.value)}
+                                style={styles.input}
+                                required
+                            />
+                        </div>
+                    )}
+
+                    {mode === 'REGISTER' && role === 'HOD' && (
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>HOD Access Code</label>
+                            <input
+                                type="password"
+                                placeholder="Enter HOD access code"
+                                value={hodAccessCode}
+                                onChange={(e) => setHodAccessCode(e.target.value)}
                                 style={styles.input}
                                 required
                             />
@@ -122,13 +205,15 @@ const Login = ({ onLogin }) => {
 
 const styles = {
     container: {
-        height: '100vh',
+        minHeight: '100vh',
         width: '100vw',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflowY: 'auto',
         backgroundColor: '#0b1120',
-        fontFamily: "'Space Grotesk', sans-serif"
+        fontFamily: "'Space Grotesk', sans-serif",
+        padding: '24px'
     },
     card: {
         width: '100%',
@@ -138,6 +223,26 @@ const styles = {
         borderRadius: '24px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
         border: '1px solid #1f2937'
+    },
+    roleToggle: {
+        display: 'flex',
+        gap: '10px',
+        marginBottom: '24px'
+    },
+    roleBtn: {
+        flex: 1,
+        padding: '10px 12px',
+        backgroundColor: '#0b1120',
+        border: '1px solid #1f2937',
+        color: '#94a3b8',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        fontWeight: '600'
+    },
+    roleActive: {
+        backgroundColor: '#1f2a44',
+        color: '#f8fafc',
+        borderColor: '#38bdf8'
     },
     header: {
         textAlign: 'center',
@@ -180,6 +285,15 @@ const styles = {
         fontSize: '1rem',
         outline: 'none',
         transition: 'all 0.2s'
+    },
+    select: {
+        padding: '12px 16px',
+        backgroundColor: '#0b1120',
+        border: '1px solid #1f2937',
+        borderRadius: '10px',
+        color: '#f8fafc',
+        fontSize: '1rem',
+        outline: 'none'
     },
     error: {
         color: '#f87171',

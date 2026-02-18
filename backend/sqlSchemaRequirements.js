@@ -192,13 +192,16 @@ export function getSqlSchemaRequirements() {
   }
 
   // Hard safety net for core learning tables.
-  for (const t of ['users', 'orders', 'products', 'employees']) {
+  for (const t of ['users', 'orders', 'products', 'employees', 'students']) {
     ensureSet(requirements, t);
   }
 
   // Ensure the columns that are definitely used early on.
-  for (const c of ['user_id', 'firstname', 'lastname', 'email', 'age', 'city', 'salary', 'gender', 'phone', 'created_at', 'name']) {
+  for (const c of ['user_id', 'student_id', 'firstname', 'lastname', 'email', 'age', 'city', 'salary', 'gender', 'phone', 'created_at', 'name', 'department_section', 'marks', 'attendance']) {
     addColumn(requirements, 'users', c);
+  }
+  for (const c of ['student_id', 'student_name', 'marks', 'attendance', 'department_section', 'created_at']) {
+    addColumn(requirements, 'students', c);
   }
   for (const c of ['order_id', 'user_id', 'product_id', 'quantity', 'amount', 'order_date', 'created_at']) {
     addColumn(requirements, 'orders', c);

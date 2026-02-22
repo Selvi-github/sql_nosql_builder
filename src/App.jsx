@@ -11,6 +11,18 @@ function App() {
   // Views: 'LOGIN' | 'LANDING' | 'SQL' | 'NoSQL' | 'PROFILE' | 'HOD'
   const [view, setView] = useState('LOGIN');
   const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('qa_theme');
+    return stored === 'light' ? 'light' : 'dark';
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem('qa_theme', next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem('qa_auth');
@@ -26,7 +38,8 @@ function App() {
         .then((data) => {
           if (data && data.success && data.user) {
             setUser({ ...data.user, token: parsed.token });
-            setView(data.user.role === 'HOD' ? 'HOD' : 'LANDING');
+            const adminView = data.user.role === 'ADMIN' || data.user.role === 'STAFF';
+            setView(adminView ? 'HOD' : 'LANDING');
           } else {
             localStorage.removeItem('qa_auth');
           }
@@ -41,7 +54,8 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
-    setView(userData.role === 'HOD' ? 'HOD' : 'LANDING');
+    const adminView = userData.role === 'ADMIN' || userData.role === 'STAFF';
+    setView(adminView ? 'HOD' : 'LANDING');
     localStorage.setItem('qa_auth', JSON.stringify({ token: userData.token }));
   };
 
@@ -51,16 +65,23 @@ function App() {
     localStorage.removeItem('qa_auth');
   };
 
+  useEffect(() => {
+    const uiTheme = (view === 'LOGIN' || view === 'LANDING' || view === 'HOD') ? theme : 'dark';
+    document.body.dataset.uiTheme = uiTheme;
+  }, [view, theme]);
+
   return (
     <div className="app-root">
-      {view === 'LOGIN' && <Login onLogin={handleLogin} />}
+      {view === 'LOGIN' && <Login onLogin={handleLogin} theme={theme} onToggleTheme={toggleTheme} />}
 
-      {user && view === 'LANDING' && user.role !== 'HOD' && (
+      {user && view === 'LANDING' && user.role !== 'ADMIN' && user.role !== 'STAFF' && (
         <LandingPage
           user={user}
           onStart={(type) => setView(type)}
           onProfile={() => setView('PROFILE')}
           onLogout={handleLogout}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 
@@ -68,6 +89,8 @@ function App() {
         <HodDashboard
           user={user}
           onLogout={handleLogout}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 

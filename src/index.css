@@ -21,6 +21,17 @@ body {
   color: var(--text-primary);
 }
 
+body[data-ui-theme='light'] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --card-bg: #ffffff;
+  --border-subtle: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
 html,
 body,
 #root {

@@ -10,6 +10,7 @@ import * as db from './backend/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+app.set('trust proxy', 1);
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? '' : 'dev_secret_change_me');
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const SECTION_VALUES = new Set(['CSE-A', 'CSE-B', 'CSE-C']);
@@ -860,7 +861,7 @@ const startServer = async () => {
             console.log("⚠️  Continuing startup without MongoDB... NoSQL and User profiles will be offline.");
         }
 
-        app.listen(PORT, () => {
+        app.listen(PORT,'0.0.0.0', () => {
             console.log(`🚀 Secure Server ready on port ${PORT}`);
             console.log(`📡 Cloud Monitoring active...`);
         });

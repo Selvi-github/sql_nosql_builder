@@ -4,6 +4,16 @@ import jsPDF from 'jspdf';
 
 const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
 
+    const hodSignatureCandidates = [
+        '/assets/certificates/common/hod_signature.png?v=1',
+        '/assets/certificates/common/hod_signature.jpg?v=1',
+        '/assets/certificates/common/hod_signature.jpeg?v=1',
+        '/assets/certificates/common/signature.png?v=1',
+        '/assets/certificates/common/signature.jpg?v=1',
+        '/assets/certificates/common/signature.jpeg?v=1'
+    ];
+    const [hodSignatureSrc, setHodSignatureSrc] = React.useState(hodSignatureCandidates[0]);
+
     const handleDownloadPdf = async () => {
         try {
             const element = document.getElementById('certificate-download');
@@ -111,6 +121,22 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
                     {/* Seal and Signatures */}
                     <div style={styles.footer}>
                         <div style={styles.signatureBlock}>
+                            <img
+                                src={hodSignatureSrc}
+                                alt="HOD e-sign"
+                                style={styles.signatureImage}
+                                crossOrigin="anonymous"
+                                onError={(e) => {
+                                    const currentIndex = hodSignatureCandidates.indexOf(hodSignatureSrc);
+                                    const nextIndex = currentIndex + 1;
+                                    if (nextIndex < hodSignatureCandidates.length) {
+                                        setHodSignatureSrc(hodSignatureCandidates[nextIndex]);
+                                        return;
+                                    }
+                                    console.error('HOD signature image not found. Tried:', hodSignatureCandidates);
+                                    e.currentTarget.style.display = 'none';
+                                }}
+                            />
                             <div style={styles.signatureLine}></div>
                             <div style={styles.signatureLabel}>HOD<br />DEPARTMENT OF CSE</div>
                         </div>
@@ -268,6 +294,12 @@ const styles = {
         height: '2px',
         backgroundColor: '#38bdf8', // Light Blue
         marginBottom: '10px'
+    },
+    signatureImage: {
+        width: '100%',
+        height: '48px',
+        objectFit: 'contain',
+        marginBottom: '6px'
     },
     signatureLabel: {
         fontSize: '14px',

@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 
-const LandingPage = ({ user, onStart, onProfile, onLogout }) => {
+const LandingPage = ({ user, onStart, onProfile, onLogout, theme, onToggleTheme }) => {
     const [loading, setLoading] = useState(null); // 'SQL' | 'NoSQL' | null
     const [notification, setNotification] = useState(null);
+
+    const isLight = theme === 'light';
+    const themeStyles = {
+        pageBg: isLight ? '#f8fafc' : '#0b1120',
+        navBg: isLight ? '#ffffff' : '#0b1120',
+        navBorder: isLight ? '#e2e8f0' : '#1f2937',
+        cardBg: isLight ? '#ffffff' : '#161e31',
+        cardBorder: isLight ? '#e2e8f0' : '#1f2937',
+        textPrimary: isLight ? '#0f172a' : '#f8fafc',
+        textSecondary: isLight ? '#475569' : '#94a3b8'
+    };
 
     const showNotification = (type, message) => {
         setNotification({ type, message });
@@ -46,15 +57,18 @@ const LandingPage = ({ user, onStart, onProfile, onLogout }) => {
     };
 
     return (
-        <div style={styles.container}>
+        <div style={{ ...styles.container, backgroundColor: themeStyles.pageBg }}>
             {/* Top Navigation */}
-            <div style={styles.topNav}>
+            <div style={{ ...styles.topNav, backgroundColor: themeStyles.navBg, borderBottom: `1px solid ${themeStyles.navBorder}` }}>
                 <div style={styles.userBadge}>
-                    <span style={styles.avatarMini}>👤</span>
-                    <span style={styles.userName}>{user.username}</span>
+                    <span style={{ ...styles.avatarMini, borderColor: themeStyles.navBorder }}>{'👤'}</span>
+                    <span style={{ ...styles.userName, color: themeStyles.textPrimary }}>{user.username}</span>
                 </div>
                 <div style={styles.navButtons}>
                     <button onClick={onProfile} style={styles.profileBtn}>My Profile</button>
+                    <button onClick={onToggleTheme} style={styles.themeBtn}>
+                        {isLight ? '🌙' : '☀️'}
+                    </button>
                     <button onClick={onLogout} style={styles.logoutBtn}>Logout</button>
                 </div>
             </div>
@@ -69,15 +83,15 @@ const LandingPage = ({ user, onStart, onProfile, onLogout }) => {
             )}
 
             <div style={styles.contentWrapper}>
-                <h1 style={styles.title}>DualDB Query Architect</h1>
-                <p style={styles.subtitle}>Select your academic environment to begin</p>
+                <h1 style={{ ...styles.title, color: themeStyles.textPrimary }}>DualDB Query Architect</h1>
+                <p style={{ ...styles.subtitle, color: themeStyles.textSecondary }}>Select your academic environment to begin</p>
 
                 <div style={styles.cardContainer}>
                     {/* SQL CARD */}
-                    <div style={styles.card} onClick={() => !loading && handleInit('SQL')}>
+                    <div style={{ ...styles.card, backgroundColor: themeStyles.cardBg, borderColor: themeStyles.cardBorder }} onClick={() => !loading && handleInit('SQL')}>
                         <div style={{ ...styles.icon, color: '#60a5fa' }}>🗄️</div>
-                        <h2 style={styles.cardTitle}>SQL Builder</h2>
-                        <p style={styles.cardDesc}>Relational Databases (MySQL)</p>
+                        <h2 style={{ ...styles.cardTitle, color: themeStyles.textPrimary }}>SQL Builder</h2>
+                        <p style={{ ...styles.cardDesc, color: themeStyles.textSecondary }}>Relational Databases (MySQL)</p>
                         <ul style={styles.featureList}>
                             <li>20 Levels | 323 Questions</li>
                             <li>Structure Query Language</li>
@@ -89,10 +103,10 @@ const LandingPage = ({ user, onStart, onProfile, onLogout }) => {
                     </div>
 
                     {/* NoSQL CARD */}
-                    <div style={styles.card} onClick={() => !loading && handleInit('NoSQL')}>
+                    <div style={{ ...styles.card, backgroundColor: themeStyles.cardBg, borderColor: themeStyles.cardBorder }} onClick={() => !loading && handleInit('NoSQL')}>
                         <div style={{ ...styles.icon, color: '#4ade80' }}>🍃</div>
-                        <h2 style={styles.cardTitle}>NoSQL Builder</h2>
-                        <p style={styles.cardDesc}>Document Store (MongoDB)</p>
+                        <h2 style={{ ...styles.cardTitle, color: themeStyles.textPrimary }}>NoSQL Builder</h2>
+                        <p style={{ ...styles.cardDesc, color: themeStyles.textSecondary }}>Document Store (MongoDB)</p>
                         <ul style={styles.featureList}>
                             <li>30 Levels | 300 Questions</li>
                             <li>Managed Cloud Database</li>
@@ -154,6 +168,19 @@ const styles = {
     navButtons: {
         display: 'flex',
         gap: '12px'
+    },
+    themeBtn: {
+        width: '36px',
+        height: '36px',
+        borderRadius: '999px',
+        border: '1px solid #1f2937',
+        backgroundColor: 'transparent',
+        color: '#e2e8f0',
+        cursor: 'pointer',
+        fontSize: '16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     profileBtn: {
         backgroundColor: '#4f46e5',

@@ -44,6 +44,18 @@ export const GameProvider = ({ children, dbType = 'SQL', user, initialProgress }
     const [showConfetti, setShowConfetti] = useState(false);
     const [lastAttemptResult, setLastAttemptResult] = useState(null);
 
+    const getToken = () => {
+        if (user && user.token) return user.token;
+        try {
+            const raw = localStorage.getItem('qa_auth');
+            if (!raw) return '';
+            const parsed = JSON.parse(raw);
+            return parsed && parsed.token ? parsed.token : '';
+        } catch {
+            return '';
+        }
+    };
+
     // Sync Progress Helper
     const syncProgress = async (updatedCompletedQuestions, updatedScore, updatedMaxLevel) => {
         try {
@@ -54,11 +66,17 @@ export const GameProvider = ({ children, dbType = 'SQL', user, initialProgress }
                 if (allDone) completedLevels.push(i);
             }
 
-            await fetch('/api/user/progress', {
+            const token = getToken();
+            if (!token) {
+                console.warn('Progress sync skipped: missing auth token');
+                return;
+            }
+
+            const res = await fetch('/api/user/progress', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     dbType,
@@ -69,6 +87,17 @@ export const GameProvider = ({ children, dbType = 'SQL', user, initialProgress }
                     }
                 })
             });
+
+            if (!res.ok) {
+                let message = `HTTP ${res.status}`;
+                try {
+                    const payload = await res.json();
+                    if (payload && payload.error) message = payload.error;
+                } catch {
+                    // ignore
+                }
+                console.warn('Progress sync failed:', message);
+            }
         } catch (e) {
             console.error("Failed to sync progress:", e);
         }

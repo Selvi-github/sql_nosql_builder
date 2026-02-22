@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import fs from 'fs';
+import path from 'path';
 import { ObjectId } from 'mongodb';
 import * as db from './backend/db.js';
 
@@ -13,7 +14,10 @@ const PORT = process.env.PORT || 5000;
 app.set('trust proxy', 1);
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? '' : 'dev_secret_change_me');
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-const SECTION_VALUES = new Set(['CSE-A', 'CSE-B', 'CSE-C']);
+const SECTION_VALUES = new Set(['A', 'B', 'C', 'CSE-A', 'CSE-B', 'CSE-C', 'UCS-A', 'UCS-B', 'UCS-C']);
+const AUTH_DATA_PATH = path.resolve('src', 'data', 'auth.json');
+const localUserStore = new Map();
+let authDataCache = null;
 
 // --- SECURITY MIDDLEWARE ---
 app.use(helmet()); // Sets various HTTP headers for security
@@ -72,16 +76,91 @@ const respondError = (res, status, error, details) => res.status(status).json({
     ...(details ? { details } : {})
 });
 
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
-const isValidPassword = (password) => {
-    const p = String(password || '');
-    return p.length >= 8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p);
+const normalizeName = (value) => String(value || '')
+    .replace(/[.]/g, '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toUpperCase();
+
+const isNameMatch = (inputName, fullName) => {
+    const input = normalizeName(inputName);
+    const full = normalizeName(fullName);
+    if (!input || !full) return false;
+    return full.startsWith(input);
 };
+
+const normalizeRollNumber = (value) => String(value || '').trim().toUpperCase();
+
+const normalizeYear = (value) => {
+    const n = Number.parseInt(String(value || '').trim(), 10);
+    return Number.isFinite(n) ? n : null;
+};
+
+const normalizeSectionValue = (value) => {
+    const raw = String(value || '').trim().toUpperCase();
+    if (!raw) return '';
+    if (SECTION_VALUES.has(raw) && ['A', 'B', 'C'].includes(raw)) return raw;
+    const match = raw.match(/([ABC])$/);
+    return match ? match[1] : '';
+};
+
+const toDepartmentSection = (section) => (section ? `CSE-${section}` : '');
+
+const createEmptyProgress = () => ({
+    completedLevels: [],
+    completedQuestions: [],
+    score: 0
+});
+
+const ensureProgress = (progress) => {
+    if (!progress || !Array.isArray(progress.completedQuestions)) return createEmptyProgress();
+    return progress;
+};
+
+const upsertLocalUser = (user) => {
+    const existing = localUserStore.get(user._id);
+    const sqlProgress = ensureProgress(existing && existing.sqlProgress ? existing.sqlProgress : user.sqlProgress);
+    const nosqlProgress = ensureProgress(existing && existing.nosqlProgress ? existing.nosqlProgress : user.nosqlProgress);
+    const merged = {
+        ...existing,
+        ...user,
+        sqlProgress,
+        nosqlProgress
+    };
+    localUserStore.set(user._id, merged);
+    return merged;
+};
+
+const loadAuthData = () => {
+    try {
+        const raw = fs.readFileSync(AUTH_DATA_PATH, 'utf8');
+        const parsed = JSON.parse(raw);
+        authDataCache = {
+            admin: parsed && parsed.admin ? parsed.admin : null,
+            staff: Array.isArray(parsed && parsed.staff) ? parsed.staff : [],
+            students: Array.isArray(parsed && parsed.students) ? parsed.students : []
+        };
+    } catch {
+        authDataCache = { admin: null, staff: [], students: [] };
+    }
+    return authDataCache;
+};
+
+const getAuthData = () => authDataCache || loadAuthData();
+
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
 
 const requireRole = (role) => (req, res, next) => {
     const user = req.user;
     if (!user || !user.role) return res.status(403).json({ success: false, error: 'Access denied' });
     if (user.role !== role) return res.status(403).json({ success: false, error: 'Insufficient permissions' });
+    next();
+};
+
+const requireAnyRole = (roles) => (req, res, next) => {
+    const user = req.user;
+    if (!user || !user.role) return res.status(403).json({ success: false, error: 'Access denied' });
+    if (!roles.includes(user.role)) return res.status(403).json({ success: false, error: 'Insufficient permissions' });
     next();
 };
 
@@ -93,7 +172,7 @@ const requireStudent = (req, res, next) => {
     next();
 };
 
-const isValidSection = (section) => SECTION_VALUES.has(String(section || '').toUpperCase());
+loadAuthData();
 
 const requireAuth = async (req, res, next) => {
     try {
@@ -103,6 +182,13 @@ const requireAuth = async (req, res, next) => {
 
         const payload = jwt.verify(token, JWT_SECRET);
         if (!payload || !payload.sub) return res.status(401).json({ success: false, error: 'Invalid token' });
+
+        const localUser = localUserStore.get(payload.sub);
+        if (localUser) {
+            req.user = localUser;
+            req.tokenPayload = payload;
+            return next();
+        }
 
         const user = await db.getUserById(new ObjectId(payload.sub));
         if (!user) return res.status(401).json({ success: false, error: 'User not found' });
@@ -359,129 +445,121 @@ const getOfflineNoSqlDb = () => {
 
 // 0. Auth (Register)
 app.post('/api/auth/register', authLimiter, async (req, res) => {
-    const { username, email, password, department_section, roll_number } = req.body || {};
-    if (!username || !email || !password) return respondError(res, 400, 'Username, email, and password are required');
-    if (!isValidEmail(email)) return respondError(res, 400, 'Invalid email format');
-    if (!isValidPassword(password)) {
-        return respondError(res, 400, 'Password must be at least 8 chars and include upper, lower, and a number');
-    }
-    if (!department_section || !isValidSection(department_section)) {
-        return respondError(res, 400, 'Valid department section is required (CSE-A/B/C).');
-    }
-    if (!roll_number) {
-        return respondError(res, 400, 'Roll number is required.');
-    }
-
-    try {
-        const existing = await db.findUserByEmail(email);
-        if (existing) return respondError(res, 409, 'Email already registered');
-
-        const passwordHash = await bcrypt.hash(String(password), 10);
-        const user = await db.createUser({
-            username,
-            email,
-            passwordHash,
-            role: 'STUDENT',
-            department_section: String(department_section).toUpperCase(),
-            roll_number: String(roll_number).trim()
-        });
-        if (!user) return respondError(res, 500, 'Could not create user');
-
-        const token = jwt.sign({ sub: user._id.toString(), email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-        return respondOk(res, { user: sanitizeUser(user), token });
-    } catch (e) {
-        return respondError(res, 500, e.message);
-    }
+    return respondError(res, 403, 'Registration is disabled. Contact the admin.');
 });
 
 // 0. Auth (Register HOD)
 app.post('/api/auth/hod/register', authLimiter, async (req, res) => {
-    const { username, email, password, accessCode } = req.body || {};
-    if (!username || !email || !password) return respondError(res, 400, 'Username, email, and password are required');
-    if (!isValidEmail(email)) return respondError(res, 400, 'Invalid email format');
-    if (!isValidPassword(password)) {
-        return respondError(res, 400, 'Password must be at least 8 chars and include upper, lower, and a number');
-    }
-
-    const expectedCode = process.env.HOD_SIGNUP_CODE;
-    if (!expectedCode) return respondError(res, 500, 'HOD signup is not configured');
-    if (String(accessCode || '') !== String(expectedCode)) {
-        return respondError(res, 403, 'Invalid HOD access code');
-    }
-
-    try {
-        const existing = await db.findUserByEmail(email);
-        if (existing) return respondError(res, 409, 'Email already registered');
-
-        const passwordHash = await bcrypt.hash(String(password), 10);
-        const user = await db.createUser({
-            username,
-            email,
-            passwordHash,
-            role: 'HOD',
-            department_section: 'CSE-A'
-        });
-        if (!user) return respondError(res, 500, 'Could not create user');
-
-        const token = jwt.sign({ sub: user._id.toString(), email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-        return respondOk(res, { user: sanitizeUser(user), token });
-    } catch (e) {
-        return respondError(res, 500, e.message);
-    }
+    return respondError(res, 403, 'Registration is disabled. Contact the admin.');
 });
 
 // 0. Auth (Login)
 app.post('/api/auth/login', authLimiter, async (req, res) => {
-    const { email, password } = req.body || {};
-    if (!email || !password) return respondError(res, 400, 'Email and password are required');
-    if (!isValidEmail(email)) return respondError(res, 400, 'Invalid email format');
+    const { role, name, rollNumber, year, section, email, password } = req.body || {};
+    const normalizedRole = String(role || '').toUpperCase();
+    const authData = getAuthData();
 
-    try {
-        const user = await db.findUserByEmail(email);
-        if (!user) return respondError(res, 401, 'Invalid credentials');
-        if (user.role === 'HOD') return respondError(res, 403, 'Use HOD login');
+    if (normalizedRole === 'STUDENT') {
+        const roll = normalizeRollNumber(rollNumber);
+        const studentName = normalizeName(name);
+        const studentYear = normalizeYear(year);
+        const studentSection = normalizeSectionValue(section);
 
-        if (!user.passwordHash) {
-            const passwordHash = await bcrypt.hash(String(password), 10);
-            await db.setUserPassword(email, passwordHash);
-            user.passwordHash = passwordHash;
+        if (!roll || !studentName || !studentYear || !studentSection) {
+            return respondError(res, 400, 'Name, roll number, year, and section are required');
         }
 
-        const ok = await bcrypt.compare(String(password), String(user.passwordHash || ''));
-        if (!ok) return respondError(res, 401, 'Invalid credentials');
+        const match = (authData.students || []).find((s) => {
+            const sRoll = normalizeRollNumber(s.rollNumber);
+            const sYear = normalizeYear(s.year);
+            const sSection = normalizeSectionValue(s.section);
+            if (sRoll !== roll || sYear !== studentYear || sSection !== studentSection) return false;
+            return isNameMatch(studentName, s.name);
+        });
 
-        const token = jwt.sign({ sub: user._id.toString(), email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+        if (!match) return respondError(res, 401, 'Student not found in the approved list');
+
+        const userId = `student:${roll}`;
+        const user = upsertLocalUser({
+            _id: userId,
+            username: match.name,
+            email: `${roll.toLowerCase()}@student.local`,
+            role: 'STUDENT',
+            roll_number: roll,
+            section: studentSection,
+            year: studentYear,
+            department_section: toDepartmentSection(studentSection),
+            authSource: 'json',
+            sqlProgress: createEmptyProgress(),
+            nosqlProgress: createEmptyProgress()
+        });
+
+        const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         return respondOk(res, { user: sanitizeUser(user), token });
-    } catch (e) {
-        return respondError(res, 500, e.message);
     }
+
+    if (normalizedRole === 'STAFF') {
+        if (!email || !isValidEmail(email)) return respondError(res, 400, 'Valid staff email is required');
+        if (!name) return respondError(res, 400, 'Staff name is required');
+
+        const match = (authData.staff || []).find((s) => {
+            const sEmail = String(s.email || '').trim().toLowerCase();
+            return sEmail === String(email).trim().toLowerCase()
+                && isNameMatch(name, s.name);
+        });
+
+        if (!match) return respondError(res, 401, 'Staff not found in the approved list');
+
+        const staffYear = normalizeYear(match.year);
+        const staffSection = normalizeSectionValue(match.section);
+
+        const userId = `staff:${String(email).trim().toLowerCase()}`;
+        const user = upsertLocalUser({
+            _id: userId,
+            username: match.name,
+            email: String(email).trim().toLowerCase(),
+            role: 'STAFF',
+            section: staffSection,
+            year: staffYear,
+            department_section: toDepartmentSection(staffSection),
+            authSource: 'json'
+        });
+
+        const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+        return respondOk(res, { user: sanitizeUser(user), token });
+    }
+
+    if (normalizedRole === 'ADMIN') {
+        if (!email || !password) return respondError(res, 400, 'Admin email and password are required');
+        if (!isValidEmail(email)) return respondError(res, 400, 'Invalid email format');
+
+        const admin = authData.admin || {};
+        const adminEmail = String(admin.email || '').trim().toLowerCase();
+        const adminPassword = String(admin.password || '');
+
+        if (adminEmail !== String(email).trim().toLowerCase() || adminPassword !== String(password)) {
+            return respondError(res, 401, 'Invalid admin credentials');
+        }
+
+        const userId = `admin:${adminEmail}`;
+        const user = upsertLocalUser({
+            _id: userId,
+            username: 'Admin',
+            email: adminEmail,
+            role: 'ADMIN',
+            authSource: 'json'
+        });
+
+        const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+        return respondOk(res, { user: sanitizeUser(user), token });
+    }
+
+    return respondError(res, 400, 'Invalid role for login');
 });
 
 // 0. Auth (Login HOD)
 app.post('/api/auth/hod/login', authLimiter, async (req, res) => {
-    const { email, password } = req.body || {};
-    if (!email || !password) return respondError(res, 400, 'Email and password are required');
-    if (!isValidEmail(email)) return respondError(res, 400, 'Invalid email format');
-
-    try {
-        const user = await db.findUserByEmail(email);
-        if (!user) return respondError(res, 401, 'Invalid credentials');
-        if (user.role !== 'HOD') return respondError(res, 403, 'Not an HOD account');
-
-        if (!user.passwordHash) {
-            const passwordHash = await bcrypt.hash(String(password), 10);
-            await db.setUserPassword(email, passwordHash);
-            user.passwordHash = passwordHash;
-        }
-
-        const ok = await bcrypt.compare(String(password), String(user.passwordHash || ''));
-        if (!ok) return respondError(res, 401, 'Invalid credentials');
-
-        const token = jwt.sign({ sub: user._id.toString(), email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-        return respondOk(res, { user: sanitizeUser(user), token });
-    } catch (e) {
-        return respondError(res, 500, e.message);
-    }
+    return respondError(res, 404, 'Endpoint removed. Use /api/auth/login.');
 });
 
 // 0. Auth (Me)
@@ -775,6 +853,18 @@ app.post('/api/user/progress', requireAuth, requireStudent, async (req, res) => 
     if (!dbType || !progress) return respondError(res, 400, 'Missing required fields');
 
     try {
+        if (req.user && req.user.authSource === 'json') {
+            const updateKey = dbType === 'SQL' ? 'sqlProgress' : 'nosqlProgress';
+            const existing = localUserStore.get(req.user._id) || req.user;
+            const merged = {
+                ...existing,
+                [updateKey]: progress
+            };
+            localUserStore.set(req.user._id, merged);
+            req.user = merged;
+            return respondOk(res);
+        }
+
         await db.updateUserProgressById(req.user._id, dbType, progress);
         return respondOk(res);
     } catch (e) {
@@ -782,16 +872,68 @@ app.post('/api/user/progress', requireAuth, requireStudent, async (req, res) => 
     }
 });
 
-// HOD Dashboard
-app.get('/api/hod/dashboard', requireAuth, requireRole('HOD'), async (req, res) => {
-    const sectionRaw = req.query.section || '';
-    const section = sectionRaw ? String(sectionRaw).toUpperCase() : '';
-    if (section && !isValidSection(section)) {
+const buildLocalDashboardData = ({ section, year }) => {
+    const authData = getAuthData();
+    const students = (authData.students || []).map((s) => {
+        const roll = normalizeRollNumber(s.rollNumber);
+        const entrySection = normalizeSectionValue(s.section);
+        const entryYear = normalizeYear(s.year);
+        const userId = `student:${roll}`;
+        const stored = localUserStore.get(userId);
+        const sqlProgress = ensureProgress(stored && stored.sqlProgress ? stored.sqlProgress : createEmptyProgress());
+        const nosqlProgress = ensureProgress(stored && stored.nosqlProgress ? stored.nosqlProgress : createEmptyProgress());
+        return {
+            _id: userId,
+            username: s.name,
+            email: `${roll.toLowerCase()}@student.local`,
+            role: 'STUDENT',
+            roll_number: roll,
+            section: entrySection,
+            year: entryYear,
+            department_section: toDepartmentSection(entrySection),
+            sqlProgress,
+            nosqlProgress
+        };
+    });
+
+    const filtered = students.filter((s) => {
+        if (section && s.section !== section) return false;
+        if (year && s.year !== year) return false;
+        return true;
+    });
+
+    return { students: filtered };
+};
+
+// Admin/Staff Dashboard
+app.get('/api/hod/dashboard', requireAuth, requireAnyRole(['ADMIN', 'STAFF']), async (req, res) => {
+    const isStaff = req.user && req.user.role === 'STAFF';
+    const requestedSection = normalizeSectionValue(req.query.section);
+    const requestedYear = normalizeYear(req.query.year);
+
+    const enforcedSection = isStaff
+        ? normalizeSectionValue(req.user.section || req.user.department_section)
+        : requestedSection;
+    const enforcedYear = isStaff ? normalizeYear(req.user.year) : requestedYear;
+
+    if (req.query.section && !normalizeSectionValue(req.query.section)) {
         return res.status(400).json({ success: false, error: 'Invalid section filter' });
+    }
+    if (isStaff && !enforcedSection) {
+        return res.status(400).json({ success: false, error: 'Staff section is missing' });
     }
 
     try {
-        const data = await db.getHodDashboard(section || null);
+        if (req.user && req.user.authSource === 'json') {
+            const data = buildLocalDashboardData({
+                section: enforcedSection || null,
+                year: enforcedYear || null
+            });
+            return res.json({ success: true, data });
+        }
+
+        const dbSection = enforcedSection ? toDepartmentSection(enforcedSection) : null;
+        const data = await db.getHodDashboard(dbSection);
         res.json({ success: true, data });
     } catch (e) {
         res.status(500).json({ success: false, error: e.message });

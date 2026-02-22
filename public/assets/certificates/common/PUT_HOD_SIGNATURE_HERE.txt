@@ -1,0 +1,8 @@
+Place the HOD e-sign image file in this same folder with the exact name:
+
+  hod_signature.png
+
+Then refresh the app / docs model.
+
+Used by:
+- /assets/certificates/common/hod_signature.png

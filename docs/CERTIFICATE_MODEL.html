@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Certificate Model (XXX)</title>
+  <style>
+    body{margin:0;padding:24px;background:#0f172a;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    .wrap{display:flex;justify-content:center;}
+    .paper{width:1000px;max-width:100%;height:700px;background:#fff;padding:40px;box-shadow:0 10px 30px rgba(0,0,0,.45);}
+    .inner{height:100%;border:5px solid #1e3a8a;padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;box-sizing:border-box;}
+    .logo{position:absolute;top:20px;left:20px;width:100px;height:100px;object-fit:contain;}
+    .college{margin-top:20px;max-width:80%;text-align:center;font-size:28px;font-weight:800;color:#1e3a8a;letter-spacing:1px;text-transform:uppercase;font-family:serif;}
+    .title{font-size:48px;font-weight:900;color:#1e3a8a;letter-spacing:2px;text-transform:uppercase;font-family:serif;margin:10px 0;}
+    .presented{font-size:20px;color:#1e3a8a;font-style:italic;margin:10px 0;}
+    .nameLine{border-bottom:2px solid #38bdf8;min-width:50%;text-align:center;margin:20px 0;padding-bottom:5px;}
+    .name{font-size:42px;font-weight:900;color:#1e3a8a;font-family:serif;}
+    .bodyText{font-size:18px;color:#1e3a8a;text-align:center;max-width:80%;line-height:1.6;text-transform:uppercase;}
+    .course{font-weight:900;font-size:22px;}
+    .footer{display:flex;justify-content:space-between;align-items:flex-end;width:100%;padding:0 50px;margin-top:40px;box-sizing:border-box;}
+    .sigBlock{width:200px;display:flex;flex-direction:column;align-items:center;}
+    .sigImg{width:100%;height:48px;object-fit:contain;margin-bottom:6px;}
+    .sigHint{display:none;margin-top:6px;font-size:12px;line-height:1.35;color:#b91c1c;text-align:center;font-weight:700;}
+    .sigLine{width:100%;height:2px;background:#38bdf8;margin-bottom:10px;}
+    .sigLabel{font-size:14px;font-weight:800;color:#1e3a8a;text-align:center;}
+    .seal{width:80px;height:80px;background:#38bdf8;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+    .check{color:#fff;font-size:40px;font-weight:900;}
+    .dateText{font-size:16px;font-weight:800;color:#1e3a8a;margin-bottom:5px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="paper">
+      <div class="inner">
+        <img class="logo" src="../public/assets/certificates/common/college_logo.png" alt="College Logo" />
+
+        <div class="college">KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY</div>
+        <div class="title">CERTIFICATE OF COMPLETION</div>
+        <div class="presented">This is presented to :</div>
+
+        <div class="nameLine"><span class="name">XXX</span></div>
+
+        <div class="bodyText">
+          Has successfully completed the <br />
+          <span class="course">NOSQL Database Mastery Certification Program</span>
+        </div>
+
+        <div class="footer">
+          <div class="sigBlock">
+            <img
+              id="hod-sign"
+              class="sigImg"
+              src="../public/assets/certificates/common/hod_signature.png"
+              alt="HOD e-sign"
+              onerror="(function(){
+                var img=document.getElementById('hod-sign');
+                var hint=document.getElementById('hod-sign-hint');
+                var list=window.__hodSigList || [];
+                var idx=(window.__hodSigIdx || 0);
+                if(idx < list.length){
+                  window.__hodSigIdx = idx + 1;
+                  if(img) img.src = list[idx];
+                  return;
+                }
+                if(hint) hint.style.display='block';
+                if(img) img.style.display='none';
+              })()"
+            />
+            <div id="hod-sign-hint" class="sigHint">
+              Signature image not found.<br/>
+              Put your file here:<br/>
+              <span style="font-weight:800;">public/assets/certificates/common/hod_signature.png</span>
+            </div>
+            <div class="sigLine"></div>
+            <div class="sigLabel">HOD<br/>DEPARTMENT OF CSE</div>
+          </div>
+
+          <div class="seal"><div class="check">✓</div></div>
+
+          <div class="sigBlock">
+            <div class="dateText">21-Feb-2026</div>
+            <div class="sigLine"></div>
+            <div class="sigLabel">DATE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  // When opened via file://, we can't rely on Vite static serving.
+  // Try a few common filenames the user might save.
+  window.__hodSigList = [
+    '../public/assets/certificates/common/hod_signature.png',
+    '../public/assets/certificates/common/hod_signature.jpg',
+    '../public/assets/certificates/common/hod_signature.jpeg',
+    '../public/assets/certificates/common/signature.png',
+    '../public/assets/certificates/common/signature.jpg',
+    '../public/assets/certificates/common/signature.jpeg'
+  ];
+  // We already start with hod_signature.png as the <img src>, so start next try at index 1.
+  window.__hodSigIdx = 1;
+</script>
+</html>

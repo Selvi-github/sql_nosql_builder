@@ -1,0 +1,9 @@
+
+
+staff Name             Email                                        CSE      Year
+
+Asir D                 asircse@kamarajengg.edu.in                CSE-A        3
+Ram Prasath S          ramprasathcse@kamarajengg.edu.in          CSE-C        3
+Monaha M               mohanacse@kamarajengg.edu.in              CSE-C       2
+Pradhipa D             pradhipacse@kamarajengg.edu.in            CSE-A         2
+John Livingston J      johnlivingstoncse@kamarajengg.edu.in      CSE-B        3

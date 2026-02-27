@@ -329,7 +329,6 @@ const GameLayout = ({ dbType, theme }) => {
                                 </div>
                             )}
                         </div>
-                        )}
                     </div>
                 </div>
             )}

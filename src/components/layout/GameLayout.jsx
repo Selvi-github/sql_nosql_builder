@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import LevelMap from '../game/LevelMap';
 import BlocklyEditor from '../game/BlocklyEditor';
 import ERVisualizer from '../game/ERVisualizer';
 import { validateQuery } from '../../utils/queryValidator';
 
-const GameLayout = ({ dbType }) => {
+const GameLayout = ({ dbType, theme }) => {
     const {
         currentLevel,
         currentQuestion,
         handleCorrectAnswer,
         handleWrongAnswer,
         lastAttemptResult,
-        showConfetti
+        completedQuestions,
+        showConfetti,
+        levels
     } = useGame();
 
     // MODES: 'FREE' | 'LEARN'
@@ -22,6 +24,31 @@ const GameLayout = ({ dbType }) => {
     const [isExecuting, setIsExecuting] = useState(false);
     const [showERModal, setShowERModal] = useState(false);
     const [showSchemaModal, setShowSchemaModal] = useState(false);
+    const [showLevelModal, setShowLevelModal] = useState(false);
+    const [selectedLevelId, setSelectedLevelId] = useState(currentLevel.id);
+    const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+    const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
+    const [bottomHeight, setBottomHeight] = useState(240);
+    const isResizingRef = useRef(false);
+    const resizeStartRef = useRef({ startY: 0, startHeight: 240 });
+    const [confettiMessage, setConfettiMessage] = useState('Congratulations!');
+    const [confettiEmoji, setConfettiEmoji] = useState('🎉');
+    const isLight = theme !== 'dark';
+    const styles = buildStyles(isLight);
+
+    const selectedLevel = levels.find((lvl) => lvl.id === selectedLevelId) || currentLevel;
+    const levelQuestions = selectedLevel?.questions || [];
+    const completedInLevel = levelQuestions.filter((q) => completedQuestions.includes(q.id)).length;
+    const levelTotal = levelQuestions.length || 1;
+    const levelProgress = Math.round((completedInLevel / levelTotal) * 100);
+
+    const resultItems = executionResult
+        ? (Array.isArray(executionResult.results)
+            ? executionResult.results
+            : (Array.isArray(executionResult.data)
+                ? [{ type: 'table', data: executionResult.data, message: 'Statement 1 OK.' }]
+                : []))
+        : [];
 
     const getToken = () => {
         try {
@@ -37,6 +64,7 @@ const GameLayout = ({ dbType }) => {
     const runQuery = async () => {
         setIsExecuting(true);
         setExecutionResult(null);
+        setIsBottomPanelOpen(true);
 
         // Validation only triggers in LEARNING MODE
         if (mode === 'LEARN') {
@@ -90,140 +118,221 @@ const GameLayout = ({ dbType }) => {
         }
     };
 
+    useEffect(() => {
+        if (!showConfetti) return;
+        const messages = [
+            'Congratulations!',
+            'Level Complete!',
+            'Excellent!',
+            'Super!',
+            'Wonderful!',
+            'Wow!',
+            'Great!'
+        ];
+        const emojis = ['💪', '🏆', '🎊', '✨', '👍', '👑', '🚀', '🙌', '👏', '🌈', '😁', '💰', '💎', '🌟', '🔝', '💯', '🌞', '💼', '📈', '🍾', '💵', '🎓', '🥇', '🥈', '🥉'];
+        setConfettiMessage(messages[Math.floor(Math.random() * messages.length)]);
+        setConfettiEmoji(emojis[Math.floor(Math.random() * emojis.length)]);
+    }, [showConfetti]);
+
+    useEffect(() => {
+        setSelectedLevelId(currentLevel.id);
+    }, [currentLevel.id, showLevelModal]);
+
+    const startResize = (event) => {
+        isResizingRef.current = true;
+        resizeStartRef.current = { startY: event.clientY, startHeight: bottomHeight };
+        window.addEventListener('mousemove', handleResize);
+        window.addEventListener('mouseup', stopResize);
+    };
+
+    const handleResize = (event) => {
+        if (!isResizingRef.current) return;
+        const delta = resizeStartRef.current.startY - event.clientY;
+        const nextHeight = resizeStartRef.current.startHeight + delta;
+        const minHeight = 200;
+        const maxHeight = Math.min(window.innerHeight * 0.45, 460);
+        setBottomHeight(Math.max(minHeight, Math.min(maxHeight, nextHeight)));
+    };
+
+    const stopResize = () => {
+        isResizingRef.current = false;
+        window.removeEventListener('mousemove', handleResize);
+        window.removeEventListener('mouseup', stopResize);
+    };
+
     return (
         <div style={styles.container}>
-            {/* LEFT: MAP (Only in Learn Mode) */}
-            {mode === 'LEARN' && <LevelMap />}
+            <div style={styles.mainRow}>
+                {/* LEFT: MAP (Only in Learn Mode) */}
+                {mode === 'LEARN' && (
+                    <div style={{ ...styles.leftPanel, ...(isLeftPanelOpen ? {} : styles.leftPanelCollapsed) }}>
+                        <LevelMap theme={theme} />
+                    </div>
+                )}
 
-            {/* CENTER: WORKSPACE */}
-            <div style={styles.centerPanel}>
-                {/* TOOLBAR */}
-                <div style={styles.toolbar}>
-                    <div style={styles.modeToggle}>
-                        <button
-                            style={{ ...styles.toggleBtn, ...(mode === 'FREE' ? styles.activeBtn : {}) }}
-                            onClick={() => setMode('FREE')}
-                        >
-                            🛠️ Free Builder
-                        </button>
-                        <button
-                            style={{ ...styles.toggleBtn, ...(mode === 'LEARN' ? styles.activeBtn : {}) }}
-                            onClick={() => setMode('LEARN')}
-                        >
-                            🎓 Learning Mode
-                        </button>
-                        <button
-                            style={{ ...styles.schemaBtn }}
-                            onClick={() => setShowSchemaModal(true)}
-                            title="View sample data schema"
-                        >
-                            📋 View Schema
-                        </button>
+                {/* CENTER: WORKSPACE */}
+                <div style={styles.centerPanel}>
+                    {/* TOOLBAR */}
+                    <div style={styles.toolbar}>
+                        <div style={styles.toolbarLeft}>
+                            {mode === 'LEARN' && (
+                                <button
+                                    style={styles.collapseBtn}
+                                    onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+                                    title={isLeftPanelOpen ? 'Hide levels panel' : 'Show levels panel'}
+                                >
+                                    {isLeftPanelOpen ? '◀' : '▶'}
+                                </button>
+                            )}
+                            <div style={styles.modeToggle}>
+                                <button
+                                    style={{ ...styles.toggleBtn, ...(mode === 'FREE' ? styles.activeBtn : {}) }}
+                                    onClick={() => setMode('FREE')}
+                                >
+                                    🛠️ Free Builder
+                                </button>
+                                <button
+                                    style={{ ...styles.toggleBtn, ...(mode === 'LEARN' ? styles.activeBtn : {}) }}
+                                    onClick={() => setMode('LEARN')}
+                                >
+                                    🎓 Learning Mode
+                                </button>
+                            </div>
+                            <button
+                                style={styles.schemaBtn}
+                                onClick={() => setShowSchemaModal(true)}
+                                title="View sample data schema"
+                            >
+                                📋 View Schema
+                            </button>
+                            <button
+                                style={styles.schemaBtn}
+                                onClick={() => setShowERModal(true)}
+                                title="View ER diagram"
+                            >
+                                🧩 ER Diagram
+                            </button>
+                        </div>
+
+                        {mode === 'LEARN' && (
+                            <div style={styles.questBar} title={currentQuestion.text}>
+                                <span style={{ fontWeight: 'bold', color: '#2563eb' }}>Q:</span> {currentQuestion.text}
+                            </div>
+                        )}
+
+                        <div style={styles.toolbarRight}>
+                            {mode === 'LEARN' && (
+                                <button style={styles.levelBtn} onClick={() => setShowLevelModal(true)}>
+                                    Level {currentLevel.id}
+                                </button>
+                            )}
+                            <button
+                                style={{
+                                    ...styles.outputToggleBtn,
+                                    ...(isBottomPanelOpen ? styles.outputToggleBtnActive : {})
+                                }}
+                                onClick={() => setIsBottomPanelOpen(true)}
+                            >
+                                Query
+                            </button>
+                        </div>
                     </div>
 
-                    {mode === 'LEARN' && (
-                        <div style={styles.questBar} title={currentQuestion.text}>
-                            <span style={{ fontWeight: 'bold', color: '#fbbf24' }}>Q:</span> {currentQuestion.text}
-                        </div>
-                    )}
-                </div>
-
-                <div style={styles.blocklyContainer}>
-                    <BlocklyEditor
-                        onCodeChange={setGeneratedCode}
-                        category={mode === 'FREE' ? dbType : currentLevel.type} // Pass 'SQL' or 'NoSQL' in Free Mode
-                    />
+                    <div style={styles.blocklyContainer}>
+                        <BlocklyEditor
+                            onCodeChange={setGeneratedCode}
+                            category={mode === 'FREE' ? dbType : currentLevel.type} // Pass 'SQL' or 'NoSQL' in Free Mode
+                            uiTheme={theme}
+                        />
+                    </div>
                 </div>
             </div>
 
-            {/* RIGHT: RESULTS */}
-            <div style={styles.rightPanel}>
-                <div style={styles.panelSection}>
-                    <div style={styles.panelHeader}>GENERATED QUERY</div>
-                    <div style={styles.codeDisplay}>{generatedCode}</div>
-                    <button onClick={runQuery} style={styles.runBtn}>
-                        {isExecuting ? 'Running...' : '▶ EXECUTE'}
-                    </button>
-                </div>
+            {/* BOTTOM: OUTPUT PANEL */}
+            {isBottomPanelOpen && (
+                <div style={{ ...styles.bottomPanel, height: bottomHeight }}>
+                    <div style={styles.resizeHandle} onMouseDown={startResize} title="Drag to resize"></div>
+                    <div style={styles.bottomHeader}>
+                        <div style={styles.bottomTitle}>Query + Output</div>
+                        <button
+                            style={styles.closePanelBtn}
+                            onClick={() => setIsBottomPanelOpen(false)}
+                            title="Close panel"
+                        >
+                            ✕
+                        </button>
+                    </div>
 
-                <div style={{ ...styles.panelSection, flex: 1 }}>
-                    <div style={styles.panelHeader}>RESULTS (LIVE CLOUD)</div>
-                    {executionResult ? (
-                        <div style={styles.resultBox}>
-                            {executionResult.success ? (
-                                <>
-                                    <div style={{ color: executionResult.mode === 'OFFLINE' ? '#fbbf24' : '#4ade80', marginBottom: '8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        <div style={{ width: '8px', height: '8px', backgroundColor: executionResult.mode === 'OFFLINE' ? '#fbbf24' : '#4ade80', borderRadius: '50%' }}></div>
-                                        {executionResult.mode === 'OFFLINE' ? 'OFFLINE MODE' : 'CONNECTED TO CLOUD DB'}
-                                    </div>
-                                    <div style={styles.tableScroll}>
-                                        {/* SQL Multi-Statement Results */}
-                                        {executionResult.results && (
-                                            executionResult.results.map((res, idx) => (
-                                                <div key={idx} style={{ marginBottom: '20px', borderLeft: '2px solid #3b82f6', paddingLeft: '10px' }}>
-                                                    <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '4px' }}>{res.message}</div>
-                                                    {res.type === 'table' ? (
-                                                        dbType === 'NoSQL' ? (
-                                                            <JSONDisplay data={res.data} />
-                                                        ) : (
-                                                            <ResultTable data={res.data} />
-                                                        )
-                                                    ) : (
-                                                        <div style={{ color: '#94a3b8', fontSize: '11px', backgroundColor: '#1e293b', padding: '6px', borderRadius: '4px' }}>
-                                                            {res.data && res.data[0] && res.data[0].message ? `✅ ${res.data[0].message}` : '✅ Statement Executed'}
+                    <div style={styles.bottomContent}>
+                        <div style={styles.panelSection}>
+                            <div style={styles.codeDisplay}>{generatedCode}</div>
+                            <button onClick={runQuery} style={styles.runBtn}>
+                                {isExecuting ? 'Running...' : '▶ EXECUTE'}
+                            </button>
+                        </div>
+                        <div style={{ ...styles.panelSection, flex: 1 }}>
+                            <div style={styles.panelHeader}>RESULTS (LIVE CLOUD)</div>
+                            {executionResult ? (
+                                <div style={styles.resultBox}>
+                                    {executionResult.success ? (
+                                        <>
+                                            <div style={styles.executionStatus}>
+                                                <div
+                                                    style={{
+                                                        ...styles.executionDot,
+                                                        backgroundColor: executionResult.mode === 'OFFLINE' ? '#f59e0b' : '#10b981'
+                                                    }}
+                                                ></div>
+                                                {executionResult.mode === 'OFFLINE' ? 'OFFLINE MODE' : 'CONNECTED TO CLOUD DB'}
+                                            </div>
+                                            <div style={styles.tableScroll}>
+                                                {/* SQL Multi-Statement Results */}
+                                                {resultItems.length > 0 ? (
+                                                    resultItems.map((res, idx) => (
+                                                        <div key={idx} style={styles.resultBlock}>
+                                                            <div style={styles.resultMeta}>{res.message}</div>
+                                                            {res.type === 'table' ? (
+                                                                dbType === 'NoSQL' ? (
+                                                                    <JSONDisplay data={res.data} styles={styles} />
+                                                                ) : (
+                                                                    <ResultTable data={res.data} styles={styles} />
+                                                                )
+                                                            ) : (
+                                                                <div style={styles.successToast}>
+                                                                    {res.data && res.data[0] && res.data[0].message ? `✅ ${res.data[0].message}` : '✅ Statement Executed'}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                </>
+                                                    ))
+                                                ) : (
+                                                    <div style={styles.noDataText}>No data returned</div>
+                                                )}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div style={styles.errorBox}>
+                                            <div style={styles.errorTitle}>⚠️ Cloud Execution Error</div>
+                                            <div style={styles.errorText}>{executionResult.error}</div>
+                                            <div style={styles.errorHint}>
+                                                <strong>Tip:</strong> If you changed columns, the old table structure in the cloud might be clashing.
+                                                Drag a new <strong>CREATE TABLE</strong> block to drop and recreate it fresh.
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             ) : (
-                                <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '6px', border: '1px solid #ef4444' }}>
-                                    <div style={{ color: '#f87171', fontWeight: 'bold', marginBottom: '4px' }}>⚠️ Cloud Execution Error</div>
-                                    <div style={{ color: '#fca5a5', fontSize: '11px', lineHeight: '1.4' }}>{executionResult.error}</div>
-                                    <div style={{ marginTop: '10px', fontSize: '10px', color: '#94a3b8', fontStyle: 'italic' }}>
-                                        <strong>Senior Dev Tip:</strong> If you changed columns, the old table structure in the cloud might be clashing.
-                                        Drag a new <strong>CREATE TABLE</strong> block to drop and recreate it fresh!
+                                <div style={styles.emptyState}>
+                                    <div style={{ fontSize: '26px', marginBottom: '8px' }}>⚡</div>
+                                    <div style={{ color: '#64748b', fontSize: '12px' }}>
+                                        Assemble blocks and hit <strong>EXECUTE</strong> to run your query on the Cloud.
                                     </div>
                                 </div>
                             )}
                         </div>
-                    ) : (
-                        <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                            <div style={{ fontSize: '30px', marginBottom: '10px' }}>⚡</div>
-                            <div style={{ color: '#64748b', fontSize: '12px' }}>
-                                Assemble blocks and hit <strong>EXECUTE</strong><br />
-                                to run your query on the Cloud.
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Schema Reference Guide */}
-                <div style={{ ...styles.panelSection, backgroundColor: '#0f172a', margin: '10px', borderRadius: '8px', border: '1px solid #334155' }}>
-                    <div style={{ ...styles.panelHeader, color: '#3b82f6' }}>📑 SCHEMA REFERENCE</div>
-                    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                        <div style={{ marginBottom: '8px' }}>
-                            <strong style={{ color: '#e2e8f0' }}>Dynamic Schema</strong><br />
-                            Create tables using blocks to see them here in the future or via the ER Visualizer.
-                        </div>
+                        )}
                     </div>
                 </div>
-
-                {/* ER Visualizer Button (Bottom Right) */}
-                <div style={{ ...styles.panelSection, borderBottom: 'none' }}>
-                    <button
-                        style={styles.erBtn}
-                        onClick={() => setShowERModal(true)}
-                    >
-                        📊 View Entity-Relationship (ER) Diagram
-                    </button>
-                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '10px', textAlign: 'center' }}>
-                        Visualizes CREATE TABLE & RELATIONSHIPS
-                    </div>
-                </div>
-            </div>
+            )}
 
             {/* ER MODAL */}
             {showERModal && (
@@ -251,19 +360,195 @@ const GameLayout = ({ dbType }) => {
                             <button style={styles.modalClose} onClick={() => setShowSchemaModal(false)}>✕</button>
                         </div>
                         <div style={styles.schemaModalBody}>
-                            {dbType === 'SQL' ? <SQLSchemaView /> : <NoSQLSchemaView />}
+                            {dbType === 'SQL' ? <SQLSchemaView styles={styles} /> : <NoSQLSchemaView styles={styles} />}
                         </div>
                     </div>
                 </div>
             )}
 
-            {showConfetti && <div style={styles.confetti}>🎊 LEVEL COMPLETE! 🎊</div>}
+            {showLevelModal && (
+                <div style={styles.levelModalOverlay} onClick={() => setShowLevelModal(false)}>
+                    <div style={styles.levelModalContent} onClick={(e) => e.stopPropagation()}>
+                        <div style={styles.levelModalHeader}>
+                            <h2 style={styles.modalTitle}>Level - {selectedLevelId}</h2>
+                            <button style={styles.modalClose} onClick={() => setShowLevelModal(false)}>✕</button>
+                        </div>
+                        <div style={styles.levelModalBody}>
+                            <div style={styles.levelLeft}>
+                                <div style={styles.levelCard}>
+                                    <div style={styles.levelIcon}>🗒️</div>
+                                    <div style={styles.levelTitle}>Level - {selectedLevelId}</div>
+                                    <div style={styles.levelMeta}>{completedInLevel} / {levelTotal} questions</div>
+                                </div>
+                                <div style={styles.levelSelector}>
+                                    {levels.map((lvl) => (
+                                        <button
+                                            key={lvl.id}
+                                            style={{
+                                                ...styles.levelSelectorBtn,
+                                                ...(lvl.id === selectedLevelId ? styles.levelSelectorBtnActive : {})
+                                            }}
+                                            onClick={() => setSelectedLevelId(lvl.id)}
+                                        >
+                                            Level {lvl.id}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div style={styles.progressCard}>
+                                    <svg viewBox="0 0 120 120" style={styles.progressRing}>
+                                        <circle cx="60" cy="60" r="48" stroke={styles.progressTrackColor} strokeWidth="10" fill="none" />
+                                        <circle
+                                            cx="60"
+                                            cy="60"
+                                            r="48"
+                                            stroke={styles.progressFillColor}
+                                            strokeWidth="10"
+                                            fill="none"
+                                            strokeDasharray={`${2 * Math.PI * 48}`}
+                                            strokeDashoffset={`${2 * Math.PI * 48 * (1 - levelProgress / 100)}`}
+                                            strokeLinecap="round"
+                                        />
+                                        <text x="60" y="58" textAnchor="middle" style={styles.progressRingLabel}>Solved</text>
+                                        <text x="60" y="82" textAnchor="middle" style={styles.progressRingValue}>
+                                            {completedInLevel}/{levelTotal}
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div style={styles.levelRight}>
+                                <div style={styles.levelListHeader}>Questions</div>
+                                <div style={styles.levelList}>
+                                    {levelQuestions.map((q, idx) => {
+                                        const done = completedQuestions.includes(q.id);
+                                        return (
+                                            <div key={q.id} style={styles.levelRowItem}>
+                                                <div style={styles.levelCheck}>{done ? '✓' : ''}</div>
+                                                <div style={styles.levelQuestionText}>
+                                                    {idx + 1}. {q.text}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showConfetti && (
+                <div style={styles.confettiOverlay}>
+                    <style>{`
+                        @keyframes confetti-fall {
+                            0% { transform: translateY(-30px) translateX(0px) rotate(0deg); opacity: 0; }
+                            10% { opacity: 1; }
+                            100% { transform: translateY(420px) translateX(var(--drift)) rotate(360deg); opacity: 0; }
+                        }
+                        @keyframes confetti-left {
+                            0% { transform: translateX(-40px) translateY(0px) rotate(0deg); opacity: 0; }
+                            10% { opacity: 1; }
+                            100% { transform: translateX(520px) translateY(var(--drop)) rotate(360deg); opacity: 0; }
+                        }
+                        @keyframes confetti-right {
+                            0% { transform: translateX(40px) translateY(0px) rotate(0deg); opacity: 0; }
+                            10% { opacity: 1; }
+                            100% { transform: translateX(-520px) translateY(var(--drop)) rotate(360deg); opacity: 0; }
+                        }
+                        @keyframes confetti-pop {
+                            0% { transform: scale(0.9); opacity: 0; }
+                            60% { transform: scale(1.05); opacity: 1; }
+                            100% { transform: scale(1); opacity: 1; }
+                        }
+                    `}</style>
+                    <div style={styles.confettiBurst}>
+                        {Array.from({ length: 48 }).map((_, idx) => {
+                            const left = (idx * 7) % 100;
+                            const delay = (idx % 12) * 0.06;
+                            const size = 10 + (idx % 8);
+                            const drift = (idx % 18 - 9) * 10;
+                            const colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#22d3ee', '#f97316', '#facc15'];
+                            return (
+                                <span
+                                    key={`top-${idx}`}
+                                    style={{
+                                        ...styles.confettiPiece,
+                                        left: `${left}%`,
+                                        width: `${size}px`,
+                                        height: `${size * 1.6}px`,
+                                        backgroundColor: colors[idx % colors.length],
+                                        animationDelay: `${delay}s`,
+                                        animationDuration: '1.6s',
+                                        animationIterationCount: 'infinite',
+                                        marginLeft: '-4px',
+                                        animationName: 'confetti-fall',
+                                        ['--drift']: `${drift}px`
+                                    }}
+                                ></span>
+                            );
+                        })}
+                        {Array.from({ length: 36 }).map((_, idx) => {
+                            const top = (idx * 6) % 100;
+                            const delay = (idx % 10) * 0.08;
+                            const size = 10 + (idx % 8);
+                            const drop = (idx % 10 + 6) * 16;
+                            const colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#22d3ee', '#f97316', '#facc15'];
+                            return (
+                                <span
+                                    key={`left-${idx}`}
+                                    style={{
+                                        ...styles.confettiPiece,
+                                        top: `${top}%`,
+                                        left: '0%',
+                                        width: `${size}px`,
+                                        height: `${size * 1.6}px`,
+                                        backgroundColor: colors[(idx + 2) % colors.length],
+                                        animationDelay: `${delay}s`,
+                                        animationDuration: '1.8s',
+                                        animationIterationCount: 'infinite',
+                                        animationName: 'confetti-left',
+                                        ['--drop']: `${drop}px`
+                                    }}
+                                ></span>
+                            );
+                        })}
+                        {Array.from({ length: 36 }).map((_, idx) => {
+                            const top = (idx * 6) % 100;
+                            const delay = (idx % 10) * 0.08;
+                            const size = 10 + (idx % 8);
+                            const drop = (idx % 10 + 6) * 16;
+                            const colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#22d3ee', '#f97316', '#facc15'];
+                            return (
+                                <span
+                                    key={`right-${idx}`}
+                                    style={{
+                                        ...styles.confettiPiece,
+                                        top: `${top}%`,
+                                        left: '100%',
+                                        width: `${size}px`,
+                                        height: `${size * 1.6}px`,
+                                        backgroundColor: colors[(idx + 4) % colors.length],
+                                        animationDelay: `${delay}s`,
+                                        animationDuration: '1.8s',
+                                        animationIterationCount: 'infinite',
+                                        animationName: 'confetti-right',
+                                        ['--drop']: `${drop}px`
+                                    }}
+                                ></span>
+                            );
+                        })}
+                    </div>
+                    <div style={styles.confettiCard}>
+                        <div style={styles.confettiEmoji}>{confettiEmoji}</div>
+                        <div style={styles.confettiText}>{confettiMessage}</div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 // SQL Schema View Component
-const SQLSchemaView = () => {
+const SQLSchemaView = ({ styles }) => {
     return (
         <div style={styles.schemaContainer}>
             <h3 style={styles.schemaSubtitle}>users Table Structure</h3>
@@ -338,7 +623,7 @@ const SQLSchemaView = () => {
 };
 
 // NoSQL Schema View Component
-const NoSQLSchemaView = () => {
+const NoSQLSchemaView = ({ styles }) => {
     return (
         <div style={styles.schemaContainer}>
             <h3 style={styles.schemaSubtitle}>users Collection - Sample Document</h3>
@@ -367,9 +652,9 @@ const NoSQLSchemaView = () => {
 };
 
 // JSON Display Component for NoSQL Results
-const JSONDisplay = ({ data }) => {
+const JSONDisplay = ({ data, styles }) => {
     if (!data || !Array.isArray(data) || data.length === 0) {
-        return <div style={{ padding: '10px', color: '#94a3b8' }}>No documents returned</div>;
+        return <div style={{ padding: '10px', ...styles.noDataText }}>No documents returned</div>;
     }
 
     return (
@@ -382,15 +667,15 @@ const JSONDisplay = ({ data }) => {
 };
 
 // Simple Result Table Component with Safety Checks
-const ResultTable = ({ data }) => {
+const ResultTable = ({ data, styles }) => {
     if (!data || !Array.isArray(data) || data.length === 0) {
-        return <div style={{ padding: '10px', color: '#94a3b8' }}>No data returned</div>;
+        return <div style={{ padding: '10px', ...styles.noDataText }}>No data returned</div>;
     }
 
     // Safety check: Ensure the first item is actually an object to extract keys
     const firstItem = data[0];
     if (typeof firstItem !== 'object' || firstItem === null) {
-        return <div style={{ padding: '10px', color: '#94a3b8' }}>Invalid data format</div>;
+        return <div style={{ padding: '10px', ...styles.noDataText }}>Invalid data format</div>;
     }
 
     const cols = Object.keys(firstItem);
@@ -411,262 +696,723 @@ const ResultTable = ({ data }) => {
     );
 };
 
-const styles = {
-    container: {
-        display: 'flex',
-        height: 'calc(100vh - 60px)',
-        width: '100vw',
-        backgroundColor: '#0b1120',
-        color: 'white',
-        overflow: 'hidden',
-        minWidth: '1024px'
-    },
-    leftPanel: {
-        width: '240px',
-        minWidth: '240px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#161e31',
-        borderRight: '1px solid #1f2937',
-        height: '100%',
-        boxSizing: 'border-box',
-        overflowY: 'auto',
-        paddingBottom: '100px'
-    },
-    centerPanel: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: '1px solid #1f2937',
-        overflowY: 'hidden'
-    },
-    toolbar: {
-        height: '60px', borderBottom: '1px solid #1f2937', display: 'flex', alignItems: 'center', padding: '0 20px',
-        backgroundColor: '#161e31'
-    },
-    modeToggle: { display: 'flex', gap: '10px', backgroundColor: '#0f172a', padding: '4px', borderRadius: '8px' },
-    toggleBtn: {
-        padding: '6px 12px', border: 'none', backgroundColor: 'transparent', color: '#94a3b8',
-        cursor: 'pointer', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold'
-    },
-    activeBtn: { backgroundColor: '#4f46e5', color: 'white' },
-    questBar: {
-        flex: 1, textAlign: 'center', padding: '0 20px',
-        fontSize: '14px', maxWidth: '800px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        minWidth: 0
-    },
-    blocklyContainer: { flex: 1, position: 'relative' },
+const buildStyles = (isLight) => {
+    const palette = isLight
+        ? {
+            pageBg: '#f4f7fb',
+            panelBg: '#ffffff',
+            panelSoft: '#f8fafc',
+            panelMuted: '#eef2f7',
+            border: '#d6dde6',
+            borderSoft: '#e2e8f0',
+            borderStrong: '#cbd5e1',
+            textPrimary: '#1f2937',
+            textSecondary: '#64748b',
+            textMuted: '#475569',
+            accent: '#2563eb',
+            accentSoft: '#e0ecff',
+            accentBorder: '#93c5fd',
+            codeBg: '#eef2f7',
+            codeText: '#0f172a',
+            tableHeaderBg: '#f1f5f9',
+            tableHeaderText: '#334155',
+            tableText: '#475569',
+            successBg: '#e9f7ef',
+            successBorder: '#b7e2c6',
+            successText: '#1f2937',
+            errorBg: '#fff1f2',
+            errorBorder: '#fecdd3',
+            errorTitle: '#be123c',
+            errorText: '#e11d48',
+            schemaDash: '#cbd5f5',
+            schemaTitle: '#1d4ed8',
+            schemaText: '#475569',
+            overlay: 'rgba(15, 23, 42, 0.45)',
+            jsonText: '#0f766e'
+        }
+        : {
+            pageBg: '#0b1120',
+            panelBg: '#161e31',
+            panelSoft: '#0f172a',
+            panelMuted: '#0b1120',
+            border: '#1f2937',
+            borderSoft: '#334155',
+            borderStrong: '#475569',
+            textPrimary: '#f8fafc',
+            textSecondary: '#94a3b8',
+            textMuted: '#cbd5e1',
+            accent: '#4f46e5',
+            accentSoft: '#1e293b',
+            accentBorder: '#334155',
+            codeBg: '#0b1120',
+            codeText: '#e2e8f0',
+            tableHeaderBg: '#1e293b',
+            tableHeaderText: '#cbd5e1',
+            tableText: '#94a3b8',
+            successBg: '#0f2a1f',
+            successBorder: '#14532d',
+            successText: '#cbd5e1',
+            errorBg: 'rgba(239, 68, 68, 0.12)',
+            errorBorder: '#ef4444',
+            errorTitle: '#f87171',
+            errorText: '#fca5a5',
+            schemaDash: '#334155',
+            schemaTitle: '#93c5fd',
+            schemaText: '#cbd5e1',
+            overlay: 'rgba(0, 0, 0, 0.75)',
+            jsonText: '#10b981'
+        };
 
-    // RIGHT PANEL FIX
-    rightPanel: {
-        width: '25%',
-        minWidth: '300px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#161e31',
-        borderLeft: '1px solid #1f2937',
-        height: '100%',
-        boxSizing: 'border-box',
-        overflowY: 'auto',
-        paddingBottom: '100px'
-    },
-    panelSection: { padding: '15px', borderBottom: '1px solid #1f2937', display: 'flex', flexDirection: 'column' },
-    panelHeader: { fontSize: '11px', color: '#94a3b8', fontWeight: 'bold', marginBottom: '10px' },
-    codeDisplay: { fontFamily: 'monospace', fontSize: '12px', color: '#e2e8f0', backgroundColor: '#0b1120', padding: '10px', borderRadius: '4px', marginBottom: '10px', overflowX: 'auto', border: '1px solid #1f2937' },
-    runBtn: { padding: '10px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' },
-    resultBox: { fontSize: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 },
-    tableScroll: { overflow: 'auto', maxHeight: '400px' },
-    table: { width: '100%', borderCollapse: 'collapse', fontSize: '11px' },
-    th: { textAlign: 'left', padding: '6px', borderBottom: '1px solid #475569', color: '#cbd5e1', position: 'sticky', top: 0, backgroundColor: '#1e293b' },
-    td: { padding: '6px', borderBottom: '1px solid #334155', color: '#94a3b8' },
+    return {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            height: 'calc(100vh - 60px)',
+            width: '100vw',
+            backgroundColor: palette.pageBg,
+            color: palette.textPrimary,
+            overflow: 'hidden',
+            minWidth: '1024px'
+        },
+        mainRow: {
+            display: 'flex',
+            flex: 1,
+            minHeight: 0
+        },
+        leftPanel: {
+            width: '240px',
+            minWidth: '240px',
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: palette.panelBg,
+            borderRight: `1px solid ${palette.border}`,
+            height: '100%',
+            boxSizing: 'border-box',
+            overflowY: 'auto'
+        },
+        leftPanelCollapsed: {
+            width: '0px',
+            minWidth: '0px',
+            borderRight: 'none',
+            overflow: 'hidden',
+            overflowY: 'hidden'
+        },
+        centerPanel: {
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0,
+            minHeight: 0,
+            backgroundColor: palette.pageBg
+        },
+        toolbar: {
+            height: '60px',
+            borderBottom: `1px solid ${palette.border}`,
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 16px',
+            gap: '12px',
+            backgroundColor: palette.panelBg
+        },
+        toolbarLeft: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+        },
+        toolbarRight: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginLeft: 'auto'
+        },
+        collapseBtn: {
+            border: `1px solid ${palette.border}`,
+            backgroundColor: palette.panelSoft,
+            color: palette.textMuted,
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px'
+        },
+        modeToggle: {
+            display: 'flex',
+            gap: '6px',
+            backgroundColor: palette.panelSoft,
+            padding: '4px',
+            borderRadius: '10px',
+            border: `1px solid ${palette.borderSoft}`
+        },
+        toggleBtn: {
+            padding: '6px 12px',
+            border: 'none',
+            backgroundColor: 'transparent',
+            color: palette.textSecondary,
+            cursor: 'pointer',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '600'
+        },
+        activeBtn: { backgroundColor: palette.accent, color: 'white' },
+        questBar: {
+            flex: 1,
+            textAlign: 'center',
+            padding: '0 20px',
+            fontSize: '14px',
+            maxWidth: '800px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            minWidth: 0,
+            color: palette.textMuted
+        },
+        blocklyContainer: { flex: 1, position: 'relative', minHeight: 0 },
+        outputToggleBtn: {
+            padding: '6px 12px',
+            border: `1px solid ${palette.border}`,
+            backgroundColor: palette.panelSoft,
+            color: palette.textMuted,
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '600'
+        },
+        outputToggleBtnActive: {
+            backgroundColor: palette.accentSoft,
+            borderColor: palette.accentBorder,
+            color: palette.accent
+        },
+        levelBtn: {
+            padding: '6px 12px',
+            border: `1px solid ${palette.border}`,
+            backgroundColor: palette.panelBg,
+            color: palette.textPrimary,
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '600'
+        },
 
-    erBtn: {
-        width: '100%',
-        padding: '12px',
-        backgroundColor: '#6366f1',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        fontSize: '13px',
-        transition: 'all 0.3s',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.4)'
-    },
-    erModalOverlay: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        zIndex: 1000,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backdropFilter: 'blur(5px)'
-    },
-    erModalContent: {
-        width: '90%',
-        height: '90%',
-        backgroundColor: '#0f172a',
-        borderRadius: '16px',
-        border: '1px solid #334155',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-    },
-    erModalHeader: {
-        padding: '20px',
-        borderBottom: '1px solid #334155',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    closeBtn: {
-        background: 'none',
-        border: 'none',
-        color: '#94a3b8',
-        fontSize: '24px',
-        cursor: 'pointer'
-    },
-    erModalBody: {
-        flex: 1,
-        padding: '20px',
-        overflow: 'hidden'
-    },
-    confetti: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '40px', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 100 },
-    jsonContainer: {
-        backgroundColor: '#0b1120',
-        borderRadius: '6px',
-        padding: '12px',
-        border: '1px solid #1f2937',
-        overflow: 'auto',
-        maxHeight: '400px'
-    },
-    jsonPre: {
-        margin: 0,
-        fontFamily: 'monospace',
-        fontSize: '11px',
-        color: '#10b981',
-        lineHeight: '1.5',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word'
-    },
-    schemaBtn: {
-        padding: '8px 16px',
-        backgroundColor: '#8b5cf6',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '13px',
-        fontWeight: '600',
-        transition: 'all 0.2s',
-        marginLeft: '10px'
-    },
-    schemaModalOverlay: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000
-    },
-    schemaModalContent: {
-        backgroundColor: '#1e293b',
-        borderRadius: '12px',
-        width: '90%',
-        maxWidth: '700px',
-        maxHeight: '80vh',
-        overflow: 'auto',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-    },
-    schemaModalHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '20px 24px',
-        borderBottom: '1px solid #334155',
-        position: 'sticky',
-        top: 0,
-        backgroundColor: '#1e293b',
-        zIndex: 1
-    },
-    modalTitle: {
-        margin: 0,
-        fontSize: '20px',
-        color: '#f1f5f9',
-        fontWeight: '600'
-    },
-    modalClose: {
-        background: 'none',
-        border: 'none',
-        color: '#94a3b8',
-        fontSize: '24px',
-        cursor: 'pointer',
-        padding: '0',
-        width: '32px',
-        height: '32px',
-        borderRadius: '6px',
-        transition: 'all 0.2s'
-    },
-    schemaModalBody: {
-        padding: '24px'
-    },
-    schemaContainer: {
-        color: '#e2e8f0'
-    },
-    schemaSubtitle: {
-        fontSize: '16px',
-        color: '#cbd5e1',
-        marginBottom: '16px',
-        fontWeight: '600'
-    },
-    schemaTable: {
-        width: '100%',
-        borderCollapse: 'collapse',
-        fontSize: '13px'
-    },
-    schemaHeaderRow: {
-        backgroundColor: '#334155'
-    },
-    schemaTh: {
-        padding: '12px',
-        textAlign: 'left',
-        fontWeight: '600',
-        color: '#f1f5f9',
-        borderBottom: '2px solid #475569'
-    },
-    schemaRow: {
-        borderBottom: '1px solid #334155'
-    },
-    schemaTd: {
-        padding: '10px 12px',
-        color: '#cbd5e1'
-    },
-    schemaJson: {
-        backgroundColor: '#0f172a',
-        padding: '16px',
-        borderRadius: '8px',
-        fontSize: '13px',
-        color: '#10b981',
-        overflow: 'auto',
-        fontFamily: 'monospace',
-        lineHeight: '1.6'
-    },
-    schemaNote: {
-        marginTop: '16px',
-        padding: '12px',
-        backgroundColor: '#334155',
-        borderRadius: '6px',
-        fontSize: '12px',
-        color: '#cbd5e1'
-    }
+        bottomPanel: {
+            width: '100%',
+            minHeight: '220px',
+            backgroundColor: palette.panelSoft,
+            borderTop: `1px solid ${palette.border}`,
+            display: 'flex',
+            flexDirection: 'column'
+        },
+        resizeHandle: {
+            width: '100%',
+            height: '8px',
+            cursor: 'row-resize',
+            backgroundColor: palette.panelBg,
+            borderBottom: `1px solid ${palette.borderSoft}`
+        },
+        bottomHeader: {
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 16px',
+            borderBottom: `1px solid ${palette.borderSoft}`,
+            backgroundColor: palette.panelBg
+        },
+        bottomTitle: {
+            fontSize: '12px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.6px',
+            color: palette.textSecondary,
+            fontWeight: '700'
+        },
+        closePanelBtn: {
+            border: `1px solid ${palette.border}`,
+            backgroundColor: palette.panelSoft,
+            color: palette.textSecondary,
+            width: '28px',
+            height: '28px',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px'
+        },
+        bottomContent: {
+            flex: 1,
+            overflow: 'auto'
+        },
+        panelSection: { padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' },
+        panelHeader: { fontSize: '11px', color: palette.textSecondary, fontWeight: '700', letterSpacing: '0.4px' },
+        codeDisplay: {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: palette.codeText,
+            backgroundColor: palette.codeBg,
+            padding: '10px',
+            borderRadius: '6px',
+            marginBottom: '6px',
+            overflowX: 'auto',
+            border: `1px solid ${palette.border}`
+        },
+        runBtn: {
+            padding: '10px 14px',
+            backgroundColor: palette.accent,
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+        },
+        resultBox: { fontSize: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '10px' },
+        tableScroll: { overflow: 'auto', maxHeight: '220px' },
+        table: { width: '100%', borderCollapse: 'collapse', fontSize: '11px' },
+        th: {
+            textAlign: 'left',
+            padding: '6px',
+            borderBottom: `1px solid ${palette.border}`,
+            color: palette.tableHeaderText,
+            position: 'sticky',
+            top: 0,
+            backgroundColor: palette.tableHeaderBg
+        },
+        td: { padding: '6px', borderBottom: `1px solid ${palette.borderSoft}`, color: palette.tableText },
+        executionStatus: {
+            color: palette.textMuted,
+            marginBottom: '4px',
+            fontSize: '11px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+        },
+        executionDot: { width: '8px', height: '8px', borderRadius: '50%' },
+        resultBlock: { marginBottom: '14px', borderLeft: `2px solid ${palette.accentBorder}`, paddingLeft: '10px' },
+        resultMeta: { fontSize: '10px', color: palette.textSecondary, marginBottom: '4px' },
+        successToast: {
+            color: palette.successText,
+            fontSize: '11px',
+            backgroundColor: palette.successBg,
+            padding: '6px',
+            borderRadius: '6px',
+            border: `1px solid ${palette.successBorder}`
+        },
+        errorBox: { backgroundColor: palette.errorBg, padding: '12px', borderRadius: '8px', border: `1px solid ${palette.errorBorder}` },
+        errorTitle: { color: palette.errorTitle, fontWeight: '700', marginBottom: '4px', fontSize: '12px' },
+        errorText: { color: palette.errorText, fontSize: '11px', lineHeight: '1.4' },
+        errorHint: { marginTop: '10px', fontSize: '10px', color: palette.textSecondary, fontStyle: 'italic' },
+        emptyState: { textAlign: 'center', marginTop: '20px' },
+        schemaReference: {
+            marginTop: '6px',
+            padding: '10px',
+            backgroundColor: palette.panelBg,
+            border: `1px dashed ${palette.schemaDash}`,
+            borderRadius: '8px'
+        },
+        schemaReferenceTitle: { fontSize: '11px', fontWeight: '700', color: palette.schemaTitle, marginBottom: '4px' },
+        schemaReferenceText: { fontSize: '11px', color: palette.schemaText },
+        erModalOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: palette.overlay,
+            zIndex: 1000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backdropFilter: 'blur(5px)'
+        },
+        erModalContent: {
+            width: '90%',
+            height: '90%',
+            backgroundColor: palette.panelBg,
+            borderRadius: '16px',
+            border: `1px solid ${palette.border}`,
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        },
+        erModalHeader: {
+            padding: '20px',
+            borderBottom: `1px solid ${palette.borderSoft}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        },
+        closeBtn: {
+            background: 'none',
+            border: 'none',
+            color: palette.textSecondary,
+            fontSize: '24px',
+            cursor: 'pointer'
+        },
+        erModalBody: {
+            flex: 1,
+            padding: '20px',
+            overflow: 'hidden'
+        },
+        confettiOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(15, 23, 42, 0.2)',
+            zIndex: 100,
+            pointerEvents: 'none'
+        },
+        confettiBurst: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden'
+        },
+        confettiPiece: {
+            position: 'absolute',
+            top: 0,
+            borderRadius: '4px',
+            opacity: 0,
+            animationName: 'confetti-fall',
+            animationDuration: '2.6s',
+            animationTimingFunction: 'ease-out',
+            animationFillMode: 'forwards',
+            boxShadow: '0 2px 6px rgba(15, 23, 42, 0.35)'
+        },
+        confettiCard: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '24px 32px',
+            backgroundColor: 'rgba(255, 255, 255, 0.88)',
+            borderRadius: '20px',
+            border: `1px solid ${palette.borderSoft}`,
+            boxShadow: '0 20px 60px -24px rgba(15, 23, 42, 0.35)',
+            animation: 'confetti-pop 0.6s ease-out'
+        },
+        confettiEmoji: {
+            fontSize: '112px',
+            lineHeight: 1
+        },
+        confettiText: {
+            fontSize: '20px',
+            fontWeight: '700',
+            color: palette.textPrimary,
+            letterSpacing: '0.2px'
+        },
+        jsonContainer: {
+            backgroundColor: palette.panelMuted,
+            borderRadius: '6px',
+            padding: '12px',
+            border: `1px solid ${palette.border}`,
+            overflow: 'auto',
+            maxHeight: '220px'
+        },
+        jsonPre: {
+            margin: 0,
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            color: palette.jsonText,
+            lineHeight: '1.5',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
+        },
+        schemaBtn: {
+            padding: '8px 16px',
+            backgroundColor: palette.panelSoft,
+            color: palette.textPrimary,
+            border: `1px solid ${palette.border}`,
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+        },
+        schemaModalOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: palette.overlay,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+        },
+        schemaModalContent: {
+            backgroundColor: palette.panelBg,
+            borderRadius: '12px',
+            width: '90%',
+            maxWidth: '700px',
+            maxHeight: '80vh',
+            overflow: 'auto',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+        },
+        schemaModalHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '20px 24px',
+            borderBottom: `1px solid ${palette.borderSoft}`,
+            position: 'sticky',
+            top: 0,
+            backgroundColor: palette.panelBg,
+            zIndex: 1
+        },
+        modalTitle: {
+            margin: 0,
+            fontSize: '20px',
+            color: palette.textPrimary,
+            fontWeight: '600'
+        },
+        modalClose: {
+            background: 'none',
+            border: 'none',
+            color: palette.textSecondary,
+            fontSize: '24px',
+            cursor: 'pointer',
+            padding: '0',
+            width: '32px',
+            height: '32px',
+            borderRadius: '6px',
+            transition: 'all 0.2s'
+        },
+        schemaModalBody: {
+            padding: '24px'
+        },
+        levelModalOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: palette.overlay,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+        },
+        levelModalContent: {
+            backgroundColor: palette.panelBg,
+            borderRadius: '16px',
+            width: '92%',
+            maxWidth: '980px',
+            maxHeight: '82vh',
+            overflow: 'hidden',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            border: `1px solid ${palette.border}`
+        },
+        levelModalHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '18px 22px',
+            borderBottom: `1px solid ${palette.borderSoft}`,
+            backgroundColor: palette.panelBg
+        },
+        levelModalBody: {
+            display: 'grid',
+            gridTemplateColumns: '280px 1fr',
+            gap: '20px',
+            padding: '22px',
+            backgroundColor: palette.panelSoft,
+            height: 'calc(82vh - 64px)'
+        },
+        levelLeft: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            paddingBottom: '12px',
+            overflowY: 'auto'
+        },
+        levelRight: {
+            backgroundColor: palette.panelBg,
+            borderRadius: '12px',
+            border: `1px solid ${palette.borderSoft}`,
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            overflow: 'hidden'
+        },
+        levelCard: {
+            backgroundColor: palette.panelBg,
+            borderRadius: '14px',
+            border: `1px solid ${palette.borderSoft}`,
+            padding: '18px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px'
+        },
+        levelIcon: {
+            width: '52px',
+            height: '52px',
+            borderRadius: '12px',
+            backgroundColor: palette.panelMuted,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px'
+        },
+        levelTitle: {
+            fontSize: '22px',
+            fontWeight: '700',
+            color: palette.textPrimary
+        },
+        levelMeta: {
+            fontSize: '13px',
+            color: palette.textSecondary
+        },
+        levelSelector: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px'
+        },
+        levelSelectorBtn: {
+            padding: '6px 10px',
+            borderRadius: '999px',
+            border: `1px solid ${palette.borderSoft}`,
+            backgroundColor: palette.panelBg,
+            color: palette.textSecondary,
+            fontSize: '12px',
+            cursor: 'pointer'
+        },
+        levelSelectorBtnActive: {
+            backgroundColor: palette.accentSoft,
+            borderColor: palette.accentBorder,
+            color: palette.accent,
+            fontWeight: '600'
+        },
+        progressCard: {
+            backgroundColor: palette.panelBg,
+            borderRadius: '14px',
+            border: `1px solid ${palette.borderSoft}`,
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '6px'
+        },
+        progressRing: {
+            width: '140px',
+            height: '140px'
+        },
+        progressTrackColor: palette.borderSoft,
+        progressFillColor: palette.accent,
+        progressRingLabel: {
+            fontSize: '10px',
+            fill: palette.textSecondary,
+            fontWeight: '600'
+        },
+        progressRingValue: {
+            fontSize: '14px',
+            fill: palette.textPrimary,
+            fontWeight: '700'
+        },
+        progressLabel: {
+            fontSize: '12px',
+            color: palette.textSecondary
+        },
+        progressValue: {
+            fontSize: '18px',
+            fontWeight: '700',
+            color: palette.textPrimary
+        },
+        levelListHeader: {
+            fontSize: '14px',
+            fontWeight: '700',
+            color: palette.textPrimary
+        },
+        levelList: {
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            paddingRight: '6px',
+            flex: 1
+        },
+        levelRowItem: {
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+            padding: '8px 10px',
+            borderRadius: '10px',
+            backgroundColor: palette.panelSoft
+        },
+        levelCheck: {
+            width: '20px',
+            height: '20px',
+            borderRadius: '6px',
+            border: `1px solid ${palette.border}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: palette.accent,
+            backgroundColor: palette.panelBg
+        },
+        levelQuestionText: {
+            fontSize: '13px',
+            color: palette.textMuted
+        },
+        schemaContainer: {
+            color: palette.textPrimary
+        },
+        schemaSubtitle: {
+            fontSize: '16px',
+            color: palette.textMuted,
+            marginBottom: '16px',
+            fontWeight: '600'
+        },
+        schemaTable: {
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '13px'
+        },
+        schemaHeaderRow: {
+            backgroundColor: palette.tableHeaderBg
+        },
+        schemaTh: {
+            padding: '12px',
+            textAlign: 'left',
+            fontWeight: '600',
+            color: palette.textPrimary,
+            borderBottom: `2px solid ${palette.border}`
+        },
+        schemaRow: {
+            borderBottom: `1px solid ${palette.borderSoft}`
+        },
+        schemaTd: {
+            padding: '10px 12px',
+            color: palette.textSecondary
+        },
+        schemaJson: {
+            backgroundColor: palette.panelMuted,
+            padding: '16px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            color: palette.jsonText,
+            overflow: 'auto',
+            fontFamily: 'monospace',
+            lineHeight: '1.6'
+        },
+        schemaNote: {
+            marginTop: '16px',
+            padding: '12px',
+            backgroundColor: palette.panelSoft,
+            borderRadius: '6px',
+            fontSize: '12px',
+            color: palette.textSecondary
+        },
+        noDataText: {
+            color: palette.textSecondary,
+            fontSize: '11px'
+        }
+    };
 };
 
 export default GameLayout;

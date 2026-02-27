@@ -7,10 +7,11 @@ import { nosqlDefinitions } from "../../blocks/nosql/definitions";
 import { sqlGenerators } from "../../blocks/sql/generators";
 import { nosqlGenerators } from "../../blocks/nosql/generators";
 
-const BlocklyEditor = ({ initialXml, onCodeChange, category = "SQL", readOnly = false }) => {
+const BlocklyEditor = ({ initialXml, onCodeChange, category = "SQL", readOnly = false, uiTheme = "light" }) => {
   const blocklyDiv = useRef(null);
   const workspaceRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState(category);
+  const isLight = uiTheme !== 'dark';
 
   // Update internal category when prop changes
   useEffect(() => {
@@ -36,9 +37,32 @@ const BlocklyEditor = ({ initialXml, onCodeChange, category = "SQL", readOnly = 
 
     // Initialize workspace
     if (blocklyDiv.current) {
+      if (!Blockly.Themes.CalmLight) {
+        Blockly.Themes.CalmLight = Blockly.Theme.defineTheme('CalmLight', {
+          base: Blockly.Themes.Classic,
+          componentStyles: {
+            workspaceBackgroundColour: '#ffffff',
+            toolboxBackgroundColour: '#f8fafc',
+            toolboxForegroundColour: '#0f172a',
+            flyoutBackgroundColour: '#f1f5f9',
+            flyoutForegroundColour: '#0f172a',
+            flyoutOpacity: 0.98,
+            scrollbarColour: '#cbd5e1',
+            insertionMarkerColour: '#2563eb',
+            insertionMarkerOpacity: 0.2
+          },
+          fontStyle: {
+            family: 'Inter, Arial, sans-serif',
+            size: 12
+          }
+        });
+      }
+
+      const blocklyTheme = isLight ? Blockly.Themes.CalmLight : Blockly.Themes.Dark;
+
       workspaceRef.current = Blockly.inject(blocklyDiv.current, {
         toolbox: getToolboxXML(),
-        theme: Blockly.Themes.Dark,
+        theme: blocklyTheme,
         scrollbars: true,
         readOnly: readOnly,
         trashcan: true,
@@ -61,7 +85,7 @@ const BlocklyEditor = ({ initialXml, onCodeChange, category = "SQL", readOnly = 
         grid: {
           spacing: 20,
           length: 3,
-          colour: '#ccc',
+          colour: isLight ? '#e2e8f0' : '#334155',
           snap: true
         },
         sounds: false
@@ -97,6 +121,13 @@ const BlocklyEditor = ({ initialXml, onCodeChange, category = "SQL", readOnly = 
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (workspaceRef.current) {
+      const blocklyTheme = isLight ? Blockly.Themes.CalmLight : Blockly.Themes.Dark;
+      workspaceRef.current.setTheme(blocklyTheme);
+    }
+  }, [isLight]);
 
   // Update toolbox when category changes
   useEffect(() => {

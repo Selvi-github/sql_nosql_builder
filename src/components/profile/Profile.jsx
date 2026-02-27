@@ -2,9 +2,26 @@ import React, { useState } from 'react';
 import { sqlLevels, nosqlLevels } from '../../data/levels';
 import Certificate from './Certificate';
 
-const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
+const Profile = ({ user, sqlProgress, nosqlProgress, onBack, theme }) => {
     const [generating, setGenerating] = useState(null); // 'SQL' | 'NoSQL' | null
     const [certificateData, setCertificateData] = useState(null);
+
+    const isLight = theme !== 'dark';
+    const themeStyles = {
+        pageBg: isLight ? '#f8fafc' : '#0b1120',
+        cardBg: isLight ? '#ffffff' : '#161e31',
+        cardBorder: isLight ? '#e2e8f0' : '#1f2937',
+        panelBg: isLight ? '#f8fafc' : '#0b1120',
+        panelBorder: isLight ? '#e2e8f0' : '#1f2937',
+        textPrimary: isLight ? '#0f172a' : '#f1f5f9',
+        textSecondary: isLight ? '#475569' : '#94a3b8',
+        textMuted: isLight ? '#64748b' : '#94a3b8',
+        backBorder: isLight ? '#e2e8f0' : '#1f2937',
+        avatarBg: isLight ? '#e2e8f0' : '#1f2937',
+        progressTrack: isLight ? '#e2e8f0' : '#1f2937',
+        disabledBg: isLight ? '#eef2f7' : '#1e293b',
+        disabledBorder: isLight ? '#cbd5e1' : '#334155'
+    };
 
     const calculateProgress = (completed, total) => {
         const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -49,10 +66,12 @@ const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
     const ProgressBar = ({ stats, color }) => (
         <div style={styles.progressContainer}>
             <div style={styles.progressHeader}>
-                <span style={styles.progressLabel}>{stats.completed} / {stats.total} Questions</span>
-                <span style={styles.progressPercent}>{stats.percentage}%</span>
+                <span style={{ ...styles.progressLabel, color: themeStyles.textMuted }}>
+                    {stats.completed} / {stats.total} Questions
+                </span>
+                <span style={{ ...styles.progressPercent, color: themeStyles.textPrimary }}>{stats.percentage}%</span>
             </div>
-            <div style={styles.progressTrack}>
+            <div style={{ ...styles.progressTrack, backgroundColor: themeStyles.progressTrack }}>
                 <div style={{ ...styles.progressFill, width: `${stats.percentage}%`, backgroundColor: color }}></div>
             </div>
         </div>
@@ -85,25 +104,30 @@ const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
     }
 
     return (
-        <div style={styles.container}>
+        <div style={{ ...styles.container, backgroundColor: themeStyles.pageBg, color: themeStyles.textPrimary }}>
             <div style={styles.header}>
-                <button onClick={onBack} style={styles.backBtn}>← Back</button>
+                <button
+                    onClick={onBack}
+                    style={{ ...styles.backBtn, borderColor: themeStyles.backBorder, color: themeStyles.textMuted }}
+                >
+                    ← Back
+                </button>
                 <h1 style={styles.title}>Student Profile</h1>
             </div>
 
-            <div style={styles.card}>
-                <div style={styles.userSection}>
-                    <div style={styles.avatar}>👤</div>
+            <div style={{ ...styles.card, backgroundColor: themeStyles.cardBg, borderColor: themeStyles.cardBorder }}>
+                <div style={{ ...styles.userSection, borderBottomColor: themeStyles.panelBorder }}>
+                    <div style={{ ...styles.avatar, backgroundColor: themeStyles.avatarBg }}>👤</div>
                     <div style={styles.userInfo}>
                         <h2 style={styles.userName}>{user.username}</h2>
-                        <p style={styles.userEmail}>{user.email}</p>
+                        <p style={{ ...styles.userEmail, color: themeStyles.textSecondary }}>{user.email}</p>
                     </div>
                 </div>
 
                 <div style={styles.statsGrid}>
                     {/* SQL STATS */}
-                    <div style={styles.statBox}>
-                        <h3 style={styles.statTitle}>SQL Proficiency</h3>
+                    <div style={{ ...styles.statBox, backgroundColor: themeStyles.panelBg, borderColor: themeStyles.panelBorder }}>
+                        <h3 style={{ ...styles.statTitle, color: themeStyles.textSecondary }}>SQL Proficiency</h3>
                         <ProgressBar stats={sqlStats} color="#3b82f6" />
 
                         <div style={styles.certSection}>
@@ -117,7 +141,9 @@ const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
                                 </button>
                             ) : (
                                 <div style={styles.lockedCert}>
-                                    <p style={styles.lockedText}>Complete all levels to unlock certificate</p>
+                                    <p style={{ ...styles.lockedText, color: themeStyles.textMuted }}>
+                                        Complete all levels to unlock certificate
+                                    </p>
                                     <button disabled style={styles.certBtnDisabled}>Certificate Locked</button>
                                 </div>
                             )}
@@ -125,8 +151,8 @@ const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
                     </div>
 
                     {/* NoSQL STATS */}
-                    <div style={styles.statBox}>
-                        <h3 style={styles.statTitle}>NoSQL Proficiency</h3>
+                    <div style={{ ...styles.statBox, backgroundColor: themeStyles.panelBg, borderColor: themeStyles.panelBorder }}>
+                        <h3 style={{ ...styles.statTitle, color: themeStyles.textSecondary }}>NoSQL Proficiency</h3>
                         <ProgressBar stats={nosqlStats} color="#10b981" />
 
                         <div style={styles.certSection}>
@@ -140,8 +166,20 @@ const Profile = ({ user, sqlProgress, nosqlProgress, onBack }) => {
                                 </button>
                             ) : (
                                 <div style={styles.lockedCert}>
-                                    <p style={styles.lockedText}>Complete all levels to unlock certificate</p>
-                                    <button disabled style={styles.certBtnDisabled}>Certificate Locked</button>
+                                    <p style={{ ...styles.lockedText, color: themeStyles.textMuted }}>
+                                        Complete all levels to unlock certificate
+                                    </p>
+                                    <button
+                                        disabled
+                                        style={{
+                                            ...styles.certBtnDisabled,
+                                            backgroundColor: themeStyles.disabledBg,
+                                            borderColor: themeStyles.disabledBorder,
+                                            color: themeStyles.textMuted
+                                        }}
+                                    >
+                                        Certificate Locked
+                                    </button>
                                 </div>
                             )}
                         </div>

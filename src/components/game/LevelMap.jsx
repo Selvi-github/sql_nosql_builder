@@ -1,8 +1,10 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 
-const LevelMap = () => {
+const LevelMap = ({ theme = 'light' }) => {
     const { currentLevel, levels, score, maxUnlockedLevel, setCurrentLevelId } = useGame();
+    const isLight = theme !== 'dark';
+    const styles = buildStyles(isLight);
 
     // Visualize levels as a vertical road
     // 30 Levels
@@ -24,11 +26,11 @@ const LevelMap = () => {
                     const isUnlocked = level.id <= maxUnlockedLevel;
                     const isCurrent = level.id === currentLevel.id;
 
-                    let bgColor = '#059669'; // Forest (More muted emerald)
-                    if (level.id > 10) bgColor = '#d97706'; // Hills (Muted amber)
-                    if (level.id > 20) bgColor = '#4f46e5'; // Mountains (Indigo)
+                    let bgColor = isLight ? '#38bdf8' : '#059669';
+                    if (level.id > 10) bgColor = isLight ? '#34d399' : '#d97706';
+                    if (level.id > 20) bgColor = isLight ? '#818cf8' : '#4f46e5';
 
-                    if (!isUnlocked) bgColor = '#1f2937'; // Locked (New border color)
+                    if (!isUnlocked) bgColor = isLight ? '#cbd5e1' : '#1f2937';
 
                     return (
                         <div key={level.id} style={styles.levelRow}>
@@ -60,7 +62,7 @@ const LevelMap = () => {
                                 ...styles.levelLabel,
                                 opacity: isUnlocked ? 1 : 0.5,
                                 fontWeight: isCurrent ? 'bold' : 'normal',
-                                color: isCurrent ? 'white' : '#94a3b8'
+                                color: isCurrent ? (isLight ? '#0f172a' : '#ffffff') : (isLight ? '#64748b' : '#94a3b8')
                             }}>
                                 {level.title}
                             </div>
@@ -72,40 +74,40 @@ const LevelMap = () => {
     );
 };
 
-const styles = {
+const buildStyles = (isLight) => ({
     container: {
         width: '240px',
-        backgroundColor: '#161e31',
+        backgroundColor: isLight ? '#ffffff' : '#161e31',
         display: 'flex',
         flexDirection: 'column',
-        borderRight: '1px solid #1f2937',
+        borderRight: isLight ? '1px solid #d6dde6' : '1px solid #1f2937',
         height: '100%'
     },
     header: {
         padding: '20px',
-        backgroundColor: '#0b1120',
-        borderBottom: '1px solid #1f2937',
+        backgroundColor: isLight ? '#f8fafc' : '#0b1120',
+        borderBottom: isLight ? '1px solid #e2e8f0' : '1px solid #1f2937',
         textAlign: 'center'
     },
     scoreTitle: {
         fontSize: '11px',
-        color: '#94a3b8',
+        color: isLight ? '#64748b' : '#94a3b8',
         letterSpacing: '1px'
     },
     scoreValue: {
         fontSize: '28px',
-        color: '#fcd34d',
+        color: isLight ? '#2563eb' : '#fcd34d',
         fontWeight: 'bold',
         fontFamily: 'monospace'
     },
     mapScroll: {
         flex: 1,
         overflowY: 'auto',
-        padding: '20px 10px 150px 10px', // MASSIVE padding-bottom (150px) to clear taskbar
-        boxSizing: 'border-box', // Ensure padding is calculated correctly
+        padding: '20px 10px 150px 10px',
+        boxSizing: 'border-box',
         position: 'relative',
         display: 'flex',
-        flexDirection: 'column-reverse', // Start from bottom (Level 1)
+        flexDirection: 'column-reverse',
         gap: '20px'
     },
     roadLine: {
@@ -114,7 +116,7 @@ const styles = {
         bottom: 0,
         left: '34px',
         width: '4px',
-        backgroundColor: '#1f2937',
+        backgroundColor: isLight ? '#d6dde6' : '#1f2937',
         zIndex: 0
     },
     levelRow: {
@@ -148,6 +150,6 @@ const styles = {
         zIndex: 10,
         animation: 'bounce 1s infinite'
     }
-};
+});
 
 export default LevelMap;

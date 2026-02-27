@@ -66,9 +66,22 @@ function App() {
   };
 
   useEffect(() => {
-    const uiTheme = (view === 'LOGIN' || view === 'LANDING' || view === 'HOD') ? theme : 'dark';
+    const uiTheme = theme;
     document.body.dataset.uiTheme = uiTheme;
   }, [view, theme]);
+
+  const isLight = theme === 'light';
+  const builderTheme = {
+    navBg: isLight ? '#ffffff' : '#0b1120',
+    navBorder: isLight ? '#e2e8f0' : '#1f2937',
+    textPrimary: isLight ? '#0f172a' : '#f8fafc',
+    textSecondary: isLight ? '#475569' : '#94a3b8',
+    tagBg: isLight ? '#e8f1ff' : '#161e31',
+    tagBorder: isLight ? '#c7d2fe' : '#1f2937',
+    tagText: isLight ? '#1d4ed8' : '#38bdf8',
+    exitBg: isLight ? '#2563eb' : '#4f46e5',
+    exitShadow: isLight ? '0 8px 20px -12px rgba(37, 99, 235, 0.6)' : '0 4px 6px -1px rgba(0, 0, 0, 0.4)'
+  };
 
   return (
     <div className="app-root">
@@ -100,6 +113,7 @@ function App() {
           sqlProgress={user.sqlProgress}
           nosqlProgress={user.nosqlProgress}
           onBack={() => setView('LANDING')}
+          theme={theme}
         />
       )}
 
@@ -110,16 +124,16 @@ function App() {
           user={user}
           initialProgress={view === 'SQL' ? user.sqlProgress : user.nosqlProgress}
         >
-          <div style={styles.navBar}>
-            <div style={styles.brand}>
-              Query Architect <span style={styles.tag}>{view}</span>
+          <div style={{ ...styles.navBar, backgroundColor: builderTheme.navBg, borderBottom: `1px solid ${builderTheme.navBorder}` }}>
+            <div style={{ ...styles.brand, color: builderTheme.textPrimary }}>
+              Query Architect <span style={{ ...styles.tag, backgroundColor: builderTheme.tagBg, borderColor: builderTheme.tagBorder, color: builderTheme.tagText }}>{view}</span>
             </div>
             <div style={styles.navActions}>
-              <span style={styles.userHead}>👤 {user.username}</span>
-              <button style={styles.exitBtn} onClick={() => setView('LANDING')}>Exit Builder</button>
+              <span style={{ ...styles.userHead, color: builderTheme.textSecondary }}>👤 {user.username}</span>
+              <button style={{ ...styles.exitBtn, backgroundColor: builderTheme.exitBg, boxShadow: builderTheme.exitShadow }} onClick={() => setView('LANDING')}>Exit Builder</button>
             </div>
           </div>
-          <GameLayout dbType={view} />
+          <GameLayout dbType={view} theme={theme} />
         </GameProvider>
       )}
     </div>
@@ -129,15 +143,15 @@ function App() {
 const styles = {
   navBar: {
     height: '60px',
-    backgroundColor: '#0b1120',
+    backgroundColor: '#ffffff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '0 24px',
-    borderBottom: '1px solid #1f2937'
+    borderBottom: '1px solid #e2e8f0'
   },
   brand: {
-    color: 'white',
+    color: '#0f172a',
     fontWeight: 'bold',
     fontSize: '16px',
     display: 'flex',
@@ -145,13 +159,13 @@ const styles = {
     gap: '12px'
   },
   tag: {
-    backgroundColor: '#161e31',
+    backgroundColor: '#e8f1ff',
     padding: '4px 10px',
     borderRadius: '6px',
     fontSize: '11px',
     fontWeight: '700',
-    color: '#38bdf8',
-    border: '1px solid #1f2937',
+    color: '#1d4ed8',
+    border: '1px solid #c7d2fe',
     textTransform: 'uppercase',
     letterSpacing: '0.5px'
   },
@@ -161,11 +175,11 @@ const styles = {
     gap: '20px'
   },
   userHead: {
-    color: '#94a3b8',
+    color: '#475569',
     fontSize: '14px'
   },
   exitBtn: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: '#2563eb',
     border: 'none',
     color: '#ffffff',
     padding: '8px 18px',
@@ -174,7 +188,7 @@ const styles = {
     fontSize: '13px',
     fontWeight: '600',
     transition: 'all 0.2s ease',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 8px 20px -12px rgba(37, 99, 235, 0.6)'
   }
 };
 

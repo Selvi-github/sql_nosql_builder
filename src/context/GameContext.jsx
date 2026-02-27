@@ -148,7 +148,7 @@ export const GameProvider = ({ children, dbType = 'SQL', user, initialProgress }
                     alert("🏆 CONGRATULATIONS! You have completed all levels!");
                 }
             }
-        }, 1500);
+        }, 3500);
     };
 
     const handleWrongAnswer = (message) => {
@@ -161,6 +161,7 @@ export const GameProvider = ({ children, dbType = 'SQL', user, initialProgress }
             currentQuestion,
             currentQuestionIndex,
             score,
+            completedQuestions,
             lastAttemptResult,
             showConfetti,
             handleCorrectAnswer,

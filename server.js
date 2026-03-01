@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
 import { ObjectId } from 'mongodb';
@@ -501,6 +502,7 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
     if (normalizedRole === 'STAFF') {
         if (!email || !isValidEmail(email)) return respondError(res, 400, 'Valid staff email is required');
         if (!name) return respondError(res, 400, 'Staff name is required');
+        if (!password) return respondError(res, 400, 'Staff password is required');
 
         const match = (authData.staff || []).find((s) => {
             const sEmail = String(s.email || '').trim().toLowerCase();
@@ -509,6 +511,14 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
         });
 
         if (!match) return respondError(res, 401, 'Staff not found in the approved list');
+
+        const storedHash = String(match.passwordHash || '').trim();
+        const storedPlain = String(match.password || '');
+        const passwordOk = storedHash
+            ? bcrypt.compareSync(String(password), storedHash)
+            : (storedPlain && storedPlain === String(password));
+
+        if (!passwordOk) return respondError(res, 401, 'Invalid staff credentials');
 
         const staffYear = normalizeYear(match.year);
         const staffSection = normalizeSectionValue(match.section);

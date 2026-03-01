@@ -92,8 +92,8 @@ const LandingPage = ({ user, onStart, onProfile, onLogout, theme, onToggleTheme 
                         <div style={{ ...styles.icon, color: '#60a5fa' }}>🗄️</div>
                         <h2 style={{ ...styles.cardTitle, color: themeStyles.textPrimary }}>SQL Builder</h2>
                         <p style={{ ...styles.cardDesc, color: themeStyles.textSecondary }}>Relational Databases (MySQL)</p>
-                        <ul style={styles.featureList}>
-                            <li>20 Levels | 323 Questions</li>
+                        <ul style={{ ...styles.featureList, color: themeStyles.textSecondary }}>
+                            <li>10 Levels | 174 Questions</li>
                             <li>Structure Query Language</li>
                             <li>Managed Cloud Database</li>
                         </ul>
@@ -107,8 +107,8 @@ const LandingPage = ({ user, onStart, onProfile, onLogout, theme, onToggleTheme 
                         <div style={{ ...styles.icon, color: '#4ade80' }}>🍃</div>
                         <h2 style={{ ...styles.cardTitle, color: themeStyles.textPrimary }}>NoSQL Builder</h2>
                         <p style={{ ...styles.cardDesc, color: themeStyles.textSecondary }}>Document Store (MongoDB)</p>
-                        <ul style={styles.featureList}>
-                            <li>30 Levels | 300 Questions</li>
+                        <ul style={{ ...styles.featureList, color: themeStyles.textSecondary }}>
+                            <li>20 Levels | 200 Questions</li>
                             <li>Managed Cloud Database</li>
                             <li>JSON-Based Documents</li>
                         </ul>

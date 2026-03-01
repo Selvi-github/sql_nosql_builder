@@ -6,6 +6,88 @@ export const sqlLevels = [
         "type": "SQL",
         "questions": [
             {
+                "id": 105,
+                "text": "Find users with age >= 18 AND age <= 60",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        ">=",
+                        "18",
+                        "AND",
+                        "age",
+                        "<=",
+                        "60"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age >= 18 AND age <= 60;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            },
+            {
+                "id": 106,
+                "text": "Find users from Mumbai with age > 30",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "city",
+                        "=",
+                        "'Mumbai'",
+                        "AND",
+                        "age",
+                        ">",
+                        "30"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE city = 'Mumbai' AND age > 30;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            },
+            {
+                "id": 112,
+                "text": "Find users with age < 20 OR age > 50",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        "<",
+                        "20",
+                        "OR",
+                        "age",
+                        ">",
+                        "50"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age < 20 OR age > 50;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "SQL Level 2",
+        "type": "SQL",
+        "questions": [
+            {
                 "id": 101,
                 "text": "Find users NOT from Chennai or Delhi",
                 "expectedPattern": {
@@ -96,56 +178,6 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 105,
-                "text": "Find users with age >= 18 AND age <= 60",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        ">=",
-                        "18",
-                        "AND",
-                        "age",
-                        "<=",
-                        "60"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age >= 18 AND age <= 60;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 106,
-                "text": "Find users from Mumbai with age > 30",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Mumbai'",
-                        "AND",
-                        "age",
-                        ">",
-                        "30"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE city = 'Mumbai' AND age > 30;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 107,
                 "text": "Find users whose lastname is NULL OR city is Delhi",
                 "expectedPattern": {
@@ -194,28 +226,6 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 109,
-                "text": "Find users whose firstname is exactly 5 characters long",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "LENGTH",
-                        "firstname",
-                        "=",
-                        "5"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE LENGTH(firstname) = 5;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 110,
                 "text": "Find users whose city starts with 'B'",
                 "expectedPattern": {
@@ -252,31 +262,6 @@ export const sqlLevels = [
                     ]
                 },
                 "hint": "Try using: SELECT * FROM users WHERE lastname LIKE '%sharma';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 112,
-                "text": "Find users with age < 20 OR age > 50",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        "<",
-                        "20",
-                        "OR",
-                        "age",
-                        ">",
-                        "50"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age < 20 OR age > 50;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
@@ -323,29 +308,6 @@ export const sqlLevels = [
                     ]
                 },
                 "hint": "Try using: SELECT * FROM users WHERE email LIKE '%@gmail%';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 115,
-                "text": "Find users where age is divisible by 5",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        "%",
-                        "5",
-                        "=",
-                        "0"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age % 5 = 0;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
@@ -426,8 +388,329 @@ export const sqlLevels = [
         ]
     },
     {
-        "id": 2,
-        "title": "SQL Level 2",
+        "id": 3,
+        "title": "SQL Level 3",
+        "type": "SQL",
+        "questions": [
+            {
+                "id": 109,
+                "text": "Find users whose firstname is exactly 5 characters long",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "LENGTH",
+                        "firstname",
+                        "=",
+                        "5"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE LENGTH(firstname) = 5;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            },
+            {
+                "id": 209,
+                "text": "Convert firstname to uppercase",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "UPPER",
+                        "firstname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT UPPER(firstname) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 210,
+                "text": "Convert city to lowercase",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "LOWER",
+                        "city",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT LOWER(city) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 211,
+                "text": "Get first 3 characters of firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "LEFT",
+                        "firstname",
+                        "3",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT LEFT(firstname, 3) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 212,
+                "text": "Get last 3 characters of lastname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "RIGHT",
+                        "lastname",
+                        "3",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT RIGHT(lastname, 3) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 213,
+                "text": "Concatenate firstname and lastname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "CONCAT",
+                        "firstname",
+                        "'",
+                        "'",
+                        "lastname",
+                        "as",
+                        "fullname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT CONCAT(firstname, ' ', lastname) as fullname FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 214,
+                "text": "Get length of firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "LENGTH",
+                        "firstname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname, LENGTH(firstname) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 215,
+                "text": "Trim spaces from email",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "TRIM",
+                        "email",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT TRIM(email) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 216,
+                "text": "Replace 'a' with 'X' in firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "REPLACE",
+                        "firstname",
+                        "'a'",
+                        "'X'",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT REPLACE(firstname, 'a', 'X') FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 217,
+                "text": "Get substring from position 2, length 4",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "SUBSTRING",
+                        "firstname",
+                        "2",
+                        "4",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT SUBSTRING(firstname, 2, 4) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 218,
+                "text": "Reverse the firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "REVERSE",
+                        "firstname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT REVERSE(firstname) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 301,
+                "text": "Count vowels in firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "LENGTH",
+                        "firstname",
+                        "-",
+                        "LENGTH",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "LOWER",
+                        "firstname",
+                        "'a'",
+                        "''",
+                        "'e'",
+                        "''",
+                        "'i'",
+                        "''",
+                        "'o'",
+                        "''",
+                        "'u'",
+                        "''",
+                        "as",
+                        "vowel_count",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname, LENGTH(firstname) - LENGTH(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(firstname), 'a', ''), 'e', ''), 'i', ''), 'o', ''), 'u', '')) as vowel_count FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 302,
+                "text": "Get initials from name",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "CONCAT",
+                        "LEFT",
+                        "firstname",
+                        "1",
+                        "LEFT",
+                        "lastname",
+                        "1",
+                        "as",
+                        "initials",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT CONCAT(LEFT(firstname, 1), LEFT(lastname, 1)) as initials FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 303,
+                "text": "Convert firstname to title case",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "CONCAT",
+                        "UPPER",
+                        "LEFT",
+                        "firstname",
+                        "1",
+                        "LOWER",
+                        "SUBSTRING",
+                        "firstname",
+                        "2",
+                        "as",
+                        "title_case",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) as title_case FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 1007,
+                "text": "Find patterns in strings",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "firstname",
+                        "REGEXP",
+                        "'^[A-M]'"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname FROM users WHERE firstname REGEXP '^[A-M]';",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "SQL Level 4",
         "type": "SQL",
         "questions": [
             {
@@ -635,283 +918,87 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 209,
-                "text": "Convert firstname to uppercase",
+                "id": 1003,
+                "text": "Mode calculation",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "UPPER",
-                        "firstname",
+                        "age",
                         "FROM",
-                        "users"
+                        "users",
+                        "GROUP",
+                        "BY",
+                        "age",
+                        "ORDER",
+                        "BY",
+                        "COUNT",
+                        "*",
+                        "DESC",
+                        "LIMIT",
+                        "1"
                     ]
                 },
-                "hint": "Try using: SELECT UPPER(firstname) FROM users;",
+                "hint": "Try using: SELECT age FROM users GROUP BY age ORDER BY COUNT(*) DESC LIMIT 1;",
                 "allowedBlocks": [
-                    "sql_select"
+                    "sql_select",
+                    "sql_group",
+                    "sql_order",
+                    "sql_limit"
                 ]
             },
             {
-                "id": 210,
-                "text": "Convert city to lowercase",
+                "id": 1011,
+                "text": "Conditional aggregation",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "LOWER",
                         "city",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LOWER(city) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 211,
-                "text": "Get first 3 characters of firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "LEFT",
-                        "firstname",
-                        "3",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LEFT(firstname, 3) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 212,
-                "text": "Get last 3 characters of lastname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "RIGHT",
-                        "lastname",
-                        "3",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT RIGHT(lastname, 3) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 213,
-                "text": "Concatenate firstname and lastname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "firstname",
-                        "'",
-                        "'",
-                        "lastname",
+                        "SUM",
+                        "CASE",
+                        "WHEN",
+                        "age",
+                        "<",
+                        "30",
+                        "THEN",
+                        "1",
+                        "ELSE",
+                        "0",
+                        "END",
                         "as",
-                        "fullname",
+                        "under_30",
+                        "SUM",
+                        "CASE",
+                        "WHEN",
+                        "age",
+                        ">=",
+                        "30",
+                        "THEN",
+                        "1",
+                        "ELSE",
+                        "0",
+                        "END",
+                        "as",
+                        "over_30",
                         "FROM",
-                        "users"
+                        "users",
+                        "GROUP",
+                        "BY",
+                        "city"
                     ]
                 },
-                "hint": "Try using: SELECT CONCAT(firstname, ' ', lastname) as fullname FROM users;",
+                "hint": "Try using: SELECT city, SUM(CASE WHEN age < 30 THEN 1 ELSE 0 END) as under_30, SUM(CASE WHEN age >= 30 THEN 1 ELSE 0 END) as over_30 FROM users GROUP BY city;",
                 "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 214,
-                "text": "Get length of firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "LENGTH",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, LENGTH(firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 215,
-                "text": "Trim spaces from email",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "TRIM",
-                        "email",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT TRIM(email) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 216,
-                "text": "Replace 'a' with 'X' in firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "REPLACE",
-                        "firstname",
-                        "'a'",
-                        "'X'",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT REPLACE(firstname, 'a', 'X') FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 217,
-                "text": "Get substring from position 2, length 4",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "SUBSTRING",
-                        "firstname",
-                        "2",
-                        "4",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT SUBSTRING(firstname, 2, 4) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 218,
-                "text": "Reverse the firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "REVERSE",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT REVERSE(firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
+                    "sql_select",
+                    "sql_group"
                 ]
             }
         ]
     },
     {
-        "id": 3,
-        "title": "SQL Level 3",
+        "id": 5,
+        "title": "SQL Level 5",
         "type": "SQL",
         "questions": [
-            {
-                "id": 301,
-                "text": "Count vowels in firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "LENGTH",
-                        "firstname",
-                        "-",
-                        "LENGTH",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "LOWER",
-                        "firstname",
-                        "'a'",
-                        "''",
-                        "'e'",
-                        "''",
-                        "'i'",
-                        "''",
-                        "'o'",
-                        "''",
-                        "'u'",
-                        "''",
-                        "as",
-                        "vowel_count",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, LENGTH(firstname) - LENGTH(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(firstname), 'a', ''), 'e', ''), 'i', ''), 'o', ''), 'u', '')) as vowel_count FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 302,
-                "text": "Get initials from name",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "LEFT",
-                        "firstname",
-                        "1",
-                        "LEFT",
-                        "lastname",
-                        "1",
-                        "as",
-                        "initials",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(LEFT(firstname, 1), LEFT(lastname, 1)) as initials FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 303,
-                "text": "Convert firstname to title case",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "UPPER",
-                        "LEFT",
-                        "firstname",
-                        "1",
-                        "LOWER",
-                        "SUBSTRING",
-                        "firstname",
-                        "2",
-                        "as",
-                        "title_case",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) as title_case FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
             {
                 "id": 304,
                 "text": "Inner join users and orders on user_id",
@@ -1346,14 +1433,7 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select"
                 ]
-            }
-        ]
-    },
-    {
-        "id": 4,
-        "title": "SQL Level 4",
-        "type": "SQL",
-        "questions": [
+            },
             {
                 "id": 401,
                 "text": "Users who ordered more than one product type",
@@ -1435,7 +1515,14 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select"
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "SQL Level 6",
+        "type": "SQL",
+        "questions": [
             {
                 "id": 404,
                 "text": "Find users with age greater than average",
@@ -1924,14 +2011,7 @@ export const sqlLevels = [
                     "sql_where",
                     "sql_join"
                 ]
-            }
-        ]
-    },
-    {
-        "id": 5,
-        "title": "SQL Level 5",
-        "type": "SQL",
-        "questions": [
+            },
             {
                 "id": 501,
                 "text": "Products with no orders in last 30 days",
@@ -2018,7 +2098,14 @@ export const sqlLevels = [
                     "sql_select",
                     "sql_where"
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "SQL Level 7",
+        "type": "SQL",
+        "questions": [
             {
                 "id": 504,
                 "text": "Get current date",
@@ -2277,14 +2364,7 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select"
                 ]
-            }
-        ]
-    },
-    {
-        "id": 6,
-        "title": "SQL Level 6",
-        "type": "SQL",
-        "questions": [
+            },
             {
                 "id": 601,
                 "text": "Convert string to date",
@@ -2331,6 +2411,36 @@ export const sqlLevels = [
                 "hint": "Try using: SELECT FROM_UNIXTIME(1234567890);",
                 "allowedBlocks": [
                     "sql_select"
+                ]
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "SQL Level 8",
+        "type": "SQL",
+        "questions": [
+            {
+                "id": 115,
+                "text": "Find users where age is divisible by 5",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        "%",
+                        "5",
+                        "=",
+                        "0"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age % 5 = 0;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
                 ]
             },
             {
@@ -2605,12 +2715,35 @@ export const sqlLevels = [
                     "sql_select",
                     "sql_where"
                 ]
+            },
+            {
+                "id": 1015,
+                "text": "Generate random sample",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "ORDER",
+                        "BY",
+                        "RAND",
+                        "LIMIT",
+                        "10"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users ORDER BY RAND() LIMIT 10;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_order",
+                    "sql_limit"
+                ]
             }
         ]
     },
     {
-        "id": 7,
-        "title": "SQL Level 7",
+        "id": 9,
+        "title": "SQL Level 9",
         "type": "SQL",
         "questions": [
             {
@@ -3233,8 +3366,8 @@ export const sqlLevels = [
         ]
     },
     {
-        "id": 8,
-        "title": "SQL Level 8",
+        "id": 10,
+        "title": "SQL Level 10",
         "type": "SQL",
         "questions": [
             {
@@ -3696,14 +3829,70 @@ export const sqlLevels = [
                     "sql_select",
                     "sql_order"
                 ]
-            }
-        ]
-    },
-    {
-        "id": 9,
-        "title": "SQL Level 9",
-        "type": "SQL",
-        "questions": [
+            },
+            {
+                "id": 1001,
+                "text": "Running difference",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "order_id",
+                        "amount",
+                        "amount",
+                        "-",
+                        "LAG",
+                        "amount",
+                        "1",
+                        "0",
+                        "OVER",
+                        "ORDER",
+                        "BY",
+                        "order_date",
+                        "as",
+                        "diff",
+                        "FROM",
+                        "orders"
+                    ]
+                },
+                "hint": "Try using: SELECT order_id, amount, amount - LAG(amount, 1, 0) OVER (ORDER BY order_date) as diff FROM orders;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_order"
+                ]
+            },
+            {
+                "id": 1012,
+                "text": "Rolling window calculation",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "order_date",
+                        "amount",
+                        "SUM",
+                        "amount",
+                        "OVER",
+                        "ORDER",
+                        "BY",
+                        "order_date",
+                        "ROWS",
+                        "BETWEEN",
+                        "6",
+                        "PRECEDING",
+                        "AND",
+                        "CURRENT",
+                        "ROW",
+                        "as",
+                        "rolling_7day",
+                        "FROM",
+                        "orders"
+                    ]
+                },
+                "hint": "Try using: SELECT order_date, amount, SUM(amount) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7day FROM orders;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_order"
+                ]
+            },
             {
                 "id": 901,
                 "text": "Multiple CTEs",
@@ -4090,43 +4279,6 @@ export const sqlLevels = [
                     "sql_select",
                     "sql_where"
                 ]
-            }
-        ]
-    },
-    {
-        "id": 10,
-        "title": "SQL Level 10",
-        "type": "SQL",
-        "questions": [
-            {
-                "id": 1001,
-                "text": "Running difference",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "amount",
-                        "-",
-                        "LAG",
-                        "amount",
-                        "1",
-                        "0",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "diff",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, amount - LAG(amount, 1, 0) OVER (ORDER BY order_date) as diff FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
             },
             {
                 "id": 1002,
@@ -4161,32 +4313,46 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 1003,
-                "text": "Mode calculation",
+                "id": 1009,
+                "text": "Hierarchical data flattening",
                 "expectedPattern": {
                     "structures": [
-                        "SELECT",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "age",
-                        "ORDER",
-                        "BY",
-                        "COUNT",
-                        "*",
-                        "DESC",
-                        "LIMIT",
-                        "1"
+                        "WITH",
+                        "RECURSIVE",
+                        "hierarchy",
+                        "AS"
                     ]
                 },
-                "hint": "Try using: SELECT age FROM users GROUP BY age ORDER BY COUNT(*) DESC LIMIT 1;",
+                "hint": "Try using: WITH RECURSIVE hierarchy AS (",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 1017,
+                "text": "Calculate retention rate",
+                "expectedPattern": {
+                    "structures": [
+                        "WITH",
+                        "first_purchase",
+                        "AS",
+                        "SELECT",
+                        "user_id",
+                        "MIN",
+                        "order_date",
+                        "as",
+                        "first_date",
+                        "FROM",
+                        "orders",
+                        "GROUP",
+                        "BY",
+                        "user_id"
+                    ]
+                },
+                "hint": "Try using: WITH first_purchase AS (SELECT user_id, MIN(order_date) as first_date FROM orders GROUP BY user_id),",
                 "allowedBlocks": [
                     "sql_select",
-                    "sql_group",
-                    "sql_order",
-                    "sql_limit"
+                    "sql_group"
                 ]
             },
             {
@@ -4305,27 +4471,6 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 1007,
-                "text": "Find patterns in strings",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "firstname",
-                        "REGEXP",
-                        "'^[A-M]'"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname FROM users WHERE firstname REGEXP '^[A-M]';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 1008,
                 "text": "Dynamic date ranges",
                 "expectedPattern": {
@@ -4349,22 +4494,6 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
-                ]
-            },
-            {
-                "id": 1009,
-                "text": "Hierarchical data flattening",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "RECURSIVE",
-                        "hierarchy",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH RECURSIVE hierarchy AS (",
-                "allowedBlocks": [
-                    "sql_select"
                 ]
             },
             {
@@ -4392,85 +4521,6 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_group"
-                ]
-            },
-            {
-                "id": 1011,
-                "text": "Conditional aggregation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "SUM",
-                        "CASE",
-                        "WHEN",
-                        "age",
-                        "<",
-                        "30",
-                        "THEN",
-                        "1",
-                        "ELSE",
-                        "0",
-                        "END",
-                        "as",
-                        "under_30",
-                        "SUM",
-                        "CASE",
-                        "WHEN",
-                        "age",
-                        ">=",
-                        "30",
-                        "THEN",
-                        "1",
-                        "ELSE",
-                        "0",
-                        "END",
-                        "as",
-                        "over_30",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, SUM(CASE WHEN age < 30 THEN 1 ELSE 0 END) as under_30, SUM(CASE WHEN age >= 30 THEN 1 ELSE 0 END) as over_30 FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 1012,
-                "text": "Rolling window calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_date",
-                        "amount",
-                        "SUM",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "ROWS",
-                        "BETWEEN",
-                        "6",
-                        "PRECEDING",
-                        "AND",
-                        "CURRENT",
-                        "ROW",
-                        "as",
-                        "rolling_7day",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_date, amount, SUM(amount) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7day FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
                 ]
             },
             {
@@ -4531,29 +4581,6 @@ export const sqlLevels = [
                 ]
             },
             {
-                "id": 1015,
-                "text": "Generate random sample",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "ORDER",
-                        "BY",
-                        "RAND",
-                        "LIMIT",
-                        "10"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users ORDER BY RAND() LIMIT 10;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order",
-                    "sql_limit"
-                ]
-            },
-            {
                 "id": 1016,
                 "text": "Find overlapping date ranges",
                 "expectedPattern": {
@@ -4590,33 +4617,6 @@ export const sqlLevels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_join"
-                ]
-            },
-            {
-                "id": 1017,
-                "text": "Calculate retention rate",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "first_purchase",
-                        "AS",
-                        "SELECT",
-                        "user_id",
-                        "MIN",
-                        "order_date",
-                        "as",
-                        "first_date",
-                        "FROM",
-                        "orders",
-                        "GROUP",
-                        "BY",
-                        "user_id"
-                    ]
-                },
-                "hint": "Try using: WITH first_purchase AS (SELECT user_id, MIN(order_date) as first_date FROM orders GROUP BY user_id),",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
                 ]
             }
         ]

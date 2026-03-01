@@ -23,8 +23,8 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
         }
 
         if (role === 'STAFF') {
-            if (!staffName || !email) {
-                setError('Please enter staff name and email.');
+            if (!staffName || !email || !password) {
+                setError('Please enter staff name, email, and password.');
                 return;
             }
         }
@@ -43,7 +43,7 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
             const body = role === 'STUDENT'
                 ? { role, name: studentName, rollNumber, year, section }
                 : role === 'STAFF'
-                    ? { role, name: staffName, email }
+                    ? { role, name: staffName, email, password }
                     : { role, email, password };
 
             const res = await fetch('/api/auth/login', {
@@ -239,12 +239,14 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
                         </div>
                     )}
 
-                    {role === 'ADMIN' && (
+                    {(role === 'STAFF' || role === 'ADMIN') && (
                         <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Password</label>
+                            <label style={{ ...styles.label, color: themeStyles.labelText }}>
+                                {role === 'STAFF' ? 'Staff Password' : 'Password'}
+                            </label>
                             <input
                                 type="password"
-                                placeholder="Enter admin password"
+                                placeholder={role === 'STAFF' ? 'Enter staff password' : 'Enter admin password'}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}

@@ -5,6 +5,88 @@ export const levels = [
         "type": "SQL",
         "questions": [
             {
+                "id": 105,
+                "text": "Find users with age >= 18 AND age <= 60",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        ">=",
+                        "18",
+                        "AND",
+                        "age",
+                        "<=",
+                        "60"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age >= 18 AND age <= 60;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            },
+            {
+                "id": 106,
+                "text": "Find users from Mumbai with age > 30",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "city",
+                        "=",
+                        "'Mumbai'",
+                        "AND",
+                        "age",
+                        ">",
+                        "30"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE city = 'Mumbai' AND age > 30;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            },
+            {
+                "id": 112,
+                "text": "Find users with age < 20 OR age > 50",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        "<",
+                        "20",
+                        "OR",
+                        "age",
+                        ">",
+                        "50"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age < 20 OR age > 50;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
+                ]
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "SQL Level 2",
+        "type": "SQL",
+        "questions": [
+            {
                 "id": 101,
                 "text": "Find users NOT from Chennai or Delhi",
                 "expectedPattern": {
@@ -95,56 +177,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 105,
-                "text": "Find users with age >= 18 AND age <= 60",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        ">=",
-                        "18",
-                        "AND",
-                        "age",
-                        "<=",
-                        "60"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age >= 18 AND age <= 60;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 106,
-                "text": "Find users from Mumbai with age > 30",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Mumbai'",
-                        "AND",
-                        "age",
-                        ">",
-                        "30"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE city = 'Mumbai' AND age > 30;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 107,
                 "text": "Find users whose lastname is NULL OR city is Delhi",
                 "expectedPattern": {
@@ -193,28 +225,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 109,
-                "text": "Find users whose firstname is exactly 5 characters long",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "LENGTH",
-                        "firstname",
-                        "=",
-                        "5"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE LENGTH(firstname) = 5;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 110,
                 "text": "Find users whose city starts with 'B'",
                 "expectedPattern": {
@@ -251,31 +261,6 @@ export const levels = [
                     ]
                 },
                 "hint": "Try using: SELECT * FROM users WHERE lastname LIKE '%sharma';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 112,
-                "text": "Find users with age < 20 OR age > 50",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        "<",
-                        "20",
-                        "OR",
-                        "age",
-                        ">",
-                        "50"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age < 20 OR age > 50;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
@@ -322,29 +307,6 @@ export const levels = [
                     ]
                 },
                 "hint": "Try using: SELECT * FROM users WHERE email LIKE '%@gmail%';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 115,
-                "text": "Find users where age is divisible by 5",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        "%",
-                        "5",
-                        "=",
-                        "0"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age % 5 = 0;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
@@ -421,301 +383,333 @@ export const levels = [
                     "sql_select",
                     "sql_where"
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "SQL Level 3",
+        "type": "SQL",
+        "questions": [
             {
-                "id": 119,
-                "text": "Count users per city",
+                "id": 109,
+                "text": "Find users whose firstname is exactly 5 characters long",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "city",
-                        "COUNT",
                         "*",
                         "FROM",
                         "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, COUNT(*) FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 120,
-                "text": "Find average age per city",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "AVG",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, AVG(age) FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 121,
-                "text": "Find minimum age per city",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "MIN",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, MIN(age) FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 122,
-                "text": "Find maximum age per city",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "MAX",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, MAX(age) FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 123,
-                "text": "Count users grouped by age",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "age",
-                        "COUNT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "age"
-                    ]
-                },
-                "hint": "Try using: SELECT age, COUNT(*) FROM users GROUP BY age;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 124,
-                "text": "Sum of ages grouped by city",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "SUM",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, SUM(age) FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 125,
-                "text": "Cities with more than 5 users",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "COUNT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "HAVING",
-                        "COUNT",
-                        "*",
-                        ">",
+                        "WHERE",
+                        "LENGTH",
+                        "firstname",
+                        "=",
                         "5"
                     ]
                 },
-                "hint": "Try using: SELECT city, COUNT(*) FROM users GROUP BY city HAVING COUNT(*) > 5;",
+                "hint": "Try using: SELECT * FROM users WHERE LENGTH(firstname) = 5;",
                 "allowedBlocks": [
                     "sql_select",
-                    "sql_group",
-                    "sql_having"
+                    "sql_where"
                 ]
             },
             {
-                "id": 126,
-                "text": "Cities where average age > 30",
+                "id": 209,
+                "text": "Convert firstname to uppercase",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "city",
-                        "AVG",
-                        "age",
+                        "UPPER",
+                        "firstname",
                         "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "HAVING",
-                        "AVG",
-                        "age",
-                        ">",
-                        "30"
+                        "users"
                     ]
                 },
-                "hint": "Try using: SELECT city, AVG(age) FROM users GROUP BY city HAVING AVG(age) > 30;",
+                "hint": "Try using: SELECT UPPER(firstname) FROM users;",
                 "allowedBlocks": [
-                    "sql_select",
-                    "sql_group",
-                    "sql_having"
+                    "sql_select"
                 ]
             },
             {
-                "id": 127,
-                "text": "Count male and female users",
+                "id": 210,
+                "text": "Convert city to lowercase",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "gender",
-                        "COUNT",
-                        "*",
+                        "LOWER",
+                        "city",
                         "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "gender"
+                        "users"
                     ]
                 },
-                "hint": "Try using: SELECT gender, COUNT(*) FROM users GROUP BY gender;",
+                "hint": "Try using: SELECT LOWER(city) FROM users;",
                 "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
+                    "sql_select"
                 ]
             },
             {
-                "id": 128,
-                "text": "Average age by gender",
+                "id": 211,
+                "text": "Get first 3 characters of firstname",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "gender",
-                        "AVG",
-                        "age",
+                        "LEFT",
+                        "firstname",
+                        "3",
                         "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "gender"
+                        "users"
                     ]
                 },
-                "hint": "Try using: SELECT gender, AVG(age) FROM users GROUP BY gender;",
+                "hint": "Try using: SELECT LEFT(firstname, 3) FROM users;",
                 "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
+                    "sql_select"
                 ]
             },
             {
-                "id": 129,
-                "text": "Cities with minimum age less than 20",
+                "id": 212,
+                "text": "Get last 3 characters of lastname",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "city",
-                        "MIN",
-                        "age",
+                        "RIGHT",
+                        "lastname",
+                        "3",
                         "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "HAVING",
-                        "MIN",
-                        "age",
-                        "<",
-                        "20"
+                        "users"
                     ]
                 },
-                "hint": "Try using: SELECT city, MIN(age) FROM users GROUP BY city HAVING MIN(age) < 20;",
+                "hint": "Try using: SELECT RIGHT(lastname, 3) FROM users;",
                 "allowedBlocks": [
-                    "sql_select",
-                    "sql_group",
-                    "sql_having"
+                    "sql_select"
                 ]
             },
             {
-                "id": 130,
-                "text": "Count users per city, ordered by count descending",
+                "id": 213,
+                "text": "Concatenate firstname and lastname",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "city",
-                        "COUNT",
-                        "*",
+                        "CONCAT",
+                        "firstname",
+                        "'",
+                        "'",
+                        "lastname",
                         "as",
-                        "user_count",
+                        "fullname",
                         "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "ORDER",
-                        "BY",
-                        "user_count",
-                        "DESC"
+                        "users"
                     ]
                 },
-                "hint": "Try using: SELECT city, COUNT(*) as user_count FROM users GROUP BY city ORDER BY user_count DESC;",
+                "hint": "Try using: SELECT CONCAT(firstname, ' ', lastname) as fullname FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 214,
+                "text": "Get length of firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "LENGTH",
+                        "firstname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname, LENGTH(firstname) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 215,
+                "text": "Trim spaces from email",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "TRIM",
+                        "email",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT TRIM(email) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 216,
+                "text": "Replace 'a' with 'X' in firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "REPLACE",
+                        "firstname",
+                        "'a'",
+                        "'X'",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT REPLACE(firstname, 'a', 'X') FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 217,
+                "text": "Get substring from position 2, length 4",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "SUBSTRING",
+                        "firstname",
+                        "2",
+                        "4",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT SUBSTRING(firstname, 2, 4) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 218,
+                "text": "Reverse the firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "REVERSE",
+                        "firstname",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT REVERSE(firstname) FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 301,
+                "text": "Count vowels in firstname",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "LENGTH",
+                        "firstname",
+                        "-",
+                        "LENGTH",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "REPLACE",
+                        "LOWER",
+                        "firstname",
+                        "'a'",
+                        "''",
+                        "'e'",
+                        "''",
+                        "'i'",
+                        "''",
+                        "'o'",
+                        "''",
+                        "'u'",
+                        "''",
+                        "as",
+                        "vowel_count",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname, LENGTH(firstname) - LENGTH(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(firstname), 'a', ''), 'e', ''), 'i', ''), 'o', ''), 'u', '')) as vowel_count FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 302,
+                "text": "Get initials from name",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "CONCAT",
+                        "LEFT",
+                        "firstname",
+                        "1",
+                        "LEFT",
+                        "lastname",
+                        "1",
+                        "as",
+                        "initials",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT CONCAT(LEFT(firstname, 1), LEFT(lastname, 1)) as initials FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 303,
+                "text": "Convert firstname to title case",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "CONCAT",
+                        "UPPER",
+                        "LEFT",
+                        "firstname",
+                        "1",
+                        "LOWER",
+                        "SUBSTRING",
+                        "firstname",
+                        "2",
+                        "as",
+                        "title_case",
+                        "FROM",
+                        "users"
+                    ]
+                },
+                "hint": "Try using: SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) as title_case FROM users;",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 1007,
+                "text": "Find patterns in strings",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "firstname",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "firstname",
+                        "REGEXP",
+                        "'^[A-M]'"
+                    ]
+                },
+                "hint": "Try using: SELECT firstname FROM users WHERE firstname REGEXP '^[A-M]';",
                 "allowedBlocks": [
                     "sql_select",
-                    "sql_group",
-                    "sql_order"
+                    "sql_where"
                 ]
             }
         ]
     },
     {
-        "id": 2,
-        "title": "SQL Level 2",
+        "id": 4,
+        "title": "SQL Level 4",
         "type": "SQL",
         "questions": [
             {
@@ -923,525 +917,87 @@ export const levels = [
                 ]
             },
             {
-                "id": 209,
-                "text": "Convert firstname to uppercase",
+                "id": 1003,
+                "text": "Mode calculation",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "UPPER",
-                        "firstname",
+                        "age",
                         "FROM",
-                        "users"
+                        "users",
+                        "GROUP",
+                        "BY",
+                        "age",
+                        "ORDER",
+                        "BY",
+                        "COUNT",
+                        "*",
+                        "DESC",
+                        "LIMIT",
+                        "1"
                     ]
                 },
-                "hint": "Try using: SELECT UPPER(firstname) FROM users;",
+                "hint": "Try using: SELECT age FROM users GROUP BY age ORDER BY COUNT(*) DESC LIMIT 1;",
                 "allowedBlocks": [
-                    "sql_select"
+                    "sql_select",
+                    "sql_group",
+                    "sql_order",
+                    "sql_limit"
                 ]
             },
             {
-                "id": 210,
-                "text": "Convert city to lowercase",
+                "id": 1011,
+                "text": "Conditional aggregation",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "LOWER",
                         "city",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LOWER(city) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 211,
-                "text": "Get first 3 characters of firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "LEFT",
-                        "firstname",
-                        "3",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LEFT(firstname, 3) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 212,
-                "text": "Get last 3 characters of lastname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "RIGHT",
-                        "lastname",
-                        "3",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT RIGHT(lastname, 3) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 213,
-                "text": "Concatenate firstname and lastname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "firstname",
-                        "'",
-                        "'",
-                        "lastname",
-                        "as",
-                        "fullname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(firstname, ' ', lastname) as fullname FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 214,
-                "text": "Get length of firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "LENGTH",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, LENGTH(firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 215,
-                "text": "Trim spaces from email",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "TRIM",
-                        "email",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT TRIM(email) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 216,
-                "text": "Replace 'a' with 'X' in firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "REPLACE",
-                        "firstname",
-                        "'a'",
-                        "'X'",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT REPLACE(firstname, 'a', 'X') FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 217,
-                "text": "Get substring from position 2, length 4",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "SUBSTRING",
-                        "firstname",
-                        "2",
-                        "4",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT SUBSTRING(firstname, 2, 4) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 218,
-                "text": "Reverse the firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "REVERSE",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT REVERSE(firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 219,
-                "text": "Find position of 'a' in firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "POSITION",
-                        "'a'",
-                        "IN",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, POSITION('a' IN firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 220,
-                "text": "Capitalize first letter",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "UPPER",
-                        "LEFT",
-                        "firstname",
+                        "SUM",
+                        "CASE",
+                        "WHEN",
+                        "age",
+                        "<",
+                        "30",
+                        "THEN",
                         "1",
-                        "LOWER",
-                        "SUBSTRING",
-                        "firstname",
-                        "2",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 221,
-                "text": "Concatenate with separator",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT_WS",
-                        "'-'",
-                        "firstname",
-                        "lastname",
-                        "city",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT_WS('-', firstname, lastname, city) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 222,
-                "text": "Pad firstname to 10 characters with '*'",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "LPAD",
-                        "firstname",
-                        "10",
-                        "'*'",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LPAD(firstname, 10, '*') FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 223,
-                "text": "Right pad city to 15 characters",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "RPAD",
-                        "city",
-                        "15",
-                        "'-'",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT RPAD(city, 15, '-') FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 224,
-                "text": "Repeat firstname 3 times",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "REPEAT",
-                        "firstname",
-                        "3",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT REPEAT(firstname, 3) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 225,
-                "text": "Get ASCII value of first character",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "ASCII",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT ASCII(firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 226,
-                "text": "Remove leading spaces",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "LTRIM",
-                        "email",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT LTRIM(email) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 227,
-                "text": "Remove trailing spaces",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "RTRIM",
-                        "email",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT RTRIM(email) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 228,
-                "text": "Extract domain from email",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "SUBSTRING_INDEX",
-                        "email",
-                        "'@'",
-                        "-1",
+                        "ELSE",
+                        "0",
+                        "END",
                         "as",
-                        "domain",
+                        "under_30",
+                        "SUM",
+                        "CASE",
+                        "WHEN",
+                        "age",
+                        ">=",
+                        "30",
+                        "THEN",
+                        "1",
+                        "ELSE",
+                        "0",
+                        "END",
+                        "as",
+                        "over_30",
                         "FROM",
-                        "users"
+                        "users",
+                        "GROUP",
+                        "BY",
+                        "city"
                     ]
                 },
-                "hint": "Try using: SELECT SUBSTRING_INDEX(email, '@', -1) as domain FROM users;",
+                "hint": "Try using: SELECT city, SUM(CASE WHEN age < 30 THEN 1 ELSE 0 END) as under_30, SUM(CASE WHEN age >= 30 THEN 1 ELSE 0 END) as over_30 FROM users GROUP BY city;",
                 "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 229,
-                "text": "Check if firstname contains 'ar'",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "LOCATE",
-                        "'ar'",
-                        "firstname",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, LOCATE('ar', firstname) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 230,
-                "text": "Format phone number",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "'",
-                        "'",
-                        "LEFT",
-                        "phone",
-                        "3",
-                        "'",
-                        "'",
-                        "MID",
-                        "phone",
-                        "4",
-                        "3",
-                        "'-'",
-                        "RIGHT",
-                        "phone",
-                        "4",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT('(', LEFT(phone, 3), ') ', MID(phone, 4, 3), '-', RIGHT(phone, 4)) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
+                    "sql_select",
+                    "sql_group"
                 ]
             }
         ]
     },
     {
-        "id": 3,
-        "title": "SQL Level 3",
+        "id": 5,
+        "title": "SQL Level 5",
         "type": "SQL",
         "questions": [
-            {
-                "id": 301,
-                "text": "Count vowels in firstname",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "LENGTH",
-                        "firstname",
-                        "-",
-                        "LENGTH",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "REPLACE",
-                        "LOWER",
-                        "firstname",
-                        "'a'",
-                        "''",
-                        "'e'",
-                        "''",
-                        "'i'",
-                        "''",
-                        "'o'",
-                        "''",
-                        "'u'",
-                        "''",
-                        "as",
-                        "vowel_count",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, LENGTH(firstname) - LENGTH(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(firstname), 'a', ''), 'e', ''), 'i', ''), 'o', ''), 'u', '')) as vowel_count FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 302,
-                "text": "Get initials from name",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "LEFT",
-                        "firstname",
-                        "1",
-                        "LEFT",
-                        "lastname",
-                        "1",
-                        "as",
-                        "initials",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(LEFT(firstname, 1), LEFT(lastname, 1)) as initials FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 303,
-                "text": "Convert firstname to title case",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CONCAT",
-                        "UPPER",
-                        "LEFT",
-                        "firstname",
-                        "1",
-                        "LOWER",
-                        "SUBSTRING",
-                        "firstname",
-                        "2",
-                        "as",
-                        "title_case",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT CONCAT(UPPER(LEFT(firstname, 1)), LOWER(SUBSTRING(firstname, 2))) as title_case FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
             {
                 "id": 304,
                 "text": "Inner join users and orders on user_id",
@@ -1878,389 +1434,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 319,
-                "text": "Cross join users and products",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "p.product_name",
-                        "FROM",
-                        "users",
-                        "u",
-                        "CROSS",
-                        "JOIN",
-                        "products",
-                        "p"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, p.product_name FROM users u CROSS JOIN products p;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 320,
-                "text": "Full outer join users and orders",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "u",
-                        "FULL",
-                        "OUTER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users u FULL OUTER JOIN orders o ON u.user_id = o.user_id;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 321,
-                "text": "Find users who ordered specific product",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DISTINCT",
-                        "u.firstname",
-                        "FROM",
-                        "users",
-                        "u"
-                    ]
-                },
-                "hint": "Try using: SELECT DISTINCT u.firstname FROM users u",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 322,
-                "text": "Join with multiple conditions",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "AND",
-                        "u.city",
-                        "=",
-                        "'Chennai'"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users u INNER JOIN orders o ON u.user_id = o.user_id AND u.city = 'Chennai';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 323,
-                "text": "Count distinct products ordered per user",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "COUNT",
-                        "DISTINCT",
-                        "o.product_id",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.user_id",
-                        "u.firstname"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, COUNT(DISTINCT o.product_id) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 324,
-                "text": "Maximum order amount per user",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "MAX",
-                        "o.amount",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.user_id",
-                        "u.firstname"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, MAX(o.amount) FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 325,
-                "text": "Find users with orders in 2024",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DISTINCT",
-                        "u.*",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "WHERE",
-                        "YEAR",
-                        "o.order_date",
-                        "=",
-                        "2024"
-                    ]
-                },
-                "hint": "Try using: SELECT DISTINCT u.* FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE YEAR(o.order_date) = 2024;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 326,
-                "text": "Join and filter users from Chennai with orders",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "o.amount",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "WHERE",
-                        "u.city",
-                        "=",
-                        "'Chennai'"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE u.city = 'Chennai';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 327,
-                "text": "Users and their first order date",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "MIN",
-                        "o.order_date",
-                        "as",
-                        "first_order",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.user_id",
-                        "u.firstname"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, MIN(o.order_date) as first_order FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 328,
-                "text": "Users and their last order date",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "MAX",
-                        "o.order_date",
-                        "as",
-                        "last_order",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.user_id",
-                        "u.firstname"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, MAX(o.order_date) as last_order FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.user_id, u.firstname;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 329,
-                "text": "Join users, orders where amount between 500 and 2000",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.firstname",
-                        "o.amount",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "WHERE",
-                        "o.amount",
-                        "BETWEEN",
-                        "500",
-                        "AND",
-                        "2000"
-                    ]
-                },
-                "hint": "Try using: SELECT u.firstname, o.amount FROM users u INNER JOIN orders o ON u.user_id = o.user_id WHERE o.amount BETWEEN 500 AND 2000;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 330,
-                "text": "Find cities with highest total order value",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.city",
-                        "SUM",
-                        "o.amount",
-                        "as",
-                        "total",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.city",
-                        "ORDER",
-                        "BY",
-                        "total",
-                        "DESC",
-                        "LIMIT",
-                        "1"
-                    ]
-                },
-                "hint": "Try using: SELECT u.city, SUM(o.amount) as total FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.city ORDER BY total DESC LIMIT 1;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join",
-                    "sql_group",
-                    "sql_order",
-                    "sql_limit"
-                ]
-            }
-        ]
-    },
-    {
-        "id": 4,
-        "title": "SQL Level 4",
-        "type": "SQL",
-        "questions": [
-            {
                 "id": 401,
                 "text": "Users who ordered more than one product type",
                 "expectedPattern": {
@@ -2341,7 +1514,14 @@ export const levels = [
                 "allowedBlocks": [
                     "sql_select"
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "SQL Level 6",
+        "type": "SQL",
+        "questions": [
             {
                 "id": 404,
                 "text": "Find users with age greater than average",
@@ -2832,409 +2012,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 419,
-                "text": "Users older than youngest user from Chennai",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        ">",
-                        "SELECT",
-                        "MIN",
-                        "age",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Chennai'"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age > (SELECT MIN(age) FROM users WHERE city = 'Chennai');",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 420,
-                "text": "Products with price above average",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "products",
-                        "WHERE",
-                        "price",
-                        ">",
-                        "SELECT",
-                        "AVG",
-                        "price",
-                        "FROM",
-                        "products"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM products WHERE price > (SELECT AVG(price) FROM products);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 421,
-                "text": "Users from city with highest average age",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "SELECT",
-                        "city",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "ORDER",
-                        "BY",
-                        "AVG",
-                        "age",
-                        "DESC",
-                        "LIMIT",
-                        "1"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE city = (SELECT city FROM users GROUP BY city ORDER BY AVG(age) DESC LIMIT 1);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_group",
-                    "sql_order",
-                    "sql_limit"
-                ]
-            },
-            {
-                "id": 422,
-                "text": "Orders placed by users from Chennai",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "user_id",
-                        "IN",
-                        "SELECT",
-                        "user_id",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Chennai'"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM orders WHERE user_id IN (SELECT user_id FROM users WHERE city = 'Chennai');",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 423,
-                "text": "Find third highest salary",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DISTINCT",
-                        "salary",
-                        "FROM",
-                        "employees",
-                        "ORDER",
-                        "BY",
-                        "salary",
-                        "DESC",
-                        "LIMIT",
-                        "1",
-                        "OFFSET",
-                        "2"
-                    ]
-                },
-                "hint": "Try using: SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 2;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order",
-                    "sql_limit"
-                ]
-            },
-            {
-                "id": 424,
-                "text": "Users with age equal to any user from Mumbai",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        "IN",
-                        "SELECT",
-                        "age",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Mumbai'"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE age IN (SELECT age FROM users WHERE city = 'Mumbai');",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 425,
-                "text": "Departments with employees earning above company average",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "dept_id",
-                        "FROM",
-                        "employees",
-                        "GROUP",
-                        "BY",
-                        "dept_id",
-                        "HAVING",
-                        "AVG",
-                        "salary",
-                        ">",
-                        "SELECT",
-                        "AVG",
-                        "salary",
-                        "FROM",
-                        "employees"
-                    ]
-                },
-                "hint": "Try using: SELECT dept_id FROM employees GROUP BY dept_id HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group",
-                    "sql_having"
-                ]
-            },
-            {
-                "id": 426,
-                "text": "Products ordered by users from specific city",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DISTINCT",
-                        "product_id",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "user_id",
-                        "IN",
-                        "SELECT",
-                        "user_id",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Delhi'"
-                    ]
-                },
-                "hint": "Try using: SELECT DISTINCT product_id FROM orders WHERE user_id IN (SELECT user_id FROM users WHERE city = 'Delhi');",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 427,
-                "text": "Users who spent more than highest spender from Chennai",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "user_id",
-                        "FROM",
-                        "orders",
-                        "GROUP",
-                        "BY",
-                        "user_id",
-                        "HAVING",
-                        "SUM",
-                        "amount",
-                        ">",
-                        "SELECT",
-                        "MAX",
-                        "total",
-                        "FROM",
-                        "SELECT",
-                        "SUM",
-                        "amount",
-                        "as",
-                        "total",
-                        "FROM",
-                        "orders",
-                        "o",
-                        "INNER",
-                        "JOIN",
-                        "users",
-                        "u",
-                        "ON",
-                        "o.user_id",
-                        "=",
-                        "u.user_id",
-                        "WHERE",
-                        "u.city",
-                        "=",
-                        "'Chennai'",
-                        "GROUP",
-                        "BY",
-                        "o.user_id",
-                        "as",
-                        "subq"
-                    ]
-                },
-                "hint": "Try using: SELECT user_id FROM orders GROUP BY user_id HAVING SUM(amount) > (SELECT MAX(total) FROM (SELECT SUM(amount) as total FROM orders o INNER JOIN users u ON o.user_id = u.user_id WHERE u.city = 'Chennai' GROUP BY o.user_id) as subq);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join",
-                    "sql_group",
-                    "sql_having"
-                ]
-            },
-            {
-                "id": 428,
-                "text": "Find orders on same date as maximum order amount",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "order_date",
-                        "=",
-                        "SELECT",
-                        "order_date",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "amount",
-                        "=",
-                        "SELECT",
-                        "MAX",
-                        "amount",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM orders WHERE order_date = (SELECT order_date FROM orders WHERE amount = (SELECT MAX(amount) FROM orders));",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 429,
-                "text": "Employees earning more than their department average",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "employees",
-                        "e1",
-                        "WHERE",
-                        "salary",
-                        ">",
-                        "SELECT",
-                        "AVG",
-                        "salary",
-                        "FROM",
-                        "employees",
-                        "e2",
-                        "WHERE",
-                        "e1.dept_id",
-                        "=",
-                        "e2.dept_id"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e1.dept_id = e2.dept_id);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 430,
-                "text": "Users from cities with more than 2 orders total",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "IN",
-                        "SELECT",
-                        "u.city",
-                        "FROM",
-                        "users",
-                        "u",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "GROUP",
-                        "BY",
-                        "u.city",
-                        "HAVING",
-                        "COUNT",
-                        "*",
-                        ">",
-                        "2"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE city IN (SELECT u.city FROM users u INNER JOIN orders o ON u.user_id = o.user_id GROUP BY u.city HAVING COUNT(*) > 2);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join",
-                    "sql_group",
-                    "sql_having"
-                ]
-            }
-        ]
-    },
-    {
-        "id": 5,
-        "title": "SQL Level 5",
-        "type": "SQL",
-        "questions": [
-            {
                 "id": 501,
                 "text": "Products with no orders in last 30 days",
                 "expectedPattern": {
@@ -3320,7 +2097,14 @@ export const levels = [
                     "sql_select",
                     "sql_where"
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "SQL Level 7",
+        "type": "SQL",
+        "questions": [
             {
                 "id": 504,
                 "text": "Get current date",
@@ -3581,250 +2365,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 519,
-                "text": "Extract hour from datetime",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "HOUR",
-                        "created_at",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT HOUR(created_at) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 520,
-                "text": "Extract minute from datetime",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "MINUTE",
-                        "created_at",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT MINUTE(created_at) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 521,
-                "text": "Extract second from datetime",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "SECOND",
-                        "created_at",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT SECOND(created_at) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 522,
-                "text": "Get week number",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "WEEK",
-                        "created_date",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT WEEK(created_date) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 523,
-                "text": "Get quarter",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "QUARTER",
-                        "created_date",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT QUARTER(created_date) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 524,
-                "text": "Users created in last 30 days",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "created_date",
-                        ">",
-                        "DATE_SUB",
-                        "NOW",
-                        "INTERVAL",
-                        "30",
-                        "DAY"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE created_date > DATE_SUB(NOW(), INTERVAL 30 DAY);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 525,
-                "text": "Orders placed today",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "DATE",
-                        "order_date",
-                        "=",
-                        "CURDATE"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM orders WHERE DATE(order_date) = CURDATE();",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 526,
-                "text": "Orders placed this month",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "MONTH",
-                        "order_date",
-                        "=",
-                        "MONTH",
-                        "NOW",
-                        "AND",
-                        "YEAR",
-                        "order_date",
-                        "=",
-                        "YEAR",
-                        "NOW"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM orders WHERE MONTH(order_date) = MONTH(NOW()) AND YEAR(order_date) = YEAR(NOW());",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 527,
-                "text": "Users born in specific year",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "YEAR",
-                        "birthdate",
-                        "=",
-                        "1995"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users WHERE YEAR(birthdate) = 1995;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 528,
-                "text": "Get day of week number",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DAYOFWEEK",
-                        "created_date",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT DAYOFWEEK(created_date) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 529,
-                "text": "Get day of year",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DAYOFYEAR",
-                        "created_date",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT DAYOFYEAR(created_date) FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 530,
-                "text": "Add 2 hours to timestamp",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DATE_ADD",
-                        "created_at",
-                        "INTERVAL",
-                        "2",
-                        "HOUR",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT DATE_ADD(created_at, INTERVAL 2 HOUR) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            }
-        ]
-    },
-    {
-        "id": 6,
-        "title": "SQL Level 6",
-        "type": "SQL",
-        "questions": [
-            {
                 "id": 601,
                 "text": "Convert string to date",
                 "expectedPattern": {
@@ -3870,6 +2410,36 @@ export const levels = [
                 "hint": "Try using: SELECT FROM_UNIXTIME(1234567890);",
                 "allowedBlocks": [
                     "sql_select"
+                ]
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "SQL Level 8",
+        "type": "SQL",
+        "questions": [
+            {
+                "id": 115,
+                "text": "Find users where age is divisible by 5",
+                "expectedPattern": {
+                    "structures": [
+                        "SELECT",
+                        "*",
+                        "FROM",
+                        "users",
+                        "WHERE",
+                        "age",
+                        "%",
+                        "5",
+                        "=",
+                        "0"
+                    ]
+                },
+                "hint": "Try using: SELECT * FROM users WHERE age % 5 = 0;",
+                "allowedBlocks": [
+                    "sql_select",
+                    "sql_where"
                 ]
             },
             {
@@ -4146,257 +2716,33 @@ export const levels = [
                 ]
             },
             {
-                "id": 619,
-                "text": "Logarithm base 10",
+                "id": 1015,
+                "text": "Generate random sample",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "LOG10",
-                        "amount",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "amount",
-                        ">",
-                        "0"
-                    ]
-                },
-                "hint": "Try using: SELECT LOG10(amount) FROM orders WHERE amount > 0;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 620,
-                "text": "Exponential function",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "EXP",
-                        "1"
-                    ]
-                },
-                "hint": "Try using: SELECT EXP(1);",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 621,
-                "text": "Pi value",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "PI"
-                    ]
-                },
-                "hint": "Try using: SELECT PI();",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 622,
-                "text": "Sine of angle",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "SIN",
-                        "RADIANS",
-                        "90"
-                    ]
-                },
-                "hint": "Try using: SELECT SIN(RADIANS(90));",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 623,
-                "text": "Cosine of angle",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "COS",
-                        "RADIANS",
-                        "0"
-                    ]
-                },
-                "hint": "Try using: SELECT COS(RADIANS(0));",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 624,
-                "text": "Tangent of angle",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "TAN",
-                        "RADIANS",
-                        "45"
-                    ]
-                },
-                "hint": "Try using: SELECT TAN(RADIANS(45));",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 625,
-                "text": "Convert degrees to radians",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "RADIANS",
-                        "180"
-                    ]
-                },
-                "hint": "Try using: SELECT RADIANS(180);",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 626,
-                "text": "Convert radians to degrees",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DEGREES",
-                        "PI"
-                    ]
-                },
-                "hint": "Try using: SELECT DEGREES(PI());",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 627,
-                "text": "Calculate percentage",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "age",
-                        "age",
                         "*",
-                        "100.0",
-                        "/",
-                        "SELECT",
-                        "SUM",
-                        "age",
                         "FROM",
                         "users",
-                        "as",
-                        "percentage",
-                        "FROM",
-                        "users"
+                        "ORDER",
+                        "BY",
+                        "RAND",
+                        "LIMIT",
+                        "10"
                     ]
                 },
-                "hint": "Try using: SELECT age, (age * 100.0 / (SELECT SUM(age) FROM users)) as percentage FROM users;",
+                "hint": "Try using: SELECT * FROM users ORDER BY RAND() LIMIT 10;",
                 "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 628,
-                "text": "Compound interest calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "amount",
-                        "amount",
-                        "*",
-                        "POW",
-                        "1.05",
-                        "3",
-                        "as",
-                        "future_value",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT amount, amount * POW(1.05, 3) as future_value FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 629,
-                "text": "Categorize age groups",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "CASE",
-                        "WHEN",
-                        "age",
-                        "<",
-                        "20",
-                        "THEN",
-                        "'Teen'",
-                        "WHEN",
-                        "age",
-                        "<",
-                        "40",
-                        "THEN",
-                        "'Adult'",
-                        "ELSE",
-                        "'Senior'",
-                        "END",
-                        "as",
-                        "category",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, CASE WHEN age < 20 THEN 'Teen' WHEN age < 40 THEN 'Adult' ELSE 'Senior' END as category FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 630,
-                "text": "Classify order amounts",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "CASE",
-                        "WHEN",
-                        "amount",
-                        "<",
-                        "500",
-                        "THEN",
-                        "'Small'",
-                        "WHEN",
-                        "amount",
-                        "<",
-                        "2000",
-                        "THEN",
-                        "'Medium'",
-                        "ELSE",
-                        "'Large'",
-                        "END",
-                        "as",
-                        "order_size",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, CASE WHEN amount < 500 THEN 'Small' WHEN amount < 2000 THEN 'Medium' ELSE 'Large' END as order_size FROM orders;",
-                "allowedBlocks": [
-                    "sql_select"
+                    "sql_select",
+                    "sql_order",
+                    "sql_limit"
                 ]
             }
         ]
     },
     {
-        "id": 7,
-        "title": "SQL Level 7",
+        "id": 9,
+        "title": "SQL Level 9",
         "type": "SQL",
         "questions": [
             {
@@ -5015,403 +3361,12 @@ export const levels = [
                 "allowedBlocks": [
                     "sql_select"
                 ]
-            },
-            {
-                "id": 718,
-                "text": "Experience level",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "emp_name",
-                        "CASE",
-                        "WHEN",
-                        "years_exp",
-                        ">",
-                        "10",
-                        "THEN",
-                        "'Expert'",
-                        "WHEN",
-                        "years_exp",
-                        ">",
-                        "5",
-                        "THEN",
-                        "'Experienced'",
-                        "WHEN",
-                        "years_exp",
-                        ">",
-                        "2",
-                        "THEN",
-                        "'Intermediate'",
-                        "ELSE",
-                        "'Beginner'",
-                        "END",
-                        "FROM",
-                        "employees"
-                    ]
-                },
-                "hint": "Try using: SELECT emp_name, CASE WHEN years_exp > 10 THEN 'Expert' WHEN years_exp > 5 THEN 'Experienced' WHEN years_exp > 2 THEN 'Intermediate' ELSE 'Beginner' END FROM employees;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 719,
-                "text": "Boolean to text",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "CASE",
-                        "WHEN",
-                        "is_active",
-                        "=",
-                        "1",
-                        "THEN",
-                        "'Active'",
-                        "ELSE",
-                        "'Inactive'",
-                        "END",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, CASE WHEN is_active = 1 THEN 'Active' ELSE 'Inactive' END FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 720,
-                "text": "Urgency level",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "task",
-                        "CASE",
-                        "WHEN",
-                        "deadline",
-                        "<",
-                        "DATE_ADD",
-                        "NOW",
-                        "INTERVAL",
-                        "1",
-                        "DAY",
-                        "THEN",
-                        "'Urgent'",
-                        "WHEN",
-                        "deadline",
-                        "<",
-                        "DATE_ADD",
-                        "NOW",
-                        "INTERVAL",
-                        "7",
-                        "DAY",
-                        "THEN",
-                        "'Soon'",
-                        "ELSE",
-                        "'Later'",
-                        "END",
-                        "FROM",
-                        "tasks"
-                    ]
-                },
-                "hint": "Try using: SELECT task, CASE WHEN deadline < DATE_ADD(NOW(), INTERVAL 1 DAY) THEN 'Urgent' WHEN deadline < DATE_ADD(NOW(), INTERVAL 7 DAY) THEN 'Soon' ELSE 'Later' END FROM tasks;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 721,
-                "text": "Commission calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "sales_amount",
-                        "CASE",
-                        "WHEN",
-                        "sales_amount",
-                        ">",
-                        "100000",
-                        "THEN",
-                        "sales_amount",
-                        "*",
-                        "0.1",
-                        "WHEN",
-                        "sales_amount",
-                        ">",
-                        "50000",
-                        "THEN",
-                        "sales_amount",
-                        "*",
-                        "0.07",
-                        "ELSE",
-                        "sales_amount",
-                        "*",
-                        "0.05",
-                        "END",
-                        "as",
-                        "commission",
-                        "FROM",
-                        "sales"
-                    ]
-                },
-                "hint": "Try using: SELECT sales_amount, CASE WHEN sales_amount > 100000 THEN sales_amount * 0.1 WHEN sales_amount > 50000 THEN sales_amount * 0.07 ELSE sales_amount * 0.05 END as commission FROM sales;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 722,
-                "text": "Time of day",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "CASE",
-                        "WHEN",
-                        "HOUR",
-                        "NOW",
-                        "<",
-                        "12",
-                        "THEN",
-                        "'Morning'",
-                        "WHEN",
-                        "HOUR",
-                        "NOW",
-                        "<",
-                        "18",
-                        "THEN",
-                        "'Afternoon'",
-                        "ELSE",
-                        "'Evening'",
-                        "END"
-                    ]
-                },
-                "hint": "Try using: SELECT CASE WHEN HOUR(NOW()) < 12 THEN 'Morning' WHEN HOUR(NOW()) < 18 THEN 'Afternoon' ELSE 'Evening' END;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 723,
-                "text": "Stock status",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "product_name",
-                        "CASE",
-                        "WHEN",
-                        "quantity",
-                        "=",
-                        "0",
-                        "THEN",
-                        "'Out",
-                        "of",
-                        "Stock'",
-                        "WHEN",
-                        "quantity",
-                        "<",
-                        "10",
-                        "THEN",
-                        "'Low",
-                        "Stock'",
-                        "ELSE",
-                        "'In",
-                        "Stock'",
-                        "END",
-                        "FROM",
-                        "inventory"
-                    ]
-                },
-                "hint": "Try using: SELECT product_name, CASE WHEN quantity = 0 THEN 'Out of Stock' WHEN quantity < 10 THEN 'Low Stock' ELSE 'In Stock' END FROM inventory;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 724,
-                "text": "Row number for all users",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "as",
-                        "row_num",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, ROW_NUMBER() OVER (ORDER BY age) as row_num FROM users;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 725,
-                "text": "Rank users by age",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "age",
-                        "RANK",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "as",
-                        "age_rank",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, age, RANK() OVER (ORDER BY age DESC) as age_rank FROM users;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 726,
-                "text": "Dense rank by salary",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "emp_name",
-                        "salary",
-                        "DENSE_RANK",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "salary",
-                        "DESC",
-                        "FROM",
-                        "employees"
-                    ]
-                },
-                "hint": "Try using: SELECT emp_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) FROM employees;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 727,
-                "text": "Partition by city and rank",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "city",
-                        "age",
-                        "RANK",
-                        "OVER",
-                        "PARTITION",
-                        "BY",
-                        "city",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, city, age, RANK() OVER (PARTITION BY city ORDER BY age DESC) FROM users;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 728,
-                "text": "Running total of amount",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "SUM",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "running_total",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, SUM(amount) OVER (ORDER BY order_date) as running_total FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 729,
-                "text": "Average age by city with window",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "city",
-                        "age",
-                        "AVG",
-                        "age",
-                        "OVER",
-                        "PARTITION",
-                        "BY",
-                        "city",
-                        "as",
-                        "city_avg_age",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, city, age, AVG(age) OVER (PARTITION BY city) as city_avg_age FROM users;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 730,
-                "text": "Lag to get previous order amount",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "LAG",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "prev_amount",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, LAG(amount) OVER (ORDER BY order_date) as prev_amount FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
             }
         ]
     },
     {
-        "id": 8,
-        "title": "SQL Level 8",
+        "id": 10,
+        "title": "SQL Level 10",
         "type": "SQL",
         "questions": [
             {
@@ -5875,28 +3830,15 @@ export const levels = [
                 ]
             },
             {
-                "id": 818,
-                "text": "Multiple window functions",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "age"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, age,",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 819,
-                "text": "Lag with default value",
+                "id": 1001,
+                "text": "Running difference",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
                         "order_id",
                         "amount",
+                        "amount",
+                        "-",
                         "LAG",
                         "amount",
                         "1",
@@ -5905,339 +3847,51 @@ export const levels = [
                         "ORDER",
                         "BY",
                         "order_date",
+                        "as",
+                        "diff",
                         "FROM",
                         "orders"
                     ]
                 },
-                "hint": "Try using: SELECT order_id, amount, LAG(amount, 1, 0) OVER (ORDER BY order_date) FROM orders;",
+                "hint": "Try using: SELECT order_id, amount, amount - LAG(amount, 1, 0) OVER (ORDER BY order_date) as diff FROM orders;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_order"
                 ]
             },
             {
-                "id": 820,
-                "text": "Lead with offset 2",
+                "id": 1012,
+                "text": "Rolling window calculation",
                 "expectedPattern": {
                     "structures": [
                         "SELECT",
-                        "order_id",
+                        "order_date",
                         "amount",
-                        "LEAD",
+                        "SUM",
                         "amount",
-                        "2",
                         "OVER",
                         "ORDER",
                         "BY",
                         "order_date",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, LEAD(amount, 2) OVER (ORDER BY order_date) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 821,
-                "text": "Ratio to report",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "product_id",
-                        "sales",
-                        "sales",
-                        "/",
-                        "SUM",
-                        "sales",
-                        "OVER",
-                        "as",
-                        "sales_ratio",
-                        "FROM",
-                        "product_sales"
-                    ]
-                },
-                "hint": "Try using: SELECT product_id, sales, sales / SUM(sales) OVER () as sales_ratio FROM product_sales;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 822,
-                "text": "Rank with ties",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "emp_name",
-                        "salary",
-                        "RANK",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "salary",
-                        "DESC",
-                        "as",
-                        "salary_rank",
-                        "FROM",
-                        "employees"
-                    ]
-                },
-                "hint": "Try using: SELECT emp_name, salary, RANK() OVER (ORDER BY salary DESC) as salary_rank FROM employees;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 823,
-                "text": "Partition by multiple columns",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "city",
-                        "gender",
-                        "RANK",
-                        "OVER",
-                        "PARTITION",
-                        "BY",
-                        "city",
-                        "gender",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, city, gender, RANK() OVER (PARTITION BY city, gender ORDER BY age) FROM users;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 824,
-                "text": "Frame specification",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "AVG",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_id",
                         "ROWS",
                         "BETWEEN",
-                        "1",
+                        "6",
                         "PRECEDING",
                         "AND",
-                        "1",
-                        "FOLLOWING",
+                        "CURRENT",
+                        "ROW",
+                        "as",
+                        "rolling_7day",
                         "FROM",
                         "orders"
                     ]
                 },
-                "hint": "Try using: SELECT order_id, amount, AVG(amount) OVER (ORDER BY order_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) FROM orders;",
+                "hint": "Try using: SELECT order_date, amount, SUM(amount) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7day FROM orders;",
                 "allowedBlocks": [
                     "sql_select",
                     "sql_order"
                 ]
             },
-            {
-                "id": 825,
-                "text": "Named window",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "age",
-                        "RANK",
-                        "OVER",
-                        "w",
-                        "as",
-                        "age_rank",
-                        "FROM",
-                        "users",
-                        "WINDOW",
-                        "w",
-                        "AS",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, age, RANK() OVER w as age_rank FROM users WINDOW w AS (ORDER BY age DESC);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 826,
-                "text": "Top N per group",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "SELECT",
-                        "firstname",
-                        "city",
-                        "age",
-                        "RANK",
-                        "OVER",
-                        "PARTITION",
-                        "BY",
-                        "city",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "as",
-                        "rnk",
-                        "FROM",
-                        "users",
-                        "sub",
-                        "WHERE",
-                        "rnk",
-                        "<=",
-                        "3"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM (SELECT firstname, city, age, RANK() OVER (PARTITION BY city ORDER BY age DESC) as rnk FROM users) sub WHERE rnk <= 3;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 827,
-                "text": "Percentage of total",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "COUNT",
-                        "*",
-                        "as",
-                        "cnt",
-                        "COUNT",
-                        "*",
-                        "*",
-                        "100.0",
-                        "/",
-                        "SUM",
-                        "COUNT",
-                        "*",
-                        "OVER",
-                        "as",
-                        "percentage",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, COUNT(*) as cnt, COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () as percentage FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 828,
-                "text": "Gap analysis with lag",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_date",
-                        "amount",
-                        "amount",
-                        "-",
-                        "LAG",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "amount_change",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_date, amount, amount - LAG(amount) OVER (ORDER BY order_date) as amount_change FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 829,
-                "text": "Basic CTE",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "user_ages",
-                        "AS",
-                        "SELECT",
-                        "firstname",
-                        "age",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "age",
-                        ">",
-                        "25"
-                    ]
-                },
-                "hint": "Try using: WITH user_ages AS (SELECT firstname, age FROM users WHERE age > 25)",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 830,
-                "text": "CTE with join",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "chennai_users",
-                        "AS",
-                        "SELECT",
-                        "user_id",
-                        "firstname",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "city",
-                        "=",
-                        "'Chennai'"
-                    ]
-                },
-                "hint": "Try using: WITH chennai_users AS (SELECT user_id, firstname FROM users WHERE city = 'Chennai')",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            }
-        ]
-    },
-    {
-        "id": 9,
-        "title": "SQL Level 9",
-        "type": "SQL",
-        "questions": [
             {
                 "id": 901,
                 "text": "Multiple CTEs",
@@ -6626,437 +4280,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 916,
-                "text": "CTE for running calculations",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "ordered_data",
-                        "AS",
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "rn",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: WITH ordered_data AS (SELECT order_id, amount, ROW_NUMBER() OVER (ORDER BY order_date) as rn FROM orders)",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 917,
-                "text": "CTE to generate date series",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "RECURSIVE",
-                        "date_series",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH RECURSIVE date_series AS (",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 918,
-                "text": "CTE for pivot-like operation",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "category_counts",
-                        "AS",
-                        "SELECT",
-                        "city",
-                        "gender",
-                        "COUNT",
-                        "*",
-                        "as",
-                        "cnt",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "gender"
-                    ]
-                },
-                "hint": "Try using: WITH category_counts AS (SELECT city, gender, COUNT(*) as cnt FROM users GROUP BY city, gender)",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 919,
-                "text": "CTE with subquery",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "high_spenders",
-                        "AS",
-                        "SELECT",
-                        "user_id",
-                        "FROM",
-                        "orders",
-                        "GROUP",
-                        "BY",
-                        "user_id",
-                        "HAVING",
-                        "SUM",
-                        "amount",
-                        ">",
-                        "SELECT",
-                        "AVG",
-                        "total",
-                        "FROM",
-                        "SELECT",
-                        "SUM",
-                        "amount",
-                        "as",
-                        "total",
-                        "FROM",
-                        "orders",
-                        "GROUP",
-                        "BY",
-                        "user_id",
-                        "t"
-                    ]
-                },
-                "hint": "Try using: WITH high_spenders AS (SELECT user_id FROM orders GROUP BY user_id HAVING SUM(amount) > (SELECT AVG(total) FROM (SELECT SUM(amount) as total FROM orders GROUP BY user_id) t))",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group",
-                    "sql_having"
-                ]
-            },
-            {
-                "id": 920,
-                "text": "Recursive path finding",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "RECURSIVE",
-                        "paths",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH RECURSIVE paths AS (",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 921,
-                "text": "CTE for percentile calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "ordered_ages",
-                        "AS",
-                        "SELECT",
-                        "age",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "as",
-                        "rn",
-                        "COUNT",
-                        "*",
-                        "OVER",
-                        "as",
-                        "total",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: WITH ordered_ages AS (SELECT age, ROW_NUMBER() OVER (ORDER BY age) as rn, COUNT(*) OVER () as total FROM users)",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 922,
-                "text": "CTE for gap detection",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "ordered_ids",
-                        "AS",
-                        "SELECT",
-                        "user_id",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "user_id",
-                        "as",
-                        "rn",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: WITH ordered_ids AS (SELECT user_id, ROW_NUMBER() OVER (ORDER BY user_id) as rn FROM users)",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 923,
-                "text": "CTE with multiple aggregations",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "user_metrics",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH user_metrics AS (",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 924,
-                "text": "Find Nth highest salary without using LIMIT",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "DISTINCT",
-                        "salary",
-                        "FROM",
-                        "employees",
-                        "e1",
-                        "WHERE",
-                        "3",
-                        "=",
-                        "SELECT",
-                        "COUNT",
-                        "DISTINCT",
-                        "salary",
-                        "FROM",
-                        "employees",
-                        "e2",
-                        "WHERE",
-                        "e2.salary",
-                        ">=",
-                        "e1.salary"
-                    ]
-                },
-                "hint": "Try using: SELECT DISTINCT salary FROM employees e1 WHERE 3 = (SELECT COUNT(DISTINCT salary) FROM employees e2 WHERE e2.salary >= e1.salary);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 925,
-                "text": "Find employees with salary above their department average",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "e.*",
-                        "FROM",
-                        "employees",
-                        "e",
-                        "WHERE",
-                        "salary",
-                        ">",
-                        "SELECT",
-                        "AVG",
-                        "salary",
-                        "FROM",
-                        "employees",
-                        "WHERE",
-                        "dept_id",
-                        "=",
-                        "e.dept_id"
-                    ]
-                },
-                "hint": "Try using: SELECT e.* FROM employees e WHERE salary > (SELECT AVG(salary) FROM employees WHERE dept_id = e.dept_id);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 926,
-                "text": "Delete duplicate rows keeping one",
-                "expectedPattern": {
-                    "structures": [
-                        "DELETE",
-                        "u1",
-                        "FROM",
-                        "users",
-                        "u1",
-                        "INNER",
-                        "JOIN",
-                        "users",
-                        "u2",
-                        "WHERE",
-                        "u1.user_id",
-                        ">",
-                        "u2.user_id",
-                        "AND",
-                        "u1.email",
-                        "=",
-                        "u2.email"
-                    ]
-                },
-                "hint": "Try using: DELETE u1 FROM users u1 INNER JOIN users u2 WHERE u1.user_id > u2.user_id AND u1.email = u2.email;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_join",
-                    "sql_delete"
-                ]
-            },
-            {
-                "id": 927,
-                "text": "Swap values in two columns",
-                "expectedPattern": {
-                    "structures": [
-                        "UPDATE",
-                        "users",
-                        "SET",
-                        "firstname",
-                        "=",
-                        "lastname",
-                        "lastname",
-                        "=",
-                        "firstname",
-                        "WHERE",
-                        "user_id",
-                        "=",
-                        "1"
-                    ]
-                },
-                "hint": "Try using: UPDATE users SET firstname = lastname, lastname = firstname WHERE user_id = 1;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where",
-                    "sql_update"
-                ]
-            },
-            {
-                "id": 928,
-                "text": "Pivot table simulation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city,",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 929,
-                "text": "Unpivot simulation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "user_id",
-                        "'firstname'",
-                        "as",
-                        "attribute",
-                        "firstname",
-                        "as",
-                        "value",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT user_id, 'firstname' as attribute, firstname as value FROM users",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 930,
-                "text": "Find consecutive dates",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "t1.order_date",
-                        "FROM",
-                        "orders",
-                        "t1",
-                        "INNER",
-                        "JOIN",
-                        "orders",
-                        "t2",
-                        "ON",
-                        "t1.order_date",
-                        "=",
-                        "DATE_ADD",
-                        "t2.order_date",
-                        "INTERVAL",
-                        "1",
-                        "DAY"
-                    ]
-                },
-                "hint": "Try using: SELECT t1.order_date FROM orders t1 INNER JOIN orders t2 ON t1.order_date = DATE_ADD(t2.order_date, INTERVAL 1 DAY);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join"
-                ]
-            }
-        ]
-    },
-    {
-        "id": 10,
-        "title": "SQL Level 10",
-        "type": "SQL",
-        "questions": [
-            {
-                "id": 1001,
-                "text": "Running difference",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "amount",
-                        "-",
-                        "LAG",
-                        "amount",
-                        "1",
-                        "0",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "as",
-                        "diff",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, amount - LAG(amount, 1, 0) OVER (ORDER BY order_date) as diff FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
                 "id": 1002,
                 "text": "Median calculation",
                 "expectedPattern": {
@@ -7089,32 +4312,46 @@ export const levels = [
                 ]
             },
             {
-                "id": 1003,
-                "text": "Mode calculation",
+                "id": 1009,
+                "text": "Hierarchical data flattening",
                 "expectedPattern": {
                     "structures": [
-                        "SELECT",
-                        "age",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "age",
-                        "ORDER",
-                        "BY",
-                        "COUNT",
-                        "*",
-                        "DESC",
-                        "LIMIT",
-                        "1"
+                        "WITH",
+                        "RECURSIVE",
+                        "hierarchy",
+                        "AS"
                     ]
                 },
-                "hint": "Try using: SELECT age FROM users GROUP BY age ORDER BY COUNT(*) DESC LIMIT 1;",
+                "hint": "Try using: WITH RECURSIVE hierarchy AS (",
+                "allowedBlocks": [
+                    "sql_select"
+                ]
+            },
+            {
+                "id": 1017,
+                "text": "Calculate retention rate",
+                "expectedPattern": {
+                    "structures": [
+                        "WITH",
+                        "first_purchase",
+                        "AS",
+                        "SELECT",
+                        "user_id",
+                        "MIN",
+                        "order_date",
+                        "as",
+                        "first_date",
+                        "FROM",
+                        "orders",
+                        "GROUP",
+                        "BY",
+                        "user_id"
+                    ]
+                },
+                "hint": "Try using: WITH first_purchase AS (SELECT user_id, MIN(order_date) as first_date FROM orders GROUP BY user_id),",
                 "allowedBlocks": [
                     "sql_select",
-                    "sql_group",
-                    "sql_order",
-                    "sql_limit"
+                    "sql_group"
                 ]
             },
             {
@@ -7233,27 +4470,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 1007,
-                "text": "Find patterns in strings",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "FROM",
-                        "users",
-                        "WHERE",
-                        "firstname",
-                        "REGEXP",
-                        "'^[A-M]'"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname FROM users WHERE firstname REGEXP '^[A-M]';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
                 "id": 1008,
                 "text": "Dynamic date ranges",
                 "expectedPattern": {
@@ -7277,22 +4493,6 @@ export const levels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_where"
-                ]
-            },
-            {
-                "id": 1009,
-                "text": "Hierarchical data flattening",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "RECURSIVE",
-                        "hierarchy",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH RECURSIVE hierarchy AS (",
-                "allowedBlocks": [
-                    "sql_select"
                 ]
             },
             {
@@ -7320,85 +4520,6 @@ export const levels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_group"
-                ]
-            },
-            {
-                "id": 1011,
-                "text": "Conditional aggregation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "SUM",
-                        "CASE",
-                        "WHEN",
-                        "age",
-                        "<",
-                        "30",
-                        "THEN",
-                        "1",
-                        "ELSE",
-                        "0",
-                        "END",
-                        "as",
-                        "under_30",
-                        "SUM",
-                        "CASE",
-                        "WHEN",
-                        "age",
-                        ">=",
-                        "30",
-                        "THEN",
-                        "1",
-                        "ELSE",
-                        "0",
-                        "END",
-                        "as",
-                        "over_30",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, SUM(CASE WHEN age < 30 THEN 1 ELSE 0 END) as under_30, SUM(CASE WHEN age >= 30 THEN 1 ELSE 0 END) as over_30 FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 1012,
-                "text": "Rolling window calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_date",
-                        "amount",
-                        "SUM",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_date",
-                        "ROWS",
-                        "BETWEEN",
-                        "6",
-                        "PRECEDING",
-                        "AND",
-                        "CURRENT",
-                        "ROW",
-                        "as",
-                        "rolling_7day",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_date, amount, SUM(amount) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7day FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
                 ]
             },
             {
@@ -7459,29 +4580,6 @@ export const levels = [
                 ]
             },
             {
-                "id": 1015,
-                "text": "Generate random sample",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "ORDER",
-                        "BY",
-                        "RAND",
-                        "LIMIT",
-                        "10"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM users ORDER BY RAND() LIMIT 10;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order",
-                    "sql_limit"
-                ]
-            },
-            {
                 "id": 1016,
                 "text": "Find overlapping date ranges",
                 "expectedPattern": {
@@ -7518,445 +4616,6 @@ export const levels = [
                 "allowedBlocks": [
                     "sql_select",
                     "sql_join"
-                ]
-            },
-            {
-                "id": 1017,
-                "text": "Calculate retention rate",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "first_purchase",
-                        "AS",
-                        "SELECT",
-                        "user_id",
-                        "MIN",
-                        "order_date",
-                        "as",
-                        "first_date",
-                        "FROM",
-                        "orders",
-                        "GROUP",
-                        "BY",
-                        "user_id"
-                    ]
-                },
-                "hint": "Try using: WITH first_purchase AS (SELECT user_id, MIN(order_date) as first_date FROM orders GROUP BY user_id),",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 1018,
-                "text": "Find missing sequence numbers",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "t1.seq",
-                        "+",
-                        "1",
-                        "as",
-                        "missing",
-                        "FROM",
-                        "sequences",
-                        "t1",
-                        "WHERE",
-                        "NOT",
-                        "EXISTS",
-                        "SELECT",
-                        "1",
-                        "FROM",
-                        "sequences",
-                        "t2",
-                        "WHERE",
-                        "t2.seq",
-                        "=",
-                        "t1.seq",
-                        "+",
-                        "1"
-                    ]
-                },
-                "hint": "Try using: SELECT t1.seq + 1 as missing FROM sequences t1 WHERE NOT EXISTS (SELECT 1 FROM sequences t2 WHERE t2.seq = t1.seq + 1);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 1019,
-                "text": "Transpose rows to columns",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "MAX",
-                        "CASE",
-                        "WHEN",
-                        "rn",
-                        "=",
-                        "1",
-                        "THEN",
-                        "value",
-                        "END",
-                        "as",
-                        "col1",
-                        "MAX",
-                        "CASE",
-                        "WHEN",
-                        "rn",
-                        "=",
-                        "2",
-                        "THEN",
-                        "value",
-                        "END",
-                        "as",
-                        "col2",
-                        "FROM",
-                        "SELECT",
-                        "value",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "id",
-                        "as",
-                        "rn",
-                        "FROM",
-                        "data",
-                        "t"
-                    ]
-                },
-                "hint": "Try using: SELECT MAX(CASE WHEN rn = 1 THEN value END) as col1, MAX(CASE WHEN rn = 2 THEN value END) as col2 FROM (SELECT value, ROW_NUMBER() OVER (ORDER BY id) as rn FROM data) t;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 1020,
-                "text": "Complex ranking with ties",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "firstname",
-                        "age",
-                        "RANK",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "as",
-                        "rnk",
-                        "DENSE_RANK",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "as",
-                        "dense_rnk",
-                        "ROW_NUMBER",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "age",
-                        "DESC",
-                        "as",
-                        "row_num",
-                        "FROM",
-                        "users"
-                    ]
-                },
-                "hint": "Try using: SELECT firstname, age, RANK() OVER (ORDER BY age DESC) as rnk, DENSE_RANK() OVER (ORDER BY age DESC) as dense_rnk, ROW_NUMBER() OVER (ORDER BY age DESC) as row_num FROM users;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 1021,
-                "text": "Multi-level grouping sets",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "gender",
-                        "COUNT",
-                        "*",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city",
-                        "gender",
-                        "WITH",
-                        "ROLLUP"
-                    ]
-                },
-                "hint": "Try using: SELECT city, gender, COUNT(*) FROM users GROUP BY city, gender WITH ROLLUP;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group"
-                ]
-            },
-            {
-                "id": 1022,
-                "text": "Window frame with exclusion",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "order_id",
-                        "amount",
-                        "AVG",
-                        "amount",
-                        "OVER",
-                        "ORDER",
-                        "BY",
-                        "order_id",
-                        "ROWS",
-                        "BETWEEN",
-                        "UNBOUNDED",
-                        "PRECEDING",
-                        "AND",
-                        "UNBOUNDED",
-                        "FOLLOWING",
-                        "EXCLUDE",
-                        "CURRENT",
-                        "ROW",
-                        "FROM",
-                        "orders"
-                    ]
-                },
-                "hint": "Try using: SELECT order_id, amount, AVG(amount) OVER (ORDER BY order_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING EXCLUDE CURRENT ROW) FROM orders;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 1023,
-                "text": "Advanced text search",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "products",
-                        "WHERE",
-                        "MATCH",
-                        "product_name",
-                        "description",
-                        "AGAINST",
-                        "'laptop",
-                        "computer'",
-                        "IN",
-                        "NATURAL",
-                        "LANGUAGE",
-                        "MODE"
-                    ]
-                },
-                "hint": "Try using: SELECT * FROM products WHERE MATCH(product_name, description) AGAINST('laptop computer' IN NATURAL LANGUAGE MODE);",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 1024,
-                "text": "Conditional joins",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "u.*",
-                        "o.*",
-                        "FROM",
-                        "users",
-                        "u",
-                        "LEFT",
-                        "JOIN",
-                        "orders",
-                        "o",
-                        "ON",
-                        "u.user_id",
-                        "=",
-                        "o.user_id",
-                        "AND",
-                        "o.order_date",
-                        ">",
-                        "'2024-01-01'"
-                    ]
-                },
-                "hint": "Try using: SELECT u.*, o.* FROM users u LEFT JOIN orders o ON u.user_id = o.user_id AND o.order_date > '2024-01-01';",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_join"
-                ]
-            },
-            {
-                "id": 1025,
-                "text": "Chained CTEs for complex logic",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "base",
-                        "AS",
-                        "SELECT",
-                        "*",
-                        "FROM",
-                        "orders",
-                        "WHERE",
-                        "amount",
-                        ">",
-                        "100"
-                    ]
-                },
-                "hint": "Try using: WITH base AS (SELECT * FROM orders WHERE amount > 100),",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_where"
-                ]
-            },
-            {
-                "id": 1026,
-                "text": "Dynamic pivot using GROUP_CONCAT",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "city",
-                        "GROUP_CONCAT",
-                        "DISTINCT",
-                        "gender",
-                        "ORDER",
-                        "BY",
-                        "gender",
-                        "as",
-                        "genders",
-                        "FROM",
-                        "users",
-                        "GROUP",
-                        "BY",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: SELECT city, GROUP_CONCAT(DISTINCT gender ORDER BY gender) as genders FROM users GROUP BY city;",
-                "allowedBlocks": [
-                    "sql_select",
-                    "sql_group",
-                    "sql_order"
-                ]
-            },
-            {
-                "id": 1027,
-                "text": "Correlation calculation",
-                "expectedPattern": {
-                    "structures": [
-                        "SELECT",
-                        "COUNT",
-                        "*",
-                        "*",
-                        "SUM",
-                        "age",
-                        "*",
-                        "salary",
-                        "-",
-                        "SUM",
-                        "age",
-                        "*",
-                        "SUM",
-                        "salary",
-                        "/",
-                        "SQRT",
-                        "COUNT",
-                        "*",
-                        "*",
-                        "SUM",
-                        "age",
-                        "*",
-                        "age",
-                        "-",
-                        "SUM",
-                        "age",
-                        "*",
-                        "SUM",
-                        "age",
-                        "*",
-                        "SQRT",
-                        "COUNT",
-                        "*",
-                        "*",
-                        "SUM",
-                        "salary",
-                        "*",
-                        "salary",
-                        "-",
-                        "SUM",
-                        "salary",
-                        "*",
-                        "SUM",
-                        "salary",
-                        "as",
-                        "correlation",
-                        "FROM",
-                        "employees"
-                    ]
-                },
-                "hint": "Try using: SELECT (COUNT(*) * SUM(age * salary) - SUM(age) * SUM(salary)) / (SQRT(COUNT(*) * SUM(age * age) - SUM(age) * SUM(age)) * SQRT(COUNT(*) * SUM(salary * salary) - SUM(salary) * SUM(salary))) as correlation FROM employees;",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 1028,
-                "text": "Time series gap filling",
-                "expectedPattern": {
-                    "structures": [
-                        "WITH",
-                        "RECURSIVE",
-                        "all_dates",
-                        "AS"
-                    ]
-                },
-                "hint": "Try using: WITH RECURSIVE all_dates AS (",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 1029,
-                "text": "Create index on single column",
-                "expectedPattern": {
-                    "structures": [
-                        "CREATE",
-                        "INDEX",
-                        "idx_city",
-                        "ON",
-                        "users",
-                        "city"
-                    ]
-                },
-                "hint": "Try using: CREATE INDEX idx_city ON users(city);",
-                "allowedBlocks": [
-                    "sql_select"
-                ]
-            },
-            {
-                "id": 1030,
-                "text": "Create composite index",
-                "expectedPattern": {
-                    "structures": [
-                        "CREATE",
-                        "INDEX",
-                        "idx_city_age",
-                        "ON",
-                        "users",
-                        "city",
-                        "age"
-                    ]
-                },
-                "hint": "Try using: CREATE INDEX idx_city_age ON users(city, age);",
-                "allowedBlocks": [
-                    "sql_select"
                 ]
             }
         ]

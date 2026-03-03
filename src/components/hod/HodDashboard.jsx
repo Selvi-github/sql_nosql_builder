@@ -282,7 +282,7 @@ const HodDashboard = ({ user, onLogout, theme, onToggleTheme }) => {
             }
         };
 
-        const adminCanGenerateReport = Boolean(isAdmin && yearFilter !== 'ALL' && section !== 'ALL');
+        const adminCanGenerateReport = Boolean(isAdmin && yearFilter !== 'ALL');
 
     return (
         <div style={{ ...styles.page, backgroundColor: themeStyles.pageBg, color: themeStyles.textPrimary }}>
@@ -349,7 +349,7 @@ const HodDashboard = ({ user, onLogout, theme, onToggleTheme }) => {
                                 style={styles.reportBtn}
                                 onClick={handleGenerateReport}
                                 disabled={reportLoading || (isAdmin && !adminCanGenerateReport)}
-                                title={isAdmin && !adminCanGenerateReport ? 'Select a specific Year and Section to generate the class report' : ''}
+                                title={isAdmin && !adminCanGenerateReport ? 'Select a specific Year to generate the report' : ''}
                             >
                                 {reportLoading ? 'Generating...' : 'Generate Report'}
                             </button>

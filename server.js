@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { ObjectId } from 'mongodb';
@@ -20,17 +21,32 @@ const AUTH_DATA_PATH = path.resolve('src', 'data', 'auth.json');
 const localUserStore = new Map();
 let authDataCache = null;
 
+const RAW_CORS_ORIGIN = process.env.CORS_ORIGIN || '';
+const ALLOWED_ORIGINS = RAW_CORS_ORIGIN
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+const ALLOW_ANY_ORIGIN = ALLOWED_ORIGINS.includes('*');
+
+if (process.env.NODE_ENV === 'production') {
+    if (!JWT_SECRET) {
+        throw new Error('JWT_SECRET must be set in production.');
+    }
+    if (!RAW_CORS_ORIGIN || ALLOWED_ORIGINS.length === 0 || ALLOW_ANY_ORIGIN) {
+        throw new Error('CORS_ORIGIN must be set to an explicit allowlist in production.');
+    }
+}
+
 // --- SECURITY MIDDLEWARE ---
 app.use(helmet()); // Sets various HTTP headers for security
 app.use(cors({
     origin: (origin, callback) => {
         // Allow no origin (mobile apps, curl) or allowed origins
-        const allowedOrigins = (process.env.CORS_ORIGIN || '*').split(',');
-        if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
+        if (!origin) return callback(null, true);
+        if (ALLOW_ANY_ORIGIN || ALLOWED_ORIGINS.includes(origin)) {
+            return callback(null, true);
         }
+        return callback(new Error('Not allowed by CORS'));
     }
 }));
 
@@ -92,6 +108,20 @@ const isNameMatch = (inputName, fullName) => {
 
 const normalizeRollNumber = (value) => String(value || '').trim().toUpperCase();
 
+const toSafeKey = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'user';
+
+const buildOtherLoginKey = (name, password) => {
+    const safeName = toSafeKey(name);
+    const digest = crypto
+        .createHash('sha256')
+        .update(`${safeName}:${String(password || '')}`)
+        .digest('hex');
+    return `${safeName}_${digest}`;
+};
+
 const normalizeYear = (value) => {
     const n = Number.parseInt(String(value || '').trim(), 10);
     return Number.isFinite(n) ? n : null;
@@ -139,10 +169,11 @@ const loadAuthData = () => {
         authDataCache = {
             admin: parsed && parsed.admin ? parsed.admin : null,
             staff: Array.isArray(parsed && parsed.staff) ? parsed.staff : [],
-            students: Array.isArray(parsed && parsed.students) ? parsed.students : []
+            students: Array.isArray(parsed && parsed.students) ? parsed.students : [],
+            others: Array.isArray(parsed && parsed.others) ? parsed.others : []
         };
     } catch {
-        authDataCache = { admin: null, staff: [], students: [] };
+        authDataCache = { admin: null, staff: [], students: [], others: [] };
     }
     return authDataCache;
 };
@@ -167,7 +198,7 @@ const requireAnyRole = (roles) => (req, res, next) => {
 
 const requireStudent = (req, res, next) => {
     const user = req.user;
-    if (!user || user.role !== 'STUDENT') {
+    if (!user || (user.role !== 'STUDENT' && user.role !== 'OTHER')) {
         return res.status(403).json({ success: false, error: 'Student access only' });
     }
     next();
@@ -537,6 +568,38 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
 
         const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         return respondOk(res, { user: sanitizeUser(user), token });
+    }
+
+    if (normalizedRole === 'OTHER') {
+        if (!name) return respondError(res, 400, 'Name is required');
+        if (!password) return respondError(res, 400, 'Password is required');
+
+        const otherKey = buildOtherLoginKey(name, password);
+        const otherEmail = `${otherKey}@other.local`;
+
+        try {
+            let user = await db.findUserByEmail(otherEmail);
+            if (!user) {
+                user = await db.createUser({
+                    username: String(name || '').trim(),
+                    email: otherEmail,
+                    passwordHash: bcrypt.hashSync(String(password), 10),
+                    role: 'OTHER'
+                });
+            }
+
+            if (!user) return respondError(res, 500, 'Unable to create user');
+
+            if (user.passwordHash) {
+                const ok = bcrypt.compareSync(String(password), user.passwordHash);
+                if (!ok) return respondError(res, 401, 'Invalid credentials');
+            }
+
+            const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+            return respondOk(res, { user: sanitizeUser(user), token });
+        } catch (e) {
+            return respondError(res, 503, 'User store unavailable');
+        }
     }
 
     if (normalizedRole === 'ADMIN') {

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
 const Login = ({ onLogin, theme, onToggleTheme }) => {
-    const [role, setRole] = useState('STUDENT'); // STUDENT | STAFF | ADMIN
+    const [role, setRole] = useState('STUDENT'); // STUDENT | STAFF | ADMIN | OTHER
     const [studentName, setStudentName] = useState('');
     const [rollNumber, setRollNumber] = useState('');
     const [year, setYear] = useState('2');
     const [section, setSection] = useState('A');
     const [staffName, setStaffName] = useState('');
+    const [otherName, setOtherName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,6 +37,13 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
             }
         }
 
+        if (role === 'OTHER') {
+            if (!otherName || !password) {
+                setError('Please enter name and password.');
+                return;
+            }
+        }
+
         setLoading(true);
         setError('');
 
@@ -44,7 +52,9 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
                 ? { role, name: studentName, rollNumber, year, section }
                 : role === 'STAFF'
                     ? { role, name: staffName, email, password }
-                    : { role, email, password };
+                    : role === 'OTHER'
+                        ? { role, name: otherName, password }
+                        : { role, email, password };
 
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -149,6 +159,23 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
                     >
                         Admin
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => setRole('OTHER')}
+                        style={{
+                            ...styles.roleBtn,
+                            backgroundColor: themeStyles.roleBg,
+                            borderColor: themeStyles.roleBorder,
+                            color: themeStyles.roleText,
+                            ...(role === 'OTHER' ? {
+                                backgroundColor: themeStyles.roleActiveBg,
+                                color: themeStyles.roleActiveText,
+                                borderColor: '#38bdf8'
+                            } : {})
+                        }}
+                    >
+                        Other User
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
@@ -247,6 +274,34 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
                             <input
                                 type="password"
                                 placeholder={role === 'STAFF' ? 'Enter staff password' : 'Enter admin password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                required
+                            />
+                        </div>
+                    )}
+
+                    {role === 'OTHER' && (
+                        <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Name</label>
+                            <input
+                                type="text"
+                                placeholder="Enter your name"
+                                value={otherName}
+                                onChange={(e) => setOtherName(e.target.value)}
+                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                required
+                            />
+                        </div>
+                    )}
+
+                    {role === 'OTHER' && (
+                        <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Password</label>
+                            <input
+                                type="password"
+                                placeholder="Enter password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}

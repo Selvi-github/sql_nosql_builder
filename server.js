@@ -233,8 +233,15 @@ const requireAuth = async (req, res, next) => {
             return next();
         }
 
-        const user = await db.getUserById(new ObjectId(payload.sub));
+        let user;
+        if (ObjectId.isValid(payload.sub)) {
+            user = await db.getUserById(new ObjectId(payload.sub));
+        } else {
+            user = await db.getUserById(payload.sub);
+        }
         if (!user) return res.status(401).json({ success: false, error: 'User not found' });
+
+        upsertLocalUser(user);
 
         req.user = user;
         req.tokenPayload = payload;
@@ -517,6 +524,13 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
         const studentSection = normalizeSectionValue(match.section);
 
         const userId = `student:${roll}`;
+        let dbUser = null;
+        try {
+            dbUser = await db.getUserById(userId);
+        } catch (e) {
+            console.error("Failed to load student progress from MongoDB:", e);
+        }
+
         const user = upsertLocalUser({
             _id: userId,
             username: match.name,
@@ -527,9 +541,15 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
             year: studentYear,
             department_section: toDepartmentSection(studentSection),
             authSource: 'json',
-            sqlProgress: createEmptyProgress(),
-            nosqlProgress: createEmptyProgress()
+            sqlProgress: dbUser && dbUser.sqlProgress ? dbUser.sqlProgress : createEmptyProgress(),
+            nosqlProgress: dbUser && dbUser.nosqlProgress ? dbUser.nosqlProgress : createEmptyProgress()
         });
+
+        try {
+            await db.saveOrUpdateStudentOrStaff(user);
+        } catch (e) {
+            console.error("Failed to save student profile in MongoDB:", e);
+        }
 
         const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         return respondOk(res, { user: sanitizeUser(user), token });
@@ -568,6 +588,12 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
             department_section: toDepartmentSection(staffSection),
             authSource: 'json'
         });
+
+        try {
+            await db.saveOrUpdateStudentOrStaff(user);
+        } catch (e) {
+            console.error("Failed to save staff profile in MongoDB:", e);
+        }
 
         const token = jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         return respondOk(res, { user: sanitizeUser(user), token });
@@ -938,6 +964,12 @@ app.post('/api/user/progress', requireAuth, requireStudent, async (req, res) => 
             };
             localUserStore.set(req.user._id, merged);
             req.user = merged;
+
+            try {
+                await db.updateUserProgressById(req.user._id, dbType, progress);
+            } catch (e) {
+                console.error("Failed to save progress to MongoDB:", e);
+            }
             return respondOk(res);
         }
 

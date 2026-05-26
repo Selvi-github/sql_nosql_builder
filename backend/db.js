@@ -852,6 +852,33 @@ export async function updateUserProgressById(userId, dbType, progress) {
     );
 }
 
+export async function saveOrUpdateStudentOrStaff(user) {
+    if (!mongoDb) await initMongo();
+    const users = mongoDb.collection('users');
+
+    const existing = await users.findOne({ _id: user._id });
+    if (existing) {
+        const updates = {
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            roll_number: user.roll_number || null,
+            section: user.section || null,
+            year: user.year || null,
+            department_section: user.department_section || null
+        };
+        await users.updateOne(
+            { _id: user._id },
+            { $set: updates }
+        );
+        return { ...existing, ...user };
+    } else {
+        await users.insertOne(user);
+        return user;
+    }
+}
+
+
 export async function getHodDashboard(section) {
     if (!mongoDb) await initMongo();
 

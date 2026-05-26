@@ -3,6 +3,13 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
+    // Unique certificate hash based on recipient name and type
+    const certId = `KCET-${type.toUpperCase()}-${name.replace(/\s+/g, '').substring(0, 4).toUpperCase()}-${date.replace(/[^0-9]/g, '')}`;
+    const qrText = `KCET Verified Certificate
+Recipient: ${name}
+Program: ${type} Database Mastery
+Date: ${date}
+Certificate ID: ${certId}`;
 
     const hodSignatureCandidates = [
         '/assets/certificates/common/hod_signature.png?v=1',
@@ -91,7 +98,6 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
                                 }}
                             />
                         </div>
-                        {/* Right logo removed as requested */}
                         <div style={styles.collegeName}>
                             KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY
                         </div>
@@ -118,7 +124,7 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
                         <span style={styles.courseName}>{type.toUpperCase()} Database Mastery Certification Program</span>
                     </div>
 
-                    {/* Seal and Signatures */}
+                    {/* Seal, QR and Signatures */}
                     <div style={styles.footer}>
                         <div style={styles.signatureBlock}>
                             <img
@@ -146,6 +152,16 @@ const Certificate = ({ name, date, logo, autoDownload, type = 'NoSQL' }) => {
                             <div style={styles.seal}>
                                 <div style={styles.checkMark}>✓</div>
                             </div>
+                        </div>
+
+                        <div style={styles.qrContainer}>
+                            <img
+                                src={`https://quickchart.io/qr?text=${encodeURIComponent(qrText)}`}
+                                alt="Verification QR Code"
+                                style={styles.qrCode}
+                                crossOrigin="anonymous"
+                            />
+                            <div style={styles.qrLabel}>SCAN TO VERIFY</div>
                         </div>
 
                         <div style={styles.signatureBlock}>
@@ -281,7 +297,7 @@ const styles = {
         alignItems: 'flex-end',
         width: '100%',
         marginTop: '40px',
-        padding: '0 50px'
+        padding: '0 30px'
     },
     signatureBlock: {
         display: 'flex',
@@ -332,6 +348,29 @@ const styles = {
         color: 'white',
         fontSize: '40px',
         fontWeight: 'bold'
+    },
+    qrContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '140px'
+    },
+    qrCode: {
+        width: '110px',
+        height: '110px',
+        objectFit: 'contain',
+        marginBottom: '6px',
+        border: '1px solid #e2e8f0',
+        padding: '4px',
+        backgroundColor: '#ffffff'
+    },
+    qrLabel: {
+        fontSize: '11px',
+        fontWeight: 'bold',
+        color: '#1e3a8a',
+        textAlign: 'center',
+        letterSpacing: '0.5px'
     },
     printBtn: {
         marginTop: '20px',

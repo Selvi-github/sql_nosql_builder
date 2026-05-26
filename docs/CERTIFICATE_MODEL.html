@@ -17,7 +17,7 @@
     .name{font-size:42px;font-weight:900;color:#1e3a8a;font-family:serif;}
     .bodyText{font-size:18px;color:#1e3a8a;text-align:center;max-width:80%;line-height:1.6;text-transform:uppercase;}
     .course{font-weight:900;font-size:22px;}
-    .footer{display:flex;justify-content:space-between;align-items:flex-end;width:100%;padding:0 50px;margin-top:40px;box-sizing:border-box;}
+    .footer{display:flex;justify-content:space-between;align-items:flex-end;width:100%;padding:0 30px;margin-top:40px;box-sizing:border-box;}
     .sigBlock{width:200px;display:flex;flex-direction:column;align-items:center;}
     .sigImg{width:100%;height:48px;object-fit:contain;margin-bottom:6px;}
     .sigHint{display:none;margin-top:6px;font-size:12px;line-height:1.35;color:#b91c1c;text-align:center;font-weight:700;}
@@ -26,6 +26,9 @@
     .seal{width:80px;height:80px;background:#38bdf8;border-radius:50%;display:flex;align-items:center;justify-content:center;}
     .check{color:#fff;font-size:40px;font-weight:900;}
     .dateText{font-size:16px;font-weight:800;color:#1e3a8a;margin-bottom:5px;}
+    .qrContainer{display:flex;flex-direction:column;align-items:center;justify-content:center;width:140px;}
+    .qrCode{width:110px;height:110px;object-fit:contain;margin-bottom:6px;border:1px solid #e2e8f0;padding:4px;background:#fff;}
+    .qrLabel{font-size:11px;font-weight:900;color:#1e3a8a;text-align:center;letter-spacing:0.5px;}
   </style>
 </head>
 <body>
@@ -76,6 +79,15 @@
           </div>
 
           <div class="seal"><div class="check">✓</div></div>
+
+          <div class="qrContainer">
+            <img
+              class="qrCode"
+              src="https://quickchart.io/qr?text=KCET%20Verified%20Certificate%0ARecipient%3A%20XXX%0AProgram%3A%20NOSQL%20Database%20Mastery%0ADate%3A%2021-Feb-2026%0ACertificate%20ID%3A%20KCET-NOSQL-XXX-21022026"
+              alt="Verification QR Code"
+            />
+            <div class="qrLabel">SCAN TO VERIFY</div>
+          </div>
 
           <div class="sigBlock">
             <div class="dateText">21-Feb-2026</div>

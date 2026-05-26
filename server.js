@@ -27,6 +27,17 @@ const ALLOWED_ORIGINS = RAW_CORS_ORIGIN
     .map(origin => origin.trim())
     .filter(Boolean);
 const ALLOW_ANY_ORIGIN = ALLOWED_ORIGINS.includes('*');
+const DEV_FALLBACK_ORIGINS = new Set([
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174'
+]);
+const isDevLocalhostOrigin = (origin) => {
+    if (process.env.NODE_ENV === 'production') return false;
+    if (ALLOWED_ORIGINS.length > 0 || ALLOW_ANY_ORIGIN) return false;
+    return DEV_FALLBACK_ORIGINS.has(origin);
+};
 
 if (process.env.NODE_ENV === 'production') {
     if (!JWT_SECRET) {
@@ -43,7 +54,7 @@ app.use(cors({
     origin: (origin, callback) => {
         // Allow no origin (mobile apps, curl) or allowed origins
         if (!origin) return callback(null, true);
-        if (ALLOW_ANY_ORIGIN || ALLOWED_ORIGINS.includes(origin)) {
+        if (ALLOW_ANY_ORIGIN || ALLOWED_ORIGINS.includes(origin) || isDevLocalhostOrigin(origin)) {
             return callback(null, true);
         }
         return callback(new Error('Not allowed by CORS'));
@@ -493,23 +504,17 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
 
     if (normalizedRole === 'STUDENT') {
         const roll = normalizeRollNumber(rollNumber);
-        const studentName = normalizeName(name);
-        const studentYear = normalizeYear(year);
-        const studentSection = normalizeSectionValue(section);
-
-        if (!roll || !studentName || !studentYear || !studentSection) {
-            return respondError(res, 400, 'Name, roll number, year, and section are required');
-        }
+        if (!roll) return respondError(res, 400, 'Roll number is required');
 
         const match = (authData.students || []).find((s) => {
             const sRoll = normalizeRollNumber(s.rollNumber);
-            const sYear = normalizeYear(s.year);
-            const sSection = normalizeSectionValue(s.section);
-            if (sRoll !== roll || sYear !== studentYear || sSection !== studentSection) return false;
-            return isNameMatch(studentName, s.name);
+            return sRoll === roll;
         });
 
         if (!match) return respondError(res, 401, 'Student not found in the approved list');
+
+        const studentYear = normalizeYear(match.year);
+        const studentSection = normalizeSectionValue(match.section);
 
         const userId = `student:${roll}`;
         const user = upsertLocalUser({
@@ -532,13 +537,11 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
 
     if (normalizedRole === 'STAFF') {
         if (!email || !isValidEmail(email)) return respondError(res, 400, 'Valid staff email is required');
-        if (!name) return respondError(res, 400, 'Staff name is required');
         if (!password) return respondError(res, 400, 'Staff password is required');
 
         const match = (authData.staff || []).find((s) => {
             const sEmail = String(s.email || '').trim().toLowerCase();
-            return sEmail === String(email).trim().toLowerCase()
-                && isNameMatch(name, s.name);
+            return sEmail === String(email).trim().toLowerCase();
         });
 
         if (!match) return respondError(res, 401, 'Staff not found in the approved list');

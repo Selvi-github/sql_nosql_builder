@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 
 const Login = ({ onLogin, theme, onToggleTheme }) => {
+    const [step, setStep] = useState(1); // 1 = Role Selection, 2 = Credentials Input
     const [role, setRole] = useState('STUDENT'); // STUDENT | STAFF | ADMIN | OTHER
-    const [studentName, setStudentName] = useState('');
     const [rollNumber, setRollNumber] = useState('');
-    const [year, setYear] = useState('2');
-    const [section, setSection] = useState('A');
-    const [staffName, setStaffName] = useState('');
     const [otherName, setOtherName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,15 +14,15 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
         e.preventDefault();
 
         if (role === 'STUDENT') {
-            if (!studentName || !rollNumber || !year || !section) {
-                setError('Please enter name, roll number, year, and section.');
+            if (!rollNumber) {
+                setError('Please enter your roll number.');
                 return;
             }
         }
 
         if (role === 'STAFF') {
-            if (!staffName || !email || !password) {
-                setError('Please enter staff name, email, and password.');
+            if (!email || !password) {
+                setError('Please enter email and password.');
                 return;
             }
         }
@@ -49,9 +46,9 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
 
         try {
             const body = role === 'STUDENT'
-                ? { role, name: studentName, rollNumber, year, section }
+                ? { role, rollNumber }
                 : role === 'STAFF'
-                    ? { role, name: staffName, email, password }
+                    ? { role, email, password }
                     : role === 'OTHER'
                         ? { role, name: otherName, password }
                         : { role, email, password };
@@ -87,112 +84,109 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
         inputBg: isLight ? '#ffffff' : '#0b1120',
         inputBorder: isLight ? '#cbd5e1' : '#1f2937',
         inputText: isLight ? '#0f172a' : '#f8fafc',
-        roleBg: isLight ? '#f1f5f9' : '#0b1120',
-        roleBorder: isLight ? '#cbd5e1' : '#1f2937',
-        roleText: isLight ? '#475569' : '#94a3b8',
-        roleActiveBg: isLight ? '#ffffff' : '#1f2a44',
-        roleActiveText: isLight ? '#0f172a' : '#f8fafc'
     };
 
+    if (step === 1) {
+        return (
+            <div style={{ ...styles.container, backgroundColor: themeStyles.pageBg }}>
+                <style>{`
+                    .role-card-hover {
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .role-card-hover:hover {
+                        transform: translateY(-6px);
+                        border-color: #38bdf8 !important;
+                        box-shadow: 0 12px 30px -5px rgba(56, 189, 248, 0.25) !important;
+                    }
+                `}</style>
+                <div style={{ ...styles.card, maxWidth: '600px', backgroundColor: themeStyles.cardBg, borderColor: themeStyles.cardBorder }}>
+                    <div style={styles.header}>
+                        <div style={styles.headerRow}>
+                            <h1 style={{ ...styles.title, color: themeStyles.titleText }}>DualDB Query Architect</h1>
+                            <button type="button" onClick={onToggleTheme} style={styles.themeBtn}>
+                                {isLight ? '🌙' : '☀️'}
+                            </button>
+                        </div>
+                        <p style={{ ...styles.subtitle, color: themeStyles.subtitleText }}>Academic Learning Platform</p>
+                    </div>
+
+                    <h2 style={{ ...styles.stepTitle, color: themeStyles.titleText }}>Who are you? Select your role</h2>
+
+                    <div style={styles.rolesGrid}>
+                        <div
+                            onClick={() => { setRole('STUDENT'); setStep(2); setError(''); }}
+                            className="role-card-hover"
+                            style={{ ...styles.roleCard, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder }}
+                        >
+                            <span style={styles.roleCardIcon}>🎓</span>
+                            <h3 style={{ ...styles.roleCardTitle, color: themeStyles.titleText }}>Student</h3>
+                            <p style={{ ...styles.roleCardDesc, color: themeStyles.subtitleText }}>Learn SQL & NoSQL using visual block builders</p>
+                        </div>
+
+                        <div
+                            onClick={() => { setRole('STAFF'); setStep(2); setError(''); }}
+                            className="role-card-hover"
+                            style={{ ...styles.roleCard, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder }}
+                        >
+                            <span style={styles.roleCardIcon}>🏫</span>
+                            <h3 style={{ ...styles.roleCardTitle, color: themeStyles.titleText }}>Staff</h3>
+                            <p style={{ ...styles.roleCardDesc, color: themeStyles.subtitleText }}>Track student progress & export class reports</p>
+                        </div>
+
+                        <div
+                            onClick={() => { setRole('OTHER'); setStep(2); setError(''); }}
+                            className="role-card-hover"
+                            style={{ ...styles.roleCard, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder }}
+                        >
+                            <span style={styles.roleCardIcon}>👤</span>
+                            <h3 style={{ ...styles.roleCardTitle, color: themeStyles.titleText }}>Other User</h3>
+                            <p style={{ ...styles.roleCardDesc, color: themeStyles.subtitleText }}>Create profile & run custom sandbox queries</p>
+                        </div>
+
+                        <div
+                            onClick={() => { setRole('ADMIN'); setStep(2); setError(''); }}
+                            className="role-card-hover"
+                            style={{ ...styles.roleCard, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder }}
+                        >
+                            <span style={styles.roleCardIcon}>🛠️</span>
+                            <h3 style={{ ...styles.roleCardTitle, color: themeStyles.titleText }}>Admin</h3>
+                            <p style={{ ...styles.roleCardDesc, color: themeStyles.subtitleText }}>Manage system metrics & data configurations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Step 2: Credentials Form
     return (
         <div style={{ ...styles.container, backgroundColor: themeStyles.pageBg }}>
+            <style>{`
+                .back-btn-hover {
+                    transition: color 0.2s ease;
+                }
+                .back-btn-hover:hover {
+                    color: #38bdf8 !important;
+                }
+            `}</style>
             <div style={{ ...styles.card, backgroundColor: themeStyles.cardBg, borderColor: themeStyles.cardBorder }}>
-                <div style={styles.header}>
-                    <div style={styles.headerRow}>
-                        <h1 style={{ ...styles.title, color: themeStyles.titleText }}>DualDB Query Architect</h1>
-                        <button type="button" onClick={onToggleTheme} style={styles.themeBtn}>
-                            {isLight ? '🌙' : '☀️'}
-                        </button>
-                    </div>
-                    <p style={{ ...styles.subtitle, color: themeStyles.subtitleText }}>Academic Learning Platform</p>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => { setStep(1); setError(''); }}
+                    className="back-btn-hover"
+                    style={styles.backBtn}
+                >
+                    ← Back to Roles
+                </button>
 
-                <div style={styles.roleToggle}>
-                    <button
-                        type="button"
-                        onClick={() => setRole('STUDENT')}
-                        style={{
-                            ...styles.roleBtn,
-                            backgroundColor: themeStyles.roleBg,
-                            borderColor: themeStyles.roleBorder,
-                            color: themeStyles.roleText,
-                            ...(role === 'STUDENT' ? {
-                                backgroundColor: themeStyles.roleActiveBg,
-                                color: themeStyles.roleActiveText,
-                                borderColor: '#38bdf8'
-                            } : {})
-                        }}
-                    >
-                        Student
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setRole('STAFF')}
-                        style={{
-                            ...styles.roleBtn,
-                            backgroundColor: themeStyles.roleBg,
-                            borderColor: themeStyles.roleBorder,
-                            color: themeStyles.roleText,
-                            ...(role === 'STAFF' ? {
-                                backgroundColor: themeStyles.roleActiveBg,
-                                color: themeStyles.roleActiveText,
-                                borderColor: '#38bdf8'
-                            } : {})
-                        }}
-                    >
-                        Staff
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setRole('ADMIN')}
-                        style={{
-                            ...styles.roleBtn,
-                            backgroundColor: themeStyles.roleBg,
-                            borderColor: themeStyles.roleBorder,
-                            color: themeStyles.roleText,
-                            ...(role === 'ADMIN' ? {
-                                backgroundColor: themeStyles.roleActiveBg,
-                                color: themeStyles.roleActiveText,
-                                borderColor: '#38bdf8'
-                            } : {})
-                        }}
-                    >
-                        Admin
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setRole('OTHER')}
-                        style={{
-                            ...styles.roleBtn,
-                            backgroundColor: themeStyles.roleBg,
-                            borderColor: themeStyles.roleBorder,
-                            color: themeStyles.roleText,
-                            ...(role === 'OTHER' ? {
-                                backgroundColor: themeStyles.roleActiveBg,
-                                color: themeStyles.roleActiveText,
-                                borderColor: '#38bdf8'
-                            } : {})
-                        }}
-                    >
-                        Other User
-                    </button>
+                <div style={styles.header}>
+                    <h2 style={{ ...styles.formTitle, color: themeStyles.titleText }}>
+                        Sign In as {role === 'OTHER' ? 'Other User' : role.charAt(0) + role.slice(1).toLowerCase()}
+                    </h2>
+                    <p style={{ ...styles.subtitle, color: themeStyles.subtitleText }}>Enter your credentials below</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
-                    {role === 'STUDENT' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Student Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                value={studentName}
-                                onChange={(e) => setStudentName(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
-                    )}
-
                     {role === 'STUDENT' && (
                         <div style={styles.inputGroup}>
                             <label style={{ ...styles.label, color: themeStyles.labelText }}>Roll Number</label>
@@ -203,111 +197,93 @@ const Login = ({ onLogin, theme, onToggleTheme }) => {
                                 onChange={(e) => setRollNumber(e.target.value)}
                                 style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
                                 required
+                                autoFocus
                             />
-                        </div>
-                    )}
-
-                    {role === 'STUDENT' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Year</label>
-                            <select
-                                value={year}
-                                onChange={(e) => setYear(e.target.value)}
-                                style={{ ...styles.select, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            >
-                                <option value="2">2nd Year</option>
-                                <option value="3">3rd Year</option>
-                            </select>
-                        </div>
-                    )}
-
-                    {role === 'STUDENT' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Section</label>
-                            <select
-                                value={section}
-                                onChange={(e) => setSection(e.target.value)}
-                                style={{ ...styles.select, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            >
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                            </select>
                         </div>
                     )}
 
                     {role === 'STAFF' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Staff Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                value={staffName}
-                                onChange={(e) => setStaffName(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
+                        <>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Email Address</label>
+                                <input
+                                    type="email"
+                                    placeholder="staff@college.edu"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Staff Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter staff password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                />
+                            </div>
+                        </>
                     )}
 
-                    {(role === 'STAFF' || role === 'ADMIN') && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Email Address</label>
-                            <input
-                                type="email"
-                                placeholder="staff@college.edu"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
-                    )}
-
-                    {(role === 'STAFF' || role === 'ADMIN') && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>
-                                {role === 'STAFF' ? 'Staff Password' : 'Password'}
-                            </label>
-                            <input
-                                type="password"
-                                placeholder={role === 'STAFF' ? 'Enter staff password' : 'Enter admin password'}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
+                    {role === 'ADMIN' && (
+                        <>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Email Address</label>
+                                <input
+                                    type="email"
+                                    placeholder="admin@college.edu"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter admin password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                />
+                            </div>
+                        </>
                     )}
 
                     {role === 'OTHER' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                value={otherName}
-                                onChange={(e) => setOtherName(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
-                    )}
-
-                    {role === 'OTHER' && (
-                        <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, color: themeStyles.labelText }}>Password</label>
-                            <input
-                                type="password"
-                                placeholder="Enter password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
-                                required
-                            />
-                        </div>
+                        <>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter your name"
+                                    value={otherName}
+                                    onChange={(e) => setOtherName(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+                            <div style={styles.inputGroup}>
+                                <label style={{ ...styles.label, color: themeStyles.labelText }}>Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    style={{ ...styles.input, backgroundColor: themeStyles.inputBg, borderColor: themeStyles.inputBorder, color: themeStyles.inputText }}
+                                    required
+                                />
+                            </div>
+                        </>
                     )}
 
                     {error && <p style={styles.error}>{error}</p>}
@@ -331,7 +307,7 @@ const styles = {
         overflowY: 'auto',
         backgroundColor: '#0b1120',
         fontFamily: "'Space Grotesk', sans-serif",
-        padding: '24px'
+        padding: '40px 24px'
     },
     card: {
         width: '100%',
@@ -340,31 +316,12 @@ const styles = {
         padding: '40px',
         borderRadius: '24px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        border: '1px solid #1f2937'
-    },
-    roleToggle: {
-        display: 'flex',
-        gap: '10px',
-        marginBottom: '24px'
-    },
-    roleBtn: {
-        flex: 1,
-        padding: '10px 12px',
-        backgroundColor: '#0b1120',
         border: '1px solid #1f2937',
-        color: '#94a3b8',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        fontWeight: '600'
-    },
-    roleActive: {
-        backgroundColor: '#1f2a44',
-        color: '#f8fafc',
-        borderColor: '#38bdf8'
+        boxSizing: 'border-box'
     },
     header: {
         textAlign: 'center',
-        marginBottom: '32px'
+        marginBottom: '24px'
     },
     headerRow: {
         display: 'flex',
@@ -373,17 +330,31 @@ const styles = {
         gap: '12px'
     },
     title: {
-        fontSize: '2rem',
+        fontSize: '1.75rem',
         color: '#f8fafc',
         fontWeight: '800',
-        marginBottom: '8px',
+        margin: '0',
         background: 'linear-gradient(135deg, #6366f1, #0ea5e9)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent'
     },
     subtitle: {
         color: '#94a3b8',
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        margin: '8px 0 0 0'
+    },
+    stepTitle: {
+        fontSize: '1.2rem',
+        fontWeight: '700',
+        textAlign: 'center',
+        marginBottom: '24px',
+        marginTop: '20px'
+    },
+    formTitle: {
+        fontSize: '1.5rem',
+        fontWeight: '800',
+        margin: '0',
+        color: '#f8fafc'
     },
     themeBtn: {
         width: '36px',
@@ -396,7 +367,53 @@ const styles = {
         fontSize: '16px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: '0'
+    },
+    backBtn: {
+        border: 'none',
+        backgroundColor: 'transparent',
+        color: '#94a3b8',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontSize: '0.9rem',
+        marginBottom: '24px',
+        padding: '0',
+        fontWeight: '600'
+    },
+    rolesGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '20px',
+        marginTop: '10px'
+    },
+    roleCard: {
+        padding: '24px',
+        borderRadius: '16px',
+        border: '1px solid #1f2937',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+        boxSizing: 'border-box'
+    },
+    roleCardIcon: {
+        fontSize: '36px',
+        marginBottom: '12px'
+    },
+    roleCardTitle: {
+        fontSize: '1.1rem',
+        fontWeight: '700',
+        margin: '0 0 8px 0'
+    },
+    roleCardDesc: {
+        fontSize: '0.8rem',
+        margin: '0',
+        lineHeight: '1.4'
     },
     form: {
         display: 'flex',
@@ -421,16 +438,8 @@ const styles = {
         color: '#f8fafc',
         fontSize: '1rem',
         outline: 'none',
-        transition: 'all 0.2s'
-    },
-    select: {
-        padding: '12px 16px',
-        backgroundColor: '#0b1120',
-        border: '1px solid #1f2937',
-        borderRadius: '10px',
-        color: '#f8fafc',
-        fontSize: '1rem',
-        outline: 'none'
+        boxSizing: 'border-box',
+        width: '100%'
     },
     error: {
         color: '#f87171',
@@ -447,14 +456,10 @@ const styles = {
         fontSize: '1rem',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'all 0.2s',
-        boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)'
-    },
-    footer: {
-        marginTop: '24px',
-        textAlign: 'center',
-        color: '#64748b',
-        fontSize: '0.75rem'
+        boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)',
+        boxSizing: 'border-box',
+        width: '100%',
+        marginTop: '10px'
     }
 };
 
